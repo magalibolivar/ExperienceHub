@@ -1,0 +1,172 @@
+@startuml G07_ModeloDatos_ExperienceHub
+' Modelo de Datos Integrado — ExperienceHub
+' Negocio (amarillo) vs. Infraestructura conservada (celeste)
+hide circle
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor<<negocio>> #FFF3C4
+  BackgroundColor<<infra>>   #CDE7F0
+  BorderColor #556
+}
+
+' ─────────────── NEGOCIO ───────────────
+entity Ciudad <<negocio>> {
+  * IdCiudad : int <<PK>>
+  --
+  Nombre : nvarchar
+  Provincia : nvarchar
+  Estado : bit
+}
+
+entity Categoria <<negocio>> {
+  * IdCategoria : int <<PK>>
+  --
+  Nombre : nvarchar
+  Descripcion : nvarchar
+  Estado : bit
+}
+
+entity Organizador <<negocio>> {
+  * IdOrganizador : int <<PK>>
+  --
+  Nombre : nvarchar
+  Contacto / Telefono / Mail
+  Estado : bit
+  DVH : int
+}
+
+entity Interes <<negocio>> {
+  * IdInteres : int <<PK>>
+  --
+  Nombre : nvarchar
+}
+
+entity Cliente <<negocio>> {
+  * IdCliente : int <<PK>>
+  --
+  Nombre / Apellido
+  DNI (cifrado AES)
+  Email
+  FechaNacimiento
+  IdCiudad : int <<FK>>
+  DVH : int
+}
+
+entity ClienteInteres <<negocio>> {
+  * IdCliente : int <<PK,FK>>
+  * IdInteres : int <<PK,FK>>
+}
+
+entity PlanSuscripcion <<negocio>> {
+  * IdPlan : int <<PK>>
+  --
+  Nombre / Precio / Estado
+  ReservasMensuales
+  AnticipacionMaximaDias
+  AccesoPremium
+  PrioridadListaEspera
+  CantidadInvitados
+}
+
+entity Suscripcion <<negocio>> {
+  * IdSuscripcion : int <<PK>>
+  --
+  IdCliente : int <<FK>>
+  IdPlan : int <<FK>>
+  FechaInicio / FechaVencimiento
+  Estado (Activa/Suspendida/Vencida)
+  ReservasConsumidasMes
+}
+
+entity Experiencia <<negocio>> {
+  * IdExperiencia : int <<PK>>
+  --
+  Nombre / Descripcion / Ubicacion
+  IdCategoria <<FK>>  IdCiudad <<FK>>
+  IdOrganizador <<FK>>
+  Fecha / HoraInicio / DuracionMinutos
+  CupoMaximo / CupoDisponible
+  EdadMinima / Premium
+  Estado (Programada..Cancelada)
+  DVH : int
+}
+
+entity Reserva <<negocio>> {
+  * IdReserva : int <<PK>>
+  --
+  IdCliente <<FK>>  IdExperiencia <<FK>>
+  IdEmpleado <<FK>>
+  Estado (Pendiente..NoAsistio)
+  FechaReserva / FechaCancelacion
+  CantidadInvitados / MotivoCancelacion
+  DVH : int
+}
+
+entity ReservaHistorial <<negocio>> {
+  * IdHistorial : int <<PK>>
+  --
+  IdReserva <<FK>>  IdOperacion
+  Accion / Campo / ValorAnterior / ValorNuevo
+  Fecha / IdUsuario
+}
+
+entity ListaEspera <<negocio>> {
+  * IdListaEspera : int <<PK>>
+  --
+  IdExperiencia <<FK>>  IdCliente <<FK>>
+  Posicion / FechaIngreso
+  Estado (Esperando..Retirado)
+}
+
+entity Calificacion <<negocio>> {
+  * IdCalificacion : int <<PK>>
+  --
+  IdReserva <<FK>>  IdCliente <<FK>>  IdExperiencia <<FK>>
+  Puntaje (1-5) / Comentario / Fecha
+}
+
+' ─────────────── INFRAESTRUCTURA (conservada) ───────────────
+entity Usuario <<infra>> {
+  * IdUsuario : int <<PK>>
+  Username / Clave (PBKDF2) / Rol / Perfil / Estado / DVH
+}
+entity Empleado <<infra>> {
+  * IdEmpleado : int <<PK>>
+  IdUsuario <<FK>> / Nombre / Apellido / DNI / DVH
+}
+entity Permiso <<infra>> {
+  * IdPermiso : int <<PK>>
+  Nombre / NombreMenu / EsFamilia / EsRol
+}
+entity PermisoRelacion <<infra>> {
+  IdPadre <<FK>> / IdHijo <<FK>>
+}
+entity BitacoraNegocio <<infra>> {
+  * IdEvento : int <<PK>>
+  Tipo / Fecha / IdUsuario
+  IdReserva / IdExperiencia / IdCliente
+}
+
+' ─────────────── RELACIONES ───────────────
+Ciudad ||--o{ Cliente
+Ciudad ||--o{ Experiencia
+Categoria ||--o{ Experiencia
+Organizador ||--o{ Experiencia
+Cliente ||--o{ ClienteInteres
+Interes ||--o{ ClienteInteres
+Cliente ||--o{ Suscripcion
+PlanSuscripcion ||--o{ Suscripcion
+Cliente ||--o{ Reserva
+Experiencia ||--o{ Reserva
+Empleado ||--o{ Reserva
+Reserva ||--o{ ReservaHistorial
+Experiencia ||--o{ ListaEspera
+Cliente ||--o{ ListaEspera
+Reserva ||--|| Calificacion
+Experiencia ||--o{ Calificacion
+Usuario ||--o| Empleado
+Permiso ||--o{ PermisoRelacion
+Reserva ..o{ BitacoraNegocio
+@enduml

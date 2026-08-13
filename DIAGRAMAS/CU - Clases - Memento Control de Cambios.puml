@@ -1,0 +1,47 @@
+@startuml CU - Clases - Memento Control de Cambios
+title T06b - Control de Cambios (patron Memento) - Usuario y Reserva
+skinparam classAttributeIconSize 0
+
+interface IOriginator {
+  + CrearMemento() : IMemento
+  + Restaurar(m : IMemento)
+}
+interface IMemento
+
+class Usuario <<Originator>> {
+  + CrearMemento() : IMemento
+  + Restaurar(m : IMemento)
+}
+class VersionUsuario <<Memento>> {
+  - nombreUsuario, claveCifrada
+  - estado, intentos, metadatos
+}
+class "BLL.CuidadorHistorial" <<Caretaker>> {
+  + Guardar(v : VersionUsuario)
+  + Obtener(idUsuario) : List<VersionUsuario>
+}
+
+class Reserva <<Originator negocio>> {
+  + Estado, CantidadInvitados
+  + RestaurarOperacion(hist)
+}
+class ReservaHistorial <<Memento negocio>> {
+  + Campo, ValorAnterior, ValorNuevo
+  + IdUsuario, Fecha, IdOperacion
+}
+
+IOriginator <|.. Usuario
+IMemento <|.. VersionUsuario
+Usuario ..> VersionUsuario : crea/restaura
+"BLL.CuidadorHistorial" o--> VersionUsuario
+
+IOriginator <|.. Reserva
+IMemento <|.. ReservaHistorial
+Reserva ..> ReservaHistorial : cambios campo a campo
+
+note bottom
+  Quien / cuando / que cambio / valor anterior / valor nuevo.
+  La contrasena NO se versiona ni se revierte.
+  El rollback de Reserva es atomico y se registra como nueva entrada.
+end note
+@enduml

@@ -1,0 +1,36 @@
+<svg width="520" height="150" viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ExperienceHub">
+  <defs>
+    <linearGradient id="sunset" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"   stop-color="#FF6B6B"/>
+      <stop offset="0.5" stop-color="#FF8C42"/>
+      <stop offset="1"   stop-color="#FFD166"/>
+    </linearGradient>
+    <clipPath id="horizon"><rect x="0" y="0" width="150" height="86"/></clipPath>
+  </defs>
+
+  <!-- Marca: sol naciente sobre el horizonte (descubrimiento / momentos / salir) -->
+  <g clip-path="url(#horizon)" transform="translate(12,20)">
+    <circle cx="75" cy="86" r="46" fill="url(#sunset)"/>
+    <!-- rayos -->
+    <g stroke="url(#sunset)" stroke-width="7" stroke-linecap="round">
+      <line x1="75" y1="8"  x2="75" y2="24"/>
+      <line x1="33" y1="20" x2="42" y2="33"/>
+      <line x1="117" y1="20" x2="108" y2="33"/>
+      <line x1="12" y1="52" x2="27" y2="55"/>
+      <line x1="138" y1="52" x2="123" y2="55"/>
+    </g>
+  </g>
+  <!-- línea de horizonte -->
+  <line x1="12" y1="106" x2="150" y2="106" stroke="#243B53" stroke-width="5" stroke-linecap="round"/>
+  <!-- punto de "lugar" (pin de experiencia) -->
+  <circle cx="118" cy="70" r="8" fill="#243B53"/>
+  <circle cx="118" cy="70" r="3" fill="#FFFDF9"/>
+
+  <!-- Wordmark -->
+  <text x="176" y="82" font-family="Segoe UI, Poppins, Manrope, Arial, sans-serif" font-size="42" font-weight="700" fill="#243B53">
+    Experience<tspan fill="#FF6B6B">Hub</tspan>
+  </text>
+  <text x="178" y="112" font-family="Segoe UI, Poppins, Manrope, Arial, sans-serif" font-size="15" font-style="italic" fill="#FF8C42">
+    Descubrí experiencias. Viví momentos.
+  </text>
+</svg>

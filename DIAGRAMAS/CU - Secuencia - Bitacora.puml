@@ -1,0 +1,22 @@
+@startuml CU - Secuencia - Bitacora
+title T06a - Registro y consulta de Bitacora (busqueda combinada)
+actor "Usuario/Admin" as U
+participant "Modulo cualquiera" as M
+participant "Servicios.Bitacora" as B
+participant "SessionManager" as SM
+database "SQL Server\n(Bitacora)" as DB
+
+== Registro automatico ==
+M -> B : Registrar(modulo, actividad, criticidad)
+B -> SM : ObtenerUsuarioActivo()
+SM --> B : usuario
+B -> B : ObtenerIPLocal()
+B -> DB : INSERT (fecha, hora, usuario, actividad, info, criticidad, IP)
+
+== Consulta con filtros ==
+U -> B : BuscarPorFiltros(desde, hasta, idUsuario, actividad, criticidad)
+note right of B : cualquier parametro nulo/vacio/-1\nse ignora en el filtro.
+B -> DB : SELECT ... WHERE (filtros combinados)
+DB --> B : registros
+B --> U : grilla (orden fecha desc) + export PDF
+@enduml

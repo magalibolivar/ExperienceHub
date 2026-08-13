@@ -1,0 +1,41 @@
+@startuml T01 - Mapa de Navegacion MDI
+title T01 - Mapa de Navegacion MDI (formularios por funcion)
+skinparam state {
+  BackgroundColor #FFF7F0
+  BorderColor #E45A2B
+}
+state "F00 Login" as L
+state "F01 Menu (contenedor MDI)" as M
+L --> M : autenticacion OK
+
+state M {
+  state "Clientes / Suscripciones" as MC {
+    state "F02 Clientes" as F02
+    state "F02a ClienteForm" as F02a
+    F02 --> F02a
+  }
+  state "Catalogo" as MCat {
+    state "F03 Experiencias" as F03
+    state "F06 Organizadores/Categorias/Ciudades" as F06
+  }
+  state "Operacion" as MOp {
+    state "F04 Reservas" as F04
+    state "F05 ReservasRealizadas" as F05
+    state "F04b ListaEspera" as F04b
+    F04 --> F04b : sin cupo
+    F04 --> F05 : experiencia finalizada
+  }
+  state "Comercial" as MCom {
+    state "F07 Planes" as F07
+    state "F0R Recomendaciones" as FR
+  }
+  state "Administracion" as MAdm {
+    state "F09 Usuarios/Perfiles" as F09
+    state "F08 Bitacora" as F08
+    state "F10 Backup/Integridad" as F10
+    state "Idiomas / MiPerfil" as FI
+  }
+}
+M --> L : Logout (destruye Singleton)
+note bottom : El menu se construye dinamicamente\nsegun los permisos (Composite) del usuario en sesion.
+@enduml

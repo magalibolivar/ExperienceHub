@@ -1,0 +1,113 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace DAL
+{
+    /// <summary>
+    /// Capa de Acceso a Datos — BitacoraNegocio.
+    /// Opera sobre la tabla [BitacoraNegocio] de ExperienceHubDB.
+    /// </summary>
+    public class BitacoraNegocio
+    {
+        private readonly Acceso acceso = Acceso.GetInstance();
+
+        // Registra un evento de negocio en la bitácora.
+        public void Registrar(BE.BitacoraNegocio evento)
+        {
+            SqlParameter[] p =
+            {
+                new SqlParameter("@Fecha", evento.Fecha),
+                new SqlParameter("@Tipo", evento.Tipo.ToString()),
+                new SqlParameter("@IdUsuario", (object)evento.IdUsuario ?? DBNull.Value),
+                new SqlParameter("@IdReserva", (object)evento.IdReserva ?? DBNull.Value),
+                new SqlParameter("@IdExperiencia", (object)evento.IdExperiencia ?? DBNull.Value),
+                new SqlParameter("@IdCliente", (object)evento.IdCliente ?? DBNull.Value),
+                new SqlParameter("@Descripcion", evento.Descripcion)
+            };
+            acceso.Escribir(
+                "INSERT INTO BitacoraNegocio (Fecha, Tipo, IdUsuario, IdReserva, IdExperiencia, IdCliente, Descripcion) " +
+                "VALUES (@Fecha, @Tipo, @IdUsuario, @IdReserva, @IdExperiencia, @IdCliente, @Descripcion)",
+                p);
+        }
+
+        // Devuelve todos los eventos ordenados por fecha descendente.
+        public DataTable ObtenerTodos()
+        {
+            try
+            {
+                return acceso.Leer(
+                    "SELECT bn.IdEvento, bn.Fecha, bn.Tipo, " +
+                    "       u.Username AS UsernameUsuario, " +
+                    "       c.Nombre + ' ' + c.Apellido AS NombreCliente, " +
+                    "       bn.IdReserva, bn.IdExperiencia, bn.IdCliente, bn.Descripcion " +
+                    "FROM BitacoraNegocio bn " +
+                    "LEFT JOIN Usuario u ON u.IdUsuario = bn.IdUsuario " +
+                    "LEFT JOIN Cliente c ON c.IdCliente = bn.IdCliente " +
+                    "ORDER BY bn.Fecha DESC",
+                    null);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError($"[DAL.BitacoraNegocio] Error en ObtenerTodos: {ex.Message}");
+                return new DataTable();
+            }
+        }
+
+        // Devuelve eventos filtrados por tipo, rango de fechas y entidades opcionales.
+        public DataTable BuscarPorFiltros(
+            DateTime? desde, DateTime? hasta,
+            string tipo, int? idCliente, int? idReserva)
+        {
+            var condiciones = new System.Text.StringBuilder("WHERE 1=1");
+            var parametros  = new List<SqlParameter>();
+
+            if (desde.HasValue)
+            {
+                condiciones.Append(" AND bn.Fecha >= @Desde");
+                parametros.Add(new SqlParameter("@Desde", desde.Value));
+            }
+            if (hasta.HasValue)
+            {
+                condiciones.Append(" AND bn.Fecha <= @Hasta");
+                parametros.Add(new SqlParameter("@Hasta", hasta.Value.AddDays(1)));
+            }
+            if (!string.IsNullOrEmpty(tipo))
+            {
+                condiciones.Append(" AND bn.Tipo = @Tipo");
+                parametros.Add(new SqlParameter("@Tipo", tipo));
+            }
+            if (idCliente.HasValue && idCliente.Value > 0)
+            {
+                condiciones.Append(" AND bn.IdCliente = @IdCliente");
+                parametros.Add(new SqlParameter("@IdCliente", idCliente.Value));
+            }
+            if (idReserva.HasValue && idReserva.Value > 0)
+            {
+                condiciones.Append(" AND bn.IdReserva = @IdReserva");
+                parametros.Add(new SqlParameter("@IdReserva", idReserva.Value));
+            }
+
+            string sql =
+                "SELECT bn.IdEvento, bn.Fecha, bn.Tipo, " +
+                "       u.Username AS UsernameUsuario, " +
+                "       c.Nombre + ' ' + c.Apellido AS NombreCliente, " +
+                "       bn.IdReserva, bn.IdExperiencia, bn.IdCliente, bn.Descripcion " +
+                "FROM BitacoraNegocio bn " +
+                "LEFT JOIN Usuario u ON u.IdUsuario = bn.IdUsuario " +
+                "LEFT JOIN Cliente c ON c.IdCliente = bn.IdCliente " +
+                condiciones + " ORDER BY bn.Fecha DESC";
+
+            try
+            {
+                return acceso.Leer(sql, parametros.ToArray());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError($"[DAL.BitacoraNegocio] Error en BuscarPorFiltros: {ex.Message}");
+                return new DataTable();
+            }
+        }
+    }
+}

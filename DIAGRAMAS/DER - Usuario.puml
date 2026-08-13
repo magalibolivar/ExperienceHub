@@ -1,0 +1,52 @@
+@startuml DER - Usuario
+title DER - Usuario / Empleado / Permiso (aspecto tecnico)
+skinparam linetype ortho
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+  --
+  NombreUsuario : nvarchar
+  Clave : nchar(64)  ' hash PBKDF2
+  IdEmpleado : int <<FK>>
+  IdRol : int <<FK>>
+  Bloqueado : bit
+  IntentosFallidos : int
+  DVH : nvarchar
+}
+entity "Empleado" as E {
+  * IdEmpleado : int <<PK>>
+  --
+  Nombre : nvarchar
+  Apellido : nvarchar
+  Email : nvarchar
+  FechaNacimiento : date
+  DVH : nvarchar
+}
+entity "Permiso (Rol/Patente)" as P {
+  * IdPermiso : int <<PK>>
+  --
+  Nombre : nvarchar
+  Tipo : int  ' Rol | Patente
+}
+entity "PermisoRelacion" as PR {
+  * IdPadre : int <<FK>>
+  * IdHijo : int <<FK>>
+}
+entity "RolPermiso" as RP {
+  * IdRol : int <<FK>>
+  * IdPermiso : int <<FK>>
+}
+entity "HistorialUsuario" as H {
+  * IdVersion : int <<PK>>
+  --
+  IdUsuario : int <<FK>>
+  Fecha : datetime
+  Autor : nvarchar
+  Estado : nvarchar
+}
+
+U ||--o{ H
+E ||--|| U
+P ||--o{ PR : padre
+P ||--o{ PR : hijo
+U }o--|| P : IdRol
+@enduml

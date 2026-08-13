@@ -1,0 +1,46 @@
+@startuml Diagrama de Componentes
+' ExperienceHub - Diagrama de componentes por capa (arquitectura de 4+ capas).
+skinparam componentStyle rectangle
+skinparam component {
+  BackgroundColor #FFF7F0
+  BorderColor #E45A2B
+}
+
+package "Presentacion (GUI - WinForms MDI)" {
+  [Login]
+  [Menu (shell MDI)]
+  [Formularios de negocio\n(Experiencias, Reservas,\nReservasRealizadas, Clientes,\nCatalogos, Recomendaciones)]
+  [Formularios tecnicos\n(Usuarios, Perfiles, Bitacora,\nIdiomas, Backup, Integridad)]
+}
+
+package "Logica de Negocio (BLL)" {
+  [BLL Negocio\n(Experiencia, Reserva, Suscripcion,\nListaEspera, Calificacion, Recomendacion)]
+  [BLL Tecnico\n(Usuario, Configuracion, Familia,\nCuidadorHistorial, Backup, PermisosAccion)]
+}
+
+package "Acceso a Datos (DAL)" {
+  [DAL.Acceso (Singleton)]
+  [DAL por entidad\n(ADO.NET parametrizado + DV)]
+}
+
+package "Transversales" {
+  [Seguridad\n(SessionManager, Encriptador,\nDigitoVerificador, ContadorSesion)]
+  [Servicios\n(Bitacora, GestorIdioma - Observer,\nGeneradorCredenciales)]
+}
+
+database "SQL Server\n(ExperienceHubDB)" as DB
+
+[Formularios de negocio\n(Experiencias, Reservas,\nReservasRealizadas, Clientes,\nCatalogos, Recomendaciones)] --> [BLL Negocio\n(Experiencia, Reserva, Suscripcion,\nListaEspera, Calificacion, Recomendacion)]
+[Formularios tecnicos\n(Usuarios, Perfiles, Bitacora,\nIdiomas, Backup, Integridad)] --> [BLL Tecnico\n(Usuario, Configuracion, Familia,\nCuidadorHistorial, Backup, PermisosAccion)]
+[Menu (shell MDI)] --> [Servicios\n(Bitacora, GestorIdioma - Observer,\nGeneradorCredenciales)]
+[BLL Negocio\n(Experiencia, Reserva, Suscripcion,\nListaEspera, Calificacion, Recomendacion)] --> [DAL por entidad\n(ADO.NET parametrizado + DV)]
+[BLL Tecnico\n(Usuario, Configuracion, Familia,\nCuidadorHistorial, Backup, PermisosAccion)] --> [DAL por entidad\n(ADO.NET parametrizado + DV)]
+[BLL Negocio\n(Experiencia, Reserva, Suscripcion,\nListaEspera, Calificacion, Recomendacion)] ..> [Seguridad\n(SessionManager, Encriptador,\nDigitoVerificador, ContadorSesion)]
+[DAL por entidad\n(ADO.NET parametrizado + DV)] --> [DAL.Acceso (Singleton)]
+[DAL.Acceso (Singleton)] --> DB
+
+note right of [Seguridad\n(SessionManager, Encriptador,\nDigitoVerificador, ContadorSesion)]
+  La GUI nunca accede a DAL
+  ni a Seguridad directamente.
+end note
+@enduml

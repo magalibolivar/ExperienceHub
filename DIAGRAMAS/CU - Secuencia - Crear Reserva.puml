@@ -1,0 +1,61 @@
+@startuml CU_CrearReserva
+' Secuencia — Crear Reserva (reglas 1-5 + premium/edad/invitados)
+title Crear Reserva — ExperienceHub
+
+actor Agente
+participant "Reservas\n(GUI)" as GUI
+participant "BLL.Reserva" as BLL
+participant "PermisosAccion" as PA
+participant "DAL.Cliente" as DCLI
+participant "DAL.Experiencia" as DEXP
+participant "DAL.Reserva" as DRES
+participant "DAL.Suscripcion" as DSUS
+database "SQL Server" as DB
+
+Agente -> GUI : Crear reserva (cliente, experiencia, invitados)
+GUI -> BLL : CrearReserva(modulo, idCliente, idExperiencia, invitados)
+BLL -> PA : Exigir(ReservasEditar, Reservas)
+PA --> BLL : ok (fail-closed si no)
+
+BLL -> DCLI : ObtenerPorId(idCliente)
+DCLI -> DB : SELECT cliente + suscripción vigente
+DCLI --> BLL : Cliente (con Suscripcion)
+note right of BLL : Valida: existe, tiene suscripción vigente
+
+BLL -> DEXP : ObtenerPorId(idExperiencia)
+DEXP --> BLL : Experiencia
+note right of BLL
+  Reglas:
+  (3) PuedeReservar (límite mensual)
+  premium / edad mínima / invitados
+  (4) ciudad del cliente
+end note
+
+BLL -> DRES : ExisteAsistenciaPrevia(cli, exp)
+DRES --> BLL : bool  '(5) no repetir
+
+BLL -> DRES : ObtenerActivasConHorario(cli)
+DRES --> BLL : reservas activas
+note right of BLL : (2) sin solapamiento de horarios\n(Experiencia.SeSuperponeCon)
+
+BLL -> DRES : CrearConCupo(reserva, lugares)
+activate DRES
+DRES -> DB : BEGIN TRAN
+DRES -> DB : UPDATE Experiencia SET CupoDisponible -= lugares (>= lugares)
+alt sin cupo
+  DRES -> DB : ROLLBACK
+  DRES --> BLL : AppException(sin_cupo)
+else con cupo (regla 1)
+  DRES -> DB : UPDATE Estado=Completa si cupo=0
+  DRES -> DB : INSERT Reserva → SCOPE_IDENTITY
+  DRES -> DB : COMMIT
+  DRES --> BLL : idReserva
+end
+deactivate DRES
+
+BLL -> DSUS : IncrementarConsumo(idSuscripcion)
+BLL -> DRES : RegistrarHistorial(CREAR)
+BLL -> BLL : Bitácora sistema + negocio
+BLL --> GUI : idReserva
+GUI --> Agente : "Reserva creada"
+@enduml

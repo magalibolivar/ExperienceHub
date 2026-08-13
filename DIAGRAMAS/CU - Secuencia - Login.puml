@@ -1,0 +1,35 @@
+@startuml CU - Secuencia - Login
+title CU 001 - Login (con Singleton de sesion y verificacion de integridad)
+actor "Usuario" as U
+participant "Login (GUI)" as F
+participant "BLL.Usuario" as BLL
+participant "SessionManager\n(Singleton)" as SM
+participant "Encriptador\n(Seguridad)" as ENC
+participant "DAL.Usuario" as DAL
+database "SQL Server" as DB
+
+U -> F : ingresa usuario y contrasena
+F -> BLL : Autenticar(usuario, clave)
+BLL -> DAL : ObtenerPorNombre(usuario)
+DAL -> DB : SELECT ... FROM Usuario
+DB --> DAL : fila usuario
+DAL --> BLL : BE.Usuario
+alt cuenta bloqueada
+  BLL --> F : LoginException(bloqueada)
+  F --> U : muestra tiempo de bloqueo
+else credenciales
+  BLL -> ENC : VerificarContrasena(clave, hash)
+  ENC --> BLL : bool (tiempo constante)
+  alt validas
+    BLL -> BLL : cargar permisos (arbol Composite, recursivo)
+    BLL -> SM : IniciarSesion(usuario, permisos)
+    BLL --> F : OK
+    F --> U : abre Menu MDI segun perfil
+    BLL -> DB : registrar Login en Bitacora
+  else invalidas
+    BLL -> DAL : incrementar intentos fallidos
+    BLL --> F : LoginException(credenciales)
+    F --> U : mensaje de error / reintento
+  end
+end
+@enduml

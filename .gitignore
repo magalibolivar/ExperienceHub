@@ -1,0 +1,40 @@
+# ── Resultados de compilación ────────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+
+# ── Visual Studio ────────────────────────────────────────────────────────
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+
+# ── Pruebas ──────────────────────────────────────────────────────────────
+[Tt]est[Rr]esults/
+*.trx
+
+# ── NuGet ────────────────────────────────────────────────────────────────
+packages/
+*.nupkg
+
+# ── Herramientas de sesión / IDE local ───────────────────────────────────
+.claude/
+
+# ── Sensible / respaldos locales (NO subir) ──────────────────────────────
+# Credenciales en texto plano para corrección: se entregan aparte, no al repo.
+Contrase*.txt
+# Copias de respaldo de la documentación.
+*.bak.docx
+
+# ── Material de referencia ajeno a ExperienceHub (y muy pesado) ───────────
+WardrobeFlow*.docx
+
+# NOTA: GUI/Fonts/*.ttf (Montserrat) SÍ se versiona: la app lo carga en runtime.

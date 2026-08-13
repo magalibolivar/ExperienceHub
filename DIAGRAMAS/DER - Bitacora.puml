@@ -1,0 +1,30 @@
+@startuml DER - Bitacora
+title DER - Bitacora / BitacoraNegocio
+skinparam linetype ortho
+entity "Bitacora" as B {
+  * IdBitacora : int <<PK>>
+  --
+  Fecha : datetime
+  IdUsuario : int <<FK>>
+  Modulo : nvarchar
+  Actividad : nvarchar
+  Criticidad : int
+  IP : nvarchar
+  Detalle : nvarchar
+}
+entity "BitacoraNegocio" as BN {
+  * IdBitacoraNegocio : int <<PK>>
+  --
+  Fecha : datetime
+  IdUsuario : int <<FK>>
+  TipoEvento : int
+  IdReserva : int <<FK>>
+  IdExperiencia : int <<FK>>
+  Detalle : nvarchar
+}
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+}
+U ||--o{ B
+U ||--o{ BN
+@enduml
