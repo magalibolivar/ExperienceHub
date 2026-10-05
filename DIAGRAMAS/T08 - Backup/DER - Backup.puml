@@ -1,0 +1,28 @@
+@startuml DER - Backup
+title DER - Backup (no usa tablas propias: respalda toda la BD)
+skinparam linetype ortho
+hide circle
+
+database "ExperienceHubDB\n(base completa)" as DB
+artifact "Archivo de respaldo\nExperienceHub_Backup_yyyyMMddHHmmss_USUARIO.ehbak" as BAK
+
+entity "Bitacora" as B {
+  * Id : int <<PK>>
+  --
+  usuario : int <<FK>>
+  modulo : nvarchar
+  actividad : nvarchar   ' "Backup generado" / "Backup restaurado"
+  criticidad : int       ' Alta (3)
+  fecha : datetime
+}
+
+DB --> BAK : BACKUP DATABASE -> .bak temporal -> CIFRADO AES-128 + PBKDF2
+BAK --> DB : RESTORE VERIFYONLY -> descifrar -> RESTORE WITH REPLACE (SINGLE_USER)
+DB ..> B  : cada operacion se audita en Bitacora
+
+note bottom
+  El Backup NO define entidades relacionales: opera a nivel de BASE DE DATOS
+  completa (SQL Server BACKUP/RESTORE). El artefacto .ehbak es un archivo cifrado
+  en disco (no una tabla). Lo unico que persiste en la BD es el registro en Bitacora.
+end note
+@enduml

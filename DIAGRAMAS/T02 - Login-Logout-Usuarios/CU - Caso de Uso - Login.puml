@@ -1,0 +1,48 @@
+@startuml CU - Caso de Uso - Login
+title CU 001 - Autenticacion de Empleados (Login)
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Empleado\n(cualquier rol)" as EMP
+actor "Administrador" as ADM
+actor "Sistema\n(reloj/temporizador)" as SYS
+
+rectangle "Login / Seguridad de Acceso" {
+  usecase "Iniciar sesion" as UC1
+  usecase "Verificar credenciales\n(PBKDF2, tiempo constante)" as UC2
+  usecase "Seleccionar idioma\n(Observer)" as UC3
+  usecase "Recordar ultimo usuario" as UC4
+  usecase "Registrar intento fallido" as UC5
+  usecase "Bloquear cuenta\n(progresivo 1/5/15/60)" as UC6
+  usecase "Cambio de clave obligatorio\n(clave temporal)" as UC7
+  usecase "Recuperar contrasena\n(olvide mi clave)" as UC8
+  usecase "Desbloquear con\nclave de emergencia" as UC9
+  usecase "Auto-desbloqueo\nal expirar el bloqueo" as UC10
+  usecase "Registrar evento\nen Bitacora" as UC11
+  usecase "Cerrar sesion (Logout)" as UC12
+}
+
+EMP --> UC1
+EMP --> UC3
+EMP --> UC4
+EMP --> UC8
+EMP --> UC12
+ADM --> UC1
+ADM --> UC9
+
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC11 : <<include>>
+UC2 ..> UC5 : <<extend>>\n(credenciales invalidas)
+UC5 ..> UC6 : <<extend>>\n(>= 3 intentos)
+UC1 ..> UC7 : <<extend>>\n(RequiereCambioClave)
+UC6 <.. UC9 : <<extend>>\n(cuenta bloqueada)
+UC6 <.. UC10 : <<extend>>\n(bloqueo temporal expirado)
+SYS --> UC10
+
+note bottom of UC2
+  Anti-enumeracion: si el usuario no existe se ejecuta una
+  verificacion senuelo con el mismo costo temporal y se lanza
+  el mismo error/contador que ante una contrasena incorrecta.
+end note
+@enduml

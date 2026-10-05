@@ -1,0 +1,57 @@
+@startuml CU - Clases - Arquitectura
+title T01 - Clases base de la arquitectura (capas + Singleton)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "GUI" {
+  class FormBase <<Form>> {
+    # MostrarOk(msg) / MostrarError(msg)
+    # AplicarSeguridad()   ' oculta/inhabilita controles por patente
+    # traduce AppException
+  }
+  class "Formularios concretos\n(Login, Menu, Reservas, ...)" as Forms
+  Forms --|> FormBase
+}
+
+package "BLL" {
+  class "BLL.<Entidad>" {
+    + operaciones de negocio + validaciones
+  }
+}
+
+package "DAL" {
+  abstract class "BaseDAL<T>" {
+    # acceso : Acceso = Acceso.GetInstance()
+    + {abstract} ObtenerTodos() : List<T>
+    + {abstract} ObtenerPorId(id) : T
+  }
+  class "DAL.<Entidad>"
+  class Acceso <<Singleton, sealed>> {
+    - {static} instancia : Acceso
+    + {static} GetInstance() : Acceso
+    + Leer(sql, params) : DataTable
+    + Escribir(sql, params) : int
+    + EjecutarTransaccion(accion)
+    + VerificarConexion() : bool
+  }
+  "DAL.<Entidad>" --|> "BaseDAL<T>"
+  "BaseDAL<T>" --> "1" Acceso : usa (Singleton)
+}
+
+package "Seguridad / Servicios (transversal)" {
+  class SessionManager <<Singleton>>
+  class Encriptador <<static>>
+  class "Servicios.Bitacora"
+}
+
+Forms --> "BLL.<Entidad>" : invoca (nunca a DAL)
+"BLL.<Entidad>" --> "DAL.<Entidad>"
+"BLL.<Entidad>" ..> SessionManager
+"BLL.<Entidad>" ..> "Servicios.Bitacora"
+
+note bottom
+  Regla de capas: GUI -> BLL -> DAL -> SQL Server. La GUI no accede a DAL
+  ni a Seguridad. Acceso (Singleton, sealed) es el unico punto de conexion;
+  BaseDAL<T> centraliza el acceso parametrizado por ADO.NET.
+end note
+@enduml

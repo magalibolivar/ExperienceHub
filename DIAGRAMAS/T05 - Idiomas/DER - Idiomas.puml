@@ -1,0 +1,35 @@
+@startuml DER - Idiomas
+title DER - Multiidioma (Idioma / Control / Traduccion)
+skinparam linetype ortho
+hide circle
+
+entity "Idioma" as I {
+  * IdIdioma : int <<PK>>
+  --
+  Codigo : varchar(5) <<UQ>>   ' ES / EN / RU / PT
+  Nombre : nvarchar(50)
+  Activo : bit
+  EsDefault : bit
+}
+entity "Control" as C {
+  * IdControl : int <<PK>>
+  --
+  Clave : varchar(100) <<UQ>>   ' clave de traduccion (ej. btn.guardar)
+  Formulario : varchar(50)
+}
+entity "Traduccion" as T {
+  * IdControl : int <<PK,FK>>
+  * IdIdioma  : int <<PK,FK>>
+  --
+  Texto : nvarchar(1000)
+}
+
+C ||--o{ T : clave
+I ||--o{ T : idioma
+
+note bottom
+  La traduccion es la relacion N:M entre Control (clave) e Idioma, con el
+  Texto por par. PK compuesta (IdControl, IdIdioma). Un texto en blanco no se
+  persiste: la clave cae al fallback del idioma por defecto (EsDefault = 1).
+end note
+@enduml

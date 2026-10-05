@@ -1,0 +1,31 @@
+@startuml DER - Encriptado
+title DER - Encriptado (campos protegidos por criptografia)
+skinparam linetype ortho
+hide circle
+
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+  --
+  Username : nvarchar(100)
+  Clave : nvarchar(500)   <<HASH PBKDF2-SHA256>>  ' irreversible (salt+iter+hash Base64)
+}
+entity "Empleado" as E {
+  * IdEmpleado : int <<PK>>
+  --
+  Nombre / Apellido
+  DNI : nvarchar(200)     <<CIFRADO AES-128-CBC>>  ' Base64(IV+cipher)
+}
+entity "Cliente" as C {
+  * IdCliente : int <<PK>>
+  --
+  Nombre / Apellido / Email
+  DNI : nvarchar(200)     <<CIFRADO AES-128-CBC>>  ' se descifra al mostrar
+}
+
+note bottom
+  El encriptado NO tiene tablas propias: protege COLUMNAS de tablas existentes.
+  - Contrasenas (Usuario.Clave): HASH PBKDF2 irreversible, se verifica en tiempo constante.
+  - DNI (Empleado / Cliente): CIFRADO AES-128-CBC reversible, se muestra cuando el acceso
+    esta autorizado. Toda la logica vive en la clase estatica Encriptador (Seguridad).
+end note
+@enduml

@@ -103,8 +103,18 @@ namespace DAL
         /// <summary>
         /// Crea la reserva y descuenta el cupo de la experiencia en la MISMA transacción.
         /// Si el cupo ya no alcanza, revierte y lanza excepción. Devuelve el Id generado.
+        ///
+        /// Opcionalmente, dentro de la MISMA transacción atómica:
+        ///   • <paramref name="idSuscripcionAConsumir"/> &gt; 0 → descuenta el cupo mensual del plan
+        ///     (ReservasConsumidasMes + 1), para que una reserva no pueda quedar creada sin consumir
+        ///     el beneficio del cliente.
+        ///   • <paramref name="historial"/> → graba los registros de historial de la operación CREAR
+        ///     (se les estampa el Id recién generado), de modo que la reserva y su historial sean
+        ///     indivisibles: o se graban ambos, o ninguno.
         /// </summary>
-        public int CrearConCupo(BE.Reserva reserva, int lugares)
+        public int CrearConCupo(BE.Reserva reserva, int lugares,
+                                int idSuscripcionAConsumir = 0,
+                                List<BE.ReservaHistorial> historial = null)
         {
             int idNuevo = 0;
             acceso.EjecutarTransaccion((conn, tx) =>
@@ -144,6 +154,25 @@ namespace DAL
                     ins.Parameters.AddWithValue("@Fecha", reserva.FechaReserva);
                     ins.Parameters.AddWithValue("@Invitados", reserva.CantidadInvitados);
                     idNuevo = (int)ins.ExecuteScalar();
+                }
+
+                // Consumo del cupo mensual del plan — en la MISMA transacción.
+                if (idSuscripcionAConsumir > 0)
+                {
+                    using (var cons = new SqlCommand(
+                        "UPDATE Suscripcion SET ReservasConsumidasMes = ReservasConsumidasMes + 1 " +
+                        "WHERE IdSuscripcion = @IdSus", conn, tx))
+                    {
+                        cons.Parameters.AddWithValue("@IdSus", idSuscripcionAConsumir);
+                        cons.ExecuteNonQuery();
+                    }
+                }
+
+                // Historial de la operación CREAR — en la MISMA transacción (se estampa el Id generado).
+                if (historial != null && historial.Count > 0)
+                {
+                    foreach (var h in historial) h.IdReserva = idNuevo;
+                    ReservaHistorial.InsertarEnTransaccion(conn, tx, historial);
                 }
             });
             RecalcularDV();

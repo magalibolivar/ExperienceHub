@@ -1,0 +1,71 @@
+@startuml CU - Secuencia - Encriptado
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title T03 - Encriptado (hash de clave PBKDF2 + cifrado AES del DNI)
+actor "Usuario" as U
+participant "BLL.Usuario" as BU
+participant "BLL.Cliente" as BC
+participant "Encriptador\n(Seguridad, static)" as ENC
+participant "DAL.Usuario / DAL.Cliente" as DAL
+database "SQL Server" as DB
+
+group Hash de contrasena (alta / reset de usuario)
+  U -> BU : Alta(modulo, username, rol)
+  BU -> ENC : Hash(contrasenaGenerada)
+  note right of ENC : PBKDF2-SHA256\nsalt 16B + 100.000 iter + 32B\n-> Base64(salt+hash)
+  ENC --> BU : hash (Base64)
+  BU -> DAL : Insertar(username, hash, ...)
+  DAL -> DB : INSERT Usuario (Clave = hash)
+end
+
+group Cifrado del DNI (guardar cliente)
+  U -> BC : Guardar(cliente)
+  BC -> ENC : Encriptar(dni)
+  note right of ENC : AES-128-CBC\nIV aleatorio por operacion\n-> Base64(IV + cipher)
+  ENC --> BC : dniCifrado
+  BC -> DAL : Insertar/Modificar(cliente con dniCifrado)
+  DAL -> DB : INSERT/UPDATE Cliente (DNI cifrado)
+end
+
+group Descifrado del DNI (mostrar cliente)
+  U -> BC : ObtenerPorId(idCliente)
+  BC -> DAL : ObtenerPorId(idCliente)
+  DAL -> DB : SELECT Cliente
+  DB --> DAL : fila (DNI cifrado)
+  DAL -> ENC : TryDesencriptar(dniCifrado)
+  ENC --> DAL : dni en claro (o valor original si no era cifrado)
+  DAL --> BC : Cliente (DNI visible)
+  BC --> U : datos del cliente
+end
+
+note over ENC
+  La clave NUNCA se descifra: en el login se rehashea la entrada y
+  se compara en tiempo constante (VerificarContrasena). El DNI si es
+  reversible porque debe mostrarse cuando el acceso esta autorizado.
+end note
+@enduml

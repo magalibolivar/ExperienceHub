@@ -29,6 +29,13 @@ namespace BLL
         private const bool BLOQUEAR_SI_YA_REALIZADA = true;
         /// <summary>Reglas 6-7: horas de anticipación que separan una cancelación "a tiempo" de una "tardía".</summary>
         private const int  HORAS_ANTICIPACION_CANCELACION = 48;
+        /// <summary>
+        /// PN01: si un cliente ya tiene un "pedido activo" no puede armar uno nuevo. En WardrobeFlow
+        /// el pedido es físico (uno por vez); en ExperienceHub se reinterpreta como "reserva Pendiente
+        /// sin resolver". Las Confirmadas NO bloquean (un cliente reserva varias experiencias).
+        /// En true exige confirmar o cancelar la pendiente antes de armar otra.
+        /// </summary>
+        private const bool BLOQUEAR_SI_PEDIDO_PENDIENTE = true;
 
         // ── Consultas ─────────────────────────────────────────────────────────
         public List<BE.Reserva> ObtenerTodos()               => dalReserva.ObtenerTodos();
@@ -46,12 +53,77 @@ namespace BLL
         public List<BE.Reserva> ObtenerPorCliente(int id)    => dalReserva.ObtenerPorCliente(id);
         public BE.Reserva       ObtenerPorId(int id)         => dalReserva.ObtenerPorId(id);
 
+        // ── PN01 · CU03-VEN — Consultar Situación del Cliente (solo lectura) ───
+        /// <summary>
+        /// Devuelve el estado comercial del cliente (plan, cupo disponible, vigencia y reserva
+        /// pendiente si corresponde). No modifica nada. Permite al Vendedor decidir si avanzar a
+        /// armar el pedido. Mapea los códigos de la spec a <see cref="BE.EstadoSituacionCliente"/>.
+        /// </summary>
+        public BE.SituacionCliente ConsultarSituacionCliente(int idCliente)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
+
+            var situacion = BE.SituacionCliente.Resolver(dalCliente.ObtenerPorId(idCliente));
+
+            // Enriquecer con el "pedido activo" (reserva Pendiente) — requiere consultar las reservas.
+            if (situacion.Estado == BE.EstadoSituacionCliente.Ok)
+            {
+                var pendiente = dalReserva.ObtenerActivasConHorario(idCliente)
+                                          .Find(r => r.Estado == BE.EstadoReserva.Pendiente);
+                if (pendiente != null)
+                {
+                    situacion.TieneReservaActiva      = true;
+                    situacion.IdReservaActiva         = pendiente.IdReserva;
+                    situacion.NombreExperienciaActiva = pendiente.NombreExperiencia;
+                }
+            }
+            return situacion;
+        }
+
+        // ── PN01 · CU01-DEP — Verificar Disponibilidad (solo lectura) ──────────
+        /// <summary>
+        /// Verifica, sin comprometer cupo, que la experiencia siga Programada y tenga lugares
+        /// suficientes para los solicitados. La reserva efectiva (comprometer el cupo de forma
+        /// atómica, resolviendo el conflicto de concurrencia de CU02-DEP) ocurre en
+        /// <see cref="CrearReserva"/> → DAL.Reserva.CrearConCupo.
+        /// </summary>
+        public BE.ResultadoDisponibilidad VerificarDisponibilidad(int idExperiencia, int lugares)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
+
+            var exp = dalExp.ObtenerPorId(idExperiencia);
+            if (exp == null)
+                throw new BE.AppException("err.bll.reserva.experiencia_inexistente",
+                    "La experiencia seleccionada no existe.");
+
+            return BE.ResultadoDisponibilidad.Evaluar(idExperiencia, exp.Estado, exp.CupoDisponible, lugares);
+        }
+
+        /// <summary>
+        /// Decisión PURA (sin BD ni sesión): ¿el cliente tiene un "pedido activo" que impide armar
+        /// uno nuevo? Con el bloqueo activo, una reserva en estado Pendiente bloquea; las Confirmadas
+        /// no. Separada así para poder testearla sin BD (patrón PermisosAccion.PermiteAccion).
+        /// </summary>
+        public static bool TienePedidoActivoBloqueante(
+            IEnumerable<BE.Reserva> reservasActivas, bool bloquearSiPendiente)
+        {
+            if (!bloquearSiPendiente || reservasActivas == null) return false;
+            return reservasActivas.Any(r => r.Estado == BE.EstadoReserva.Pendiente);
+        }
+
         // ── Crear Reserva (reglas 1-5 + premium + edad + invitados) ────────────
         public int CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados)
         {
             PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
 
             var cliente = ObtenerClienteValidado(idCliente);
+
+            // PN01 — un cliente con un "pedido activo" (reserva Pendiente sin resolver) no puede armar
+            // otro. Este chequeo ocurre al principio del proceso, no recién al formalizar.
+            if (TienePedidoActivoBloqueante(dalReserva.ObtenerActivasConHorario(idCliente), BLOQUEAR_SI_PEDIDO_PENDIENTE))
+                throw new BE.AppException("err.bll.reserva.pedido_activo",
+                    "El cliente ya tiene una reserva pendiente sin confirmar. Confirmala o cancelala antes de armar una nueva.");
+
             var experiencia = ObtenerExperienciaValidada(idExperiencia);
             var plan = dalPlan.ObtenerPorId(cliente.Suscripcion.IdPlan);
 
@@ -108,17 +180,17 @@ namespace BLL
                 CantidadInvitados = Math.Max(0, cantidadInvitados)
             };
 
-            // Regla 1 — descuento de cupo ATÓMICO (lanza sin_cupo si ya no alcanza)
-            int idNuevo = dalReserva.CrearConCupo(reserva, lugares);
-
-            // Consumir el beneficio mensual
-            dalSus.IncrementarConsumo(cliente.Suscripcion.IdSuscripcion);
-
-            RegistrarHistorial(idNuevo, "CREAR", new List<(string, string, string)>
+            // Regla 1 — descuento de cupo + consumo del beneficio mensual + historial de CREAR,
+            // TODO en una única transacción atómica (lanza sin_cupo si el cupo ya no alcanza).
+            // Antes el consumo y el historial se escribían después de CrearConCupo: si alguno
+            // fallaba, la reserva quedaba creada sin descontar el cupo o sin su registro de cambios.
+            var registrosCrear = ConstruirRegistros(0, 1, "CREAR", new List<(string, string, string)>
             {
                 ("Estado",       null, BE.EstadoReserva.Pendiente.ToString()),
                 ("FechaReserva", null, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             });
+            int idNuevo = dalReserva.CrearConCupo(reserva, lugares,
+                cliente.Suscripcion.IdSuscripcion, registrosCrear);
 
             bitacora.Registrar(modulo,
                 $"Crear Reserva #{idNuevo} — {cliente.NombreCompleto} — {experiencia.Nombre} — {lugares} lugar(es)",
@@ -328,6 +400,20 @@ namespace BLL
         private void RegistrarHistorial(int idReserva, string accion,
                                         List<(string Campo, string Anterior, string Nuevo)> campos)
         {
+            int idOp = dalHistorial.ObtenerSiguienteIdOperacion(idReserva);
+            dalHistorial.RegistrarCambios(ConstruirRegistros(idReserva, idOp, accion, campos));
+        }
+
+        /// <summary>
+        /// Arma los registros de historial de una operación (sellando el usuario en sesión) SIN
+        /// persistirlos. Separar la construcción de la escritura permite que la operación CREAR
+        /// grabe su historial dentro de la misma transacción de DAL.Reserva.CrearConCupo.
+        /// Para una reserva nueva se pasa idReserva=0 (lo estampa el DAL con el Id generado) e
+        /// idOperacion=1 (es su primera operación).
+        /// </summary>
+        private List<BE.ReservaHistorial> ConstruirRegistros(int idReserva, int idOperacion, string accion,
+                                        List<(string Campo, string Anterior, string Nuevo)> campos)
+        {
             int?   idUsuario     = null;
             string nombreUsuario = null;
             if (Seguridad.SessionManager.IsLoggedIn)
@@ -336,11 +422,10 @@ namespace BLL
                 idUsuario = u.Id; nombreUsuario = u.Username;
             }
 
-            int idOp = dalHistorial.ObtenerSiguienteIdOperacion(idReserva);
-            var registros = campos.Select(c => new BE.ReservaHistorial
+            return campos.Select(c => new BE.ReservaHistorial
             {
                 IdReserva     = idReserva,
-                IdOperacion   = idOp,
+                IdOperacion   = idOperacion,
                 Fecha         = DateTime.Now,
                 IdUsuario     = idUsuario,
                 NombreUsuario = nombreUsuario,
@@ -349,8 +434,6 @@ namespace BLL
                 ValorAnterior = c.Anterior,
                 ValorNuevo    = c.Nuevo
             }).ToList();
-
-            dalHistorial.RegistrarCambios(registros);
         }
     }
 }

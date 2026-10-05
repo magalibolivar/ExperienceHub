@@ -1,0 +1,61 @@
+@startuml DER - Login
+title DER - Login (tablas que intervienen en la autenticacion)
+skinparam linetype ortho
+hide circle
+
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+  --
+  Username : nvarchar(100) <<UQ>>
+  Clave : nvarchar(500)          ' hash PBKDF2-SHA256
+  Rol : nvarchar(100)            ' rol como texto (resuelve permisos)
+  Perfil : nvarchar(100)
+  Estado : bit
+  IntentosFallidos : int         ' se resetea al loguear OK
+  CantidadBloqueos : int         ' define la duracion del bloqueo (1/5/15/60)
+  FechaBloqueo : datetime        ' instante del ultimo bloqueo
+  RequiereCambioClave : bit      ' fuerza cambio de clave temporal
+  Activo : bit                   ' baja logica (archivado)
+  IdIdioma : varchar(5)          ' preferencia restaurada al loguear
+  DVH : int                      ' T07 - integridad de la fila
+}
+
+entity "ClaveRecuperacion" as CR {
+  * IdClave : int <<PK>>
+  --
+  ClaveHash : nvarchar(500)      ' PBKDF2 (igual que Usuario.Clave)
+  Usada : bit                    ' uso unico
+  UsadaPor : nvarchar(100)       ' admin que la canjeo
+  FechaUso : datetime
+  FechaCreacion : datetime
+}
+
+entity "Bitacora" as B {
+  * Id : int <<PK>>
+  --
+  fecha : datetime
+  usuario : int <<FK, null>>
+  modulo : nvarchar             ' "Login"
+  actividad : nvarchar          ' "Inicio Sesion" / "Intento Fallido Login"
+  criticidad : int              ' IntentosLogin
+  ip : nvarchar
+}
+
+entity "DVVertical" as DV {
+  * Id : int <<PK>>
+  --
+  NombreTabla : varchar(100) <<UQ>>   ' 'Usuario'
+  DVV : int                    ' T07 - integridad de la tabla
+  FechaCalculo : datetime
+}
+
+U ||--o{ B : registra eventos de login (usuario)
+DV ||..|| U : protege la tabla Usuario (por nombre)
+
+note bottom
+  ClaveRecuperacion es un POOL global de claves de emergencia de un solo
+  uso (no tiene FK a Usuario): habilita el autodesbloqueo del Administrador
+  cuando la cuenta queda bloqueada. El bloqueo progresivo se calcula con
+  CantidadBloqueos + FechaBloqueo; el auto-desbloqueo ocurre al expirar.
+end note
+@enduml

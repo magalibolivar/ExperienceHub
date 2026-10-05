@@ -1,0 +1,69 @@
+@startuml CU - Secuencia - Control de Cambios
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title T06b - Control de Cambios (Memento: restaurar operacion de Reserva)
+actor "Administrador" as A
+participant "Historial de Cambios\n(GUI)" as GUI
+participant "BLL.Reserva" as BLL
+participant "DAL.ReservaHistorial" as DH
+participant "DAL.Reserva" as DR
+participant "Servicios.Bitacora" as BIT
+database "SQL Server" as DB
+
+A -> GUI : abre Historial de una Reserva
+GUI -> BLL : ObtenerHistorial(idReserva)
+BLL -> DH : ObtenerPorReserva(idReserva)
+DH -> DB : SELECT ReservaHistorial
+DB --> DH : cambios (campo / anterior / nuevo / quien / cuando)
+DH --> BLL : historial
+BLL --> GUI : grilla de versiones
+
+A -> GUI : selecciona operacion a revertir y confirma
+GUI -> BLL : RestaurarOperacion(modulo, idReserva, idOperacion)
+BLL -> DH : ObtenerPorOperacion(idReserva, idOperacion)
+DH --> BLL : cambios de esa operacion
+
+BLL -> DR : RestaurarOperacionAtomica(idReserva, cambios)
+activate DR
+DR -> DB : BEGIN TRAN
+DR -> DB : UPDATE Reserva (revierte campos)
+DR -> DB : COMMIT
+deactivate DR
+
+BLL -> DH : RegistrarHistorial(idReserva, "RESTAURAR", ...)
+note right of BLL : el rollback se graba como\nUNA NUEVA entrada del historial
+BLL -> BIT : Registrar(modulo, "Restaurar Reserva", Alta)
+BLL --> GUI : ok
+GUI --> A : grilla recargada con la entrada RESTAURAR
+
+note over BLL
+  Usuario aplica el Memento FORMAL: antes de cada operacion destructiva
+  (reset de clave, desbloqueo, archivado) CuidadorHistorial.Guardar(idUsuario,
+  CrearMemento()) persiste una VersionUsuario. La clave nunca se versiona.
+end note
+@enduml

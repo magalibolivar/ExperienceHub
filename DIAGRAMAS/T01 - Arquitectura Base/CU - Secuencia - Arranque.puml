@@ -1,0 +1,60 @@
+@startuml CU - Secuencia - Arranque
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title T01 - Arranque de la aplicacion (conexion + integridad + Login)
+participant "Program.Main" as P
+participant "BLL.Configuracion" as CFG
+participant "DAL.Acceso\n(Singleton)" as AC
+participant "Login (GUI)" as L
+participant "Menu (MDI)" as M
+database "SQL Server" as DB
+
+P -> CFG : VerificarConexionDAL(out err)
+CFG -> AC : VerificarConexion()
+AC -> DB : abrir conexion de prueba
+alt sin conexion
+  CFG --> P : false + mensaje
+  P -> P : MessageBox("Error de Conexion") + Application.Exit()
+else conexion OK
+  P -> CFG : VerificarIntegridadDV(out resultado)
+  CFG -> DB : recalcular y comparar DVH/DVV
+  alt integridad COMPROMETIDA
+    CFG --> P : false (registra en Bitacora + HistorialIntegridad)
+    note right of P : fail-closed: no se muestra el Login\nhasta reparar / restaurar
+  else INTEGRO
+    P -> L : ShowDialog()
+    alt login OK
+      L --> P : DialogResult.OK
+      P -> M : Application.Run(new Menu())
+      M --> P : sesion en curso (menu segun permisos)
+    else cancela
+      L --> P : cierre de la aplicacion
+    end
+  end
+end
+@enduml

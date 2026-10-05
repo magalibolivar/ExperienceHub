@@ -1,0 +1,92 @@
+@startuml
+title PN02 - Comercialización y prestación del servicio
+
+|Cliente (externo)|
+start
+:Solicitar acceso al servicio;
+
+|Agente de Reservas|
+:Identificar cliente;
+note right
+DNI
+end note
+
+if (¿Cliente registrado?) then (no)
+    :Registrar cliente;
+else (sí)
+endif
+
+if (¿Tiene suscripción activa?) then (no)
+    :Contratar plan y activar suscripción;
+    note right
+    Factura
+    end note
+else (sí)
+endif
+
+:Consultar experiencias disponibles;
+
+|Cliente (externo)|
+:Seleccionar experiencia;
+
+|Agente de Reservas|
+:Registrar solicitud de reserva;
+:Verificar condiciones de la suscripción;
+
+if (¿Dentro del límite del plan?) then (no)
+    :Informar límite alcanzado;
+    stop
+else (sí)
+endif
+
+if (¿Hay cupo disponible?) then (sí)
+
+    :Confirmar reserva;
+    note right
+    Comprobante de reserva
+    end note
+
+else (no)
+
+    :Incorporar a la lista de espera;
+
+    if (¿Se libera una vacante?) then (sí)
+
+        :Promover y confirmar reserva;
+        note right
+        Comprobante de reserva
+        end note
+
+    else (no)
+
+        :Mantener en lista de espera;
+        stop
+
+    endif
+endif
+
+|Organizador (externo)|
+:Realizar la experiencia;
+
+|Cliente (externo)|
+:Asistir a la experiencia;
+
+|Agente de Reservas|
+:Registrar asistencia;
+
+if (¿El cliente asistió?) then (sí)
+
+    |Cliente (externo)|
+    :Aportar calificación;
+
+    |Agente de Reservas|
+    :Registrar calificación;
+
+else (no)
+
+    :Registrar inasistencia;
+
+endif
+
+stop
+@enduml

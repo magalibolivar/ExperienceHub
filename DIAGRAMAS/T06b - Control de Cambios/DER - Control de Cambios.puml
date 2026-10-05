@@ -1,0 +1,45 @@
+@startuml DER - Control de Cambios
+title DER - Control de Cambios (HistorialUsuario / ReservaHistorial)
+skinparam linetype ortho
+hide circle
+
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+}
+entity "HistorialUsuario" as HU {
+  * IdVersion : int <<PK>>
+  --
+  IdUsuario : int <<FK>>
+  Fecha : datetime
+  Actor : nvarchar          ' quien realizo el cambio
+  Detalle : nvarchar
+  UsernameSnap / NombreSnap / ApellidoSnap
+  FechaNacSnap / EmailSnap
+  ClaveSnap : nvarchar(500)  ' trazabilidad interna; nunca se muestra ni se restaura
+  EstadoSnap : bit / IntentosSnap : int
+}
+
+entity "Reserva" as R {
+  * IdReserva : int <<PK>>
+}
+entity "ReservaHistorial" as RH {
+  * IdHistorial : int <<PK>>
+  --
+  IdReserva : int <<FK>>
+  IdOperacion : int         ' agrupa los cambios de una misma operacion
+  Fecha : datetime
+  IdUsuario / NombreUsuario
+  Accion : nvarchar(30)     ' CREAR / CONFIRMAR / CANCELAR / RESTAURAR
+  Campo : nvarchar(50)
+  ValorAnterior / ValorNuevo : nvarchar(400)
+}
+
+U ||--o{ HU : versiona (Memento formal)
+R ||--o{ RH : historico campo a campo
+
+note bottom
+  Usuario => Memento FORMAL (Originator/Memento/Caretaker): un snapshot completo
+  por version. Reserva => historico campo a campo agrupado por IdOperacion; el
+  rollback se graba como una NUEVA fila (Accion = RESTAURAR). La clave no se revierte.
+end note
+@enduml

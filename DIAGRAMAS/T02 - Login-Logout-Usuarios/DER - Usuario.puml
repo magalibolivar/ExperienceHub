@@ -1,0 +1,79 @@
+@startuml DER - Usuario
+title DER - Usuario / Empleado / Permiso / HistorialUsuario (aspecto tecnico)
+skinparam linetype ortho
+hide circle
+
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+  --
+  Username : nvarchar(100) <<UQ>>
+  Clave : nvarchar(500)          ' hash PBKDF2-SHA256 (salt+iter+hash)
+  Rol : nvarchar(100)            ' rol como texto (no es FK)
+  Perfil : nvarchar(100)         ' compatibilidad (rol legacy)
+  Estado : bit
+  IntentosFallidos : int
+  CantidadBloqueos : int         ' bloqueo progresivo 1/5/15/60
+  FechaBloqueo : datetime
+  RequiereCambioClave : bit
+  IdIdioma : varchar(5)
+  Activo : bit                   ' RF-10: baja logica (archivado)
+  FechaBaja : datetime
+  Nombre / Apellido / Email / FechaNacimiento  ' datos admin no sensibles
+  DVH : int                      ' T07 digito verificador horizontal
+}
+
+entity "Empleado" as E {
+  * IdEmpleado : int <<PK>>
+  --
+  Nombre : nvarchar
+  Apellido : nvarchar
+  DNI : nvarchar(200)            ' T03: cifrado AES (Base64)
+  Email / Puesto / Legajo
+  FechaIngreso : datetime
+  IdUsuario : int <<FK, null>>   ' la FK vive en Empleado
+  DVH : int
+}
+
+entity "Permiso (Rol/Patente)" as P {
+  * IdPermiso : int <<PK>>
+  --
+  Nombre : nvarchar
+  NombreMenu : nvarchar
+  TipoComponente : nvarchar
+  EsFamilia : bit                ' Familias retiradas del modelo (revision 11/06)
+  EsRol : bit                    ' 1 = nodo-rol del Composite
+  Estado : bit
+}
+entity "PermisoRelacion" as PR {
+  * IdPadre : int <<PK,FK>>
+  * IdHijo  : int <<PK,FK>>
+}
+entity "RolPermiso (legacy/seed)" as RP {
+  * Rol : nvarchar(100) <<PK>>
+  * IdPermiso : int <<PK,FK>>
+}
+
+entity "HistorialUsuario" as H {
+  * IdVersion : int <<PK>>
+  --
+  IdUsuario : int <<FK>>
+  Fecha : datetime
+  Actor : nvarchar               ' quien realizo el cambio
+  Detalle : nvarchar
+  UsernameSnap / NombreSnap / ApellidoSnap  ' snapshots (Memento)
+  FechaNacSnap / EmailSnap
+  ClaveSnap : nvarchar(500)      ' trazabilidad interna: nunca se muestra ni se restaura
+  EstadoSnap : bit / IntentosSnap : int
+}
+
+U ||--o| E : 0..1 (Empleado.IdUsuario)
+U ||--o{ H : versiona (Memento)
+P ||--o{ PR : padre (IdPadre)
+P ||--o{ PR : hijo  (IdHijo)
+P ||--o{ RP : semilla del arbol
+note bottom of U
+  El rol del usuario se guarda como TEXTO en Usuario.Rol; la resolucion de
+  permisos efectivos se hace por nombre contra el arbol Composite (PermisoRelacion).
+  RolPermiso es solo bootstrap del seed: no se escribe en runtime.
+end note
+@enduml

@@ -1,0 +1,242 @@
+@startuml DER - Solucion Completa
+title DER - Solucion Completa ExperienceHub (todas las tablas)
+hide circle
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor<<negocio>> #FFF3C4
+  BackgroundColor<<seg>>     #CDE7F0
+  BackgroundColor<<aud>>     #E7D8F0
+  BackgroundColor<<i18n>>    #D6EFD8
+  BorderColor #556
+}
+legend top
+  Amarillo = Negocio (dominio)   Celeste = Seguridad / Usuarios
+  Violeta = Auditoria / Integridad   Verde = Multiidioma
+endlegend
+
+' ===================== SEGURIDAD / USUARIOS =====================
+entity "Usuario" as U <<seg>> {
+  * IdUsuario : int <<PK>>
+  --
+  Username <<UQ>> / Clave (PBKDF2)
+  Rol / Perfil / Estado / Activo
+  IntentosFallidos / CantidadBloqueos / FechaBloqueo
+  RequiereCambioClave / IdIdioma / DVH
+  Nombre / Apellido / Email / FechaNacimiento
+}
+entity "Empleado" as E <<seg>> {
+  * IdEmpleado : int <<PK>>
+  --
+  IdUsuario : int <<FK, null>>
+  Nombre / Apellido / DNI (AES) / Puesto / Legajo / DVH
+}
+entity "Permiso" as P <<seg>> {
+  * IdPermiso : int <<PK>>
+  --
+  Nombre / NombreMenu / TipoComponente
+  EsFamilia / EsRol / Estado
+}
+entity "PermisoRelacion" as PR <<seg>> {
+  * IdPadre : int <<PK,FK>>
+  * IdHijo  : int <<PK,FK>>
+}
+entity "RolPermiso" as RP <<seg>> {
+  * Rol : nvarchar(100) <<PK>>
+  * IdPermiso : int <<PK,FK>>
+}
+entity "ControlMapeado" as CM <<seg>> {
+  * IdControlMapeado : int <<PK>>
+  --
+  IdPermiso : int <<FK>>
+  Formulario / NombreControl
+}
+entity "ClaveRecuperacion" as CR <<seg>> {
+  * IdClave : int <<PK>>
+  --
+  ClaveHash (PBKDF2) / Usada / UsadaPor / FechaUso
+}
+entity "Preferencia" as PF <<seg>> {
+  * IdUsuario : int <<PK,FK>>
+  --
+  FuenteFamilia / FuenteTamano / Tema / FormatoFecha
+}
+entity "HistorialUsuario" as HU <<seg>> {
+  * IdVersion : int <<PK>>
+  --
+  IdUsuario : int <<FK>>
+  Fecha / Actor / Detalle
+  *Snap (Username/Nombre/Apellido/FechaNac/Email/Clave/Estado/Intentos)
+}
+
+' ===================== AUDITORIA / INTEGRIDAD =====================
+entity "Bitacora" as B <<aud>> {
+  * Id : int <<PK>>
+  --
+  usuario : int <<FK, null>>
+  fecha / modulo / actividad / detalle / criticidad / ip
+}
+entity "BitacoraNegocio" as BN <<aud>> {
+  * IdEvento : int <<PK>>
+  --
+  IdUsuario : int <<FK, null>>
+  IdReserva / IdExperiencia / IdCliente : int <<FK, null>>
+  Tipo / Fecha / Descripcion
+}
+entity "DVVertical" as DV <<aud>> {
+  * Id : int <<PK>>
+  --
+  NombreTabla <<UQ>> / DVV / FechaCalculo
+}
+entity "HistorialIntegridad" as HI <<aud>> {
+  * Id : int <<PK>>
+  --
+  NombreTabla / DVVAlmacenado / DVVCalculado
+  Resultado / FilasCorruptas / FechaVerificacion
+  DisparadoPor (Arranque/Timer/Manual)
+}
+
+' ===================== MULTIIDIOMA =====================
+entity "Idioma" as I <<i18n>> {
+  * IdIdioma : int <<PK>>
+  --
+  Codigo <<UQ>> / Nombre / Activo / EsDefault
+}
+entity "Control" as Co <<i18n>> {
+  * IdControl : int <<PK>>
+  --
+  Clave <<UQ>> / Formulario
+}
+entity "Traduccion" as Tr <<i18n>> {
+  * IdControl : int <<PK,FK>>
+  * IdIdioma  : int <<PK,FK>>
+  --
+  Texto
+}
+
+' ===================== NEGOCIO (DOMINIO) =====================
+entity "Ciudad" as Ci <<negocio>> {
+  * IdCiudad : int <<PK>>
+  Nombre / Provincia / Estado
+}
+entity "Categoria" as Ca <<negocio>> {
+  * IdCategoria : int <<PK>>
+  Nombre / Descripcion / Estado
+}
+entity "Organizador" as Or <<negocio>> {
+  * IdOrganizador : int <<PK>>
+  Nombre / Contacto / Telefono / Mail / Estado / DVH
+}
+entity "Interes" as In <<negocio>> {
+  * IdInteres : int <<PK>>
+  Nombre <<UQ>>
+}
+entity "PlanSuscripcion" as Pl <<negocio>> {
+  * IdPlan : int <<PK>>
+  --
+  Nombre / Precio / Estado
+  ReservasMensuales / AnticipacionMaximaDias
+  AccesoPremium / PrioridadListaEspera / CantidadInvitados
+}
+entity "Cliente" as Cl <<negocio>> {
+  * IdCliente : int <<PK>>
+  --
+  Nombre / Apellido / Email / DNI (AES)
+  IdCiudad : int <<FK>>
+  IdPlan : int <<FK, null>>  ' vinculo legacy directo
+  FechaNacimiento / Activo / DVH
+}
+entity "ClienteInteres" as ClI <<negocio>> {
+  * IdCliente : int <<PK,FK>>
+  * IdInteres : int <<PK,FK>>
+}
+entity "Suscripcion" as Su <<negocio>> {
+  * IdSuscripcion : int <<PK>>
+  --
+  IdCliente : int <<FK>> / IdPlan : int <<FK>>
+  FechaInicio / FechaVencimiento
+  Estado / ReservasConsumidasMes
+}
+entity "Experiencia" as Ex <<negocio>> {
+  * IdExperiencia : int <<PK>>
+  --
+  IdCategoria <<FK>> / IdCiudad <<FK>> / IdOrganizador <<FK>>
+  Fecha / HoraInicio / DuracionMinutos
+  CupoMaximo / CupoDisponible / EdadMinima / Premium / Estado / DVH
+}
+entity "Reserva" as Re <<negocio>> {
+  * IdReserva : int <<PK>>
+  --
+  IdCliente <<FK>> / IdExperiencia <<FK>> / IdEmpleado <<FK, null>>
+  Estado / FechaReserva / FechaCancelacion
+  CantidadInvitados / MotivoCancelacion / DVH
+}
+entity "ReservaHistorial" as RH <<negocio>> {
+  * IdHistorial : int <<PK>>
+  --
+  IdReserva <<FK>> / IdOperacion
+  Accion / Campo / ValorAnterior / ValorNuevo / IdUsuario / Fecha
+}
+entity "ListaEspera" as LE <<negocio>> {
+  * IdListaEspera : int <<PK>>
+  --
+  IdExperiencia <<FK>> / IdCliente <<FK>>
+  Posicion / FechaIngreso / Estado
+}
+entity "Calificacion" as Cal <<negocio>> {
+  * IdCalificacion : int <<PK>>
+  --
+  IdReserva <<FK>> / IdCliente <<FK>> / IdExperiencia <<FK>>
+  Puntaje (1-5) / Comentario / Fecha
+}
+
+' ===================== RELACIONES =====================
+' Seguridad / Usuarios
+U ||--o| E   : IdUsuario
+U ||--o{ HU  : versiona (Memento)
+U ||--|| PF  : preferencias (ON DELETE CASCADE)
+P ||--o{ PR  : padre (IdPadre)
+P ||--o{ PR  : hijo  (IdHijo)
+P ||--o{ RP  : seed
+P ||--o{ CM  : control
+
+' Auditoria
+U ||--o{ B   : usuario
+U ||--o{ BN  : IdUsuario
+
+' Multiidioma
+Co ||--o{ Tr
+I  ||--o{ Tr
+
+' Negocio
+Ci ||--o{ Cl
+Ci ||--o{ Ex
+Ca ||--o{ Ex
+Or ||--o{ Ex
+Cl ||--o{ ClI
+In ||--o{ ClI
+Cl ||--o{ Su
+Pl ||--o{ Su
+Pl ||--o{ Cl  : legacy (IdPlan)
+Cl ||--o{ Re
+Ex ||--o{ Re
+E  ||--o{ Re  : empleado que tomo la reserva
+Re ||--o{ RH
+Ex ||--o{ LE
+Cl ||--o{ LE
+Re ||--o| Cal
+Cl ||--o{ Cal
+Ex ||--o{ Cal
+
+' Auditoria de negocio (referencias blandas, nullable)
+Re ..o{ BN
+Ex ..o{ BN
+Cl ..o{ BN
+
+note bottom
+  DER completo (dominio + seguridad + auditoria + integridad + i18n).
+  Notas: Usuario.IdIdioma referencia a Idioma.Codigo (no por PK).
+  DVVertical/HistorialIntegridad no tienen FK: enlazan por NombreTabla.
+  Cliente conserva IdPlan (vinculo legacy directo) ademas de Suscripcion.
+end note
+@enduml

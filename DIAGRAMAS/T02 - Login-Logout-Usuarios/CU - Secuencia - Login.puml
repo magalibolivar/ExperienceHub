@@ -1,0 +1,90 @@
+@startuml CU - Secuencia - Login
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+
+title CU 001 - Login (Singleton de sesion, bloqueo progresivo y anti-enumeracion)
+actor "Usuario" as U
+participant "Login (GUI)" as F
+participant "BLL.Usuario" as BLL
+participant "ContadorSesion\n(Singleton)" as CS
+participant "DAL.Usuario\n(IUsuarioDAL)" as DAL
+participant "Encriptador\n(Seguridad, static)" as ENC
+participant "BLL.Familia\n(Composite)" as PERM
+participant "SessionManager\n(Singleton)" as SM
+participant "Servicios.Bitacora" as BIT
+database "SQL Server" as DB
+
+U -> F : ingresa usuario y contrasena
+F -> BLL : Login(modulo, username, contrasena)
+
+alt campos vacios
+  BLL --> F : LoginException(CamposVacios)
+else limite de intentos de la sesion alcanzado
+  BLL -> CS : LimiteAlcanzado
+  BLL --> F : LoginException(LimiteAlcanzado) -> la app se cierra
+else
+  BLL -> DAL : ObtenerPorUsername(username)
+  DAL -> DB : SELECT * FROM Usuario WHERE Username=@u
+  DB --> DAL : fila (o null)
+  DAL --> BLL : BE.Usuario / null
+
+  alt usuario inexistente (anti-enumeracion)
+    BLL -> ENC : VerificacionSenuelo(contrasena)  ' iguala el costo PBKDF2
+    BLL -> CS : RegistrarIntento()
+    BLL -> BIT : RegistrarSinSesion("Intento Fallido Login", IntentosLogin)
+    BLL --> F : LoginException(CredencialesInvalidas, intentosRestantes)
+  else cuenta bloqueada
+    BLL -> BLL : EvaluarBloqueo(u)  ' 1/5/15/60 min o permanente
+    alt bloqueo vigente
+      BLL --> F : LoginException(CuentaBloqueada, minutos)
+    else bloqueo temporal expirado
+      BLL -> DAL : AutoDesbloquear(id)  ' se reactiva y continua
+    end
+  else credenciales
+    BLL -> ENC : VerificarContrasena(contrasena, hash)
+    ENC --> BLL : bool (comparacion en tiempo constante)
+    alt validas
+      BLL -> CS : Resetear()
+      BLL -> DAL : ResetearIntentosFallidos(username)
+      BLL -> PERM : ObtenerPermisosEfectivos(rol)  ' arbol Composite, recursivo + dedup
+      PERM --> BLL : List<Patente>
+      BLL -> SM : Login(usuario)   ' abre la sesion (Singleton)
+      BLL -> BIT : Registrar(modulo, "Inicio Sesion")
+      BLL --> F : true
+      F -> F : si RequiereCambioClave -> CambioClaveObligatorioForm
+      F --> U : DialogResult.OK -> abre Menu MDI segun permisos
+    else invalidas
+      BLL -> CS : RegistrarIntento()
+      BLL -> DAL : RegistrarIntentoFallido / BloquearConTiempo (si supera 3)
+      BLL -> BIT : Registrar("Intento Fallido Login", IntentosLogin)
+      BLL --> F : LoginException(CredencialesInvalidas, intentosRestantes)
+      F --> U : mensaje de error / reintento (link clave de emergencia si se bloquea)
+    end
+  end
+end
+@enduml

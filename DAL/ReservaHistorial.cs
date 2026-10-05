@@ -13,31 +13,42 @@ namespace DAL
     {
         private readonly Acceso acceso = Acceso.GetInstance();
 
+        private const string INSERT_SQL =
+            "INSERT INTO ReservaHistorial " +
+            "(IdReserva, IdOperacion, Fecha, IdUsuario, NombreUsuario, Accion, Campo, ValorAnterior, ValorNuevo) " +
+            "VALUES (@IdReserva, @IdOperacion, @Fecha, @IdUsuario, @NombreUsuario, @Accion, @Campo, @ValorAnterior, @ValorNuevo)";
+
         public void RegistrarCambios(List<BE.ReservaHistorial> cambios)
         {
             if (cambios == null || cambios.Count == 0) return;
+            acceso.EjecutarTransaccion((conn, tx) => InsertarEnTransaccion(conn, tx, cambios));
+        }
 
-            acceso.EjecutarTransaccion((conn, tx) =>
-            {
-                foreach (var c in cambios)
-                    using (var cmd = new SqlCommand(
-                        "INSERT INTO ReservaHistorial " +
-                        "(IdReserva, IdOperacion, Fecha, IdUsuario, NombreUsuario, Accion, Campo, ValorAnterior, ValorNuevo) " +
-                        "VALUES (@IdReserva, @IdOperacion, @Fecha, @IdUsuario, @NombreUsuario, @Accion, @Campo, @ValorAnterior, @ValorNuevo)",
-                        conn, tx))
-                    {
-                        cmd.Parameters.AddWithValue("@IdReserva",     c.IdReserva);
-                        cmd.Parameters.AddWithValue("@IdOperacion",   c.IdOperacion);
-                        cmd.Parameters.AddWithValue("@Fecha",         c.Fecha);
-                        cmd.Parameters.AddWithValue("@IdUsuario",     (object)c.IdUsuario     ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@NombreUsuario", (object)c.NombreUsuario ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Accion",        c.Accion);
-                        cmd.Parameters.AddWithValue("@Campo",         c.Campo);
-                        cmd.Parameters.AddWithValue("@ValorAnterior", (object)c.ValorAnterior ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@ValorNuevo",    (object)c.ValorNuevo    ?? DBNull.Value);
-                        cmd.ExecuteNonQuery();
-                    }
-            });
+        /// <summary>
+        /// Inserta un lote de registros de historial usando una conexión/transacción YA abiertas.
+        /// Permite que la escritura del historial comparta la transacción de otra operación
+        /// (p. ej. la creación de la reserva en <see cref="Reserva.CrearConCupo"/>), de modo que
+        /// la reserva y su registro de historial sean atómicos: o se graban ambos, o ninguno.
+        /// </summary>
+        internal static void InsertarEnTransaccion(SqlConnection conn, SqlTransaction tx,
+                                                   List<BE.ReservaHistorial> cambios)
+        {
+            if (cambios == null || cambios.Count == 0) return;
+
+            foreach (var c in cambios)
+                using (var cmd = new SqlCommand(INSERT_SQL, conn, tx))
+                {
+                    cmd.Parameters.AddWithValue("@IdReserva",     c.IdReserva);
+                    cmd.Parameters.AddWithValue("@IdOperacion",   c.IdOperacion);
+                    cmd.Parameters.AddWithValue("@Fecha",         c.Fecha);
+                    cmd.Parameters.AddWithValue("@IdUsuario",     (object)c.IdUsuario     ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@NombreUsuario", (object)c.NombreUsuario ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Accion",        c.Accion);
+                    cmd.Parameters.AddWithValue("@Campo",         c.Campo);
+                    cmd.Parameters.AddWithValue("@ValorAnterior", (object)c.ValorAnterior ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ValorNuevo",    (object)c.ValorNuevo    ?? DBNull.Value);
+                    cmd.ExecuteNonQuery();
+                }
         }
 
         public int ObtenerSiguienteIdOperacion(int idReserva)

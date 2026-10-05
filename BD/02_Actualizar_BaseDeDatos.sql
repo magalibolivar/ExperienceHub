@@ -438,10 +438,11 @@ SELECT v.Codigo, v.Nombre, v.Activo, v.EsDefault
 FROM (VALUES
     ('ES', N'Español', 1, 1),
     ('EN', N'English', 1, 0),
+    ('PT', N'Português', 1, 0),
     ('RU', N'Русский', 1, 0)
 ) AS v(Codigo, Nombre, Activo, EsDefault)
 WHERE NOT EXISTS (SELECT 1 FROM Idioma WHERE Codigo = v.Codigo);
-PRINT 'Idiomas inicializados (ES, EN, RU).';
+PRINT 'Idiomas inicializados (ES, EN, PT, RU).';
 GO
 
 -- DVV inicial para la tabla Usuario (en 0 — recalcular desde la app)

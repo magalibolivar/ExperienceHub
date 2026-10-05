@@ -19,6 +19,13 @@ namespace BE
         public const string Ciudades           = "mnuCiudades";
         public const string ListaEspera        = "mnuListaEspera";
 
+        // ── PN01 Comercialización — separación de funciones Venta / Caja ─────────────
+        // Dos patentes distintas para que el backend distinga quién crea/formaliza la
+        // contratación (Venta) de quién la cobra/cancela por intentos (Caja), en vez de
+        // gobernarlo todo con la patente genérica de Clientes.
+        public const string ContratacionVenta = "mnuContratacionVenta";
+        public const string ContratacionCaja  = "mnuContratacionCaja";
+
         // ── Patentes de ACCIÓN granular ("Configurar") — separan VER de EDITAR ───────
         // Cada una gobierna las operaciones de escritura (alta/modificación/baja) del módulo.
         // Convención: <patente de ver> + "Editar". Si la patente no existe en el catálogo,

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Compila la solucion WardrobeFlow y corre la suite de tests unitarios.
+    Compila la solucion ExperienceHub y corre la suite de tests unitarios.
 
 .DESCRIPTION
     Red de seguridad para ejecutar ANTES de hacer commit/push: si el build falla

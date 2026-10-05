@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Alerta.cs" />
     <Compile Include="AppException.cs" />
     <Compile Include="LoginException.cs" />
     <Compile Include="Bitacora.cs" />
@@ -66,12 +65,6 @@
     <Compile Include="EstadoListaEspera.cs" />
     <Compile Include="Experiencia.cs" />
     <Compile Include="Reserva.cs" />
-    <Compile Include="RecomendacionExperiencia.cs" />
-    <Compile Include="AnalisisExperiencia.cs" />
-    <Compile Include="ClienteEnRiesgo.cs" />
-    <Compile Include="AnalisisCancelaciones.cs" />
-    <Compile Include="AnalisisSuscripciones.cs" />
-    <Compile Include="ReporteComercialAgente.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="Organizador.cs" />
     <Compile Include="Categoria.cs" />
@@ -90,6 +83,11 @@
     <Compile Include="Memento\IMemento.cs" />
     <Compile Include="Memento\IOriginator.cs" />
     <Compile Include="HistorialIntegridad.cs" />
+    <Compile Include="ResultadoDisponibilidad.cs" />
+    <Compile Include="SituacionCliente.cs" />
+    <Compile Include="EstadoContratacion.cs" />
+    <Compile Include="MedioPago.cs" />
+    <Compile Include="Contratacion.cs" />
     <Compile Include="EstadoComercialCliente.cs" />
     <Compile Include="OcupacionStock.cs" />
     <Compile Include="FilaUsuarioDV.cs" />

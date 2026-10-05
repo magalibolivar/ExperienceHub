@@ -1,0 +1,26 @@
+@startuml
+title PN01 - Modelo Conceptual (Oferta de experiencias)
+hide circle
+hide methods
+class Organizador {
+  nombre
+  contacto
+}
+class Experiencia {
+  nombre
+  fecha
+  cupo
+  edadMinima
+  premium
+  estado
+}
+class Categoria {
+  nombre
+}
+class Ciudad {
+  nombre
+}
+Organizador "1" -- "0..*" Experiencia : provee
+Experiencia "0..*" -- "1" Categoria : clasificada en
+Experiencia "0..*" -- "1" Ciudad : se realiza en
+@enduml

@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bitacora.cs" />
-    <Compile Include="PanelAlertas.cs" />
     <Compile Include="ReporteJornada.cs" />
     <Compile Include="Cliente.cs" />
     <Compile Include="Idioma.cs" />
@@ -51,7 +50,6 @@
     <Compile Include="CuidadorHistorial.cs" />
     <Compile Include="Familia.cs" />
     <Compile Include="Interfaces\IClienteService.cs" />
-    <Compile Include="Interfaces\IMotorRecomendacion.cs" />
     <Compile Include="Interfaces\IReservaService.cs" />
     <Compile Include="Interfaces\IPlanSuscripcionService.cs" />
     <Compile Include="Interfaces\IExperienciaService.cs" />
@@ -61,15 +59,10 @@
     <Compile Include="Categoria.cs" />
     <Compile Include="Ciudad.cs" />
     <Compile Include="Suscripcion.cs" />
+    <Compile Include="Contratacion.cs" />
     <Compile Include="Interes.cs" />
     <Compile Include="ListaEspera.cs" />
     <Compile Include="Calificacion.cs" />
-    <Compile Include="Recomendacion.cs" />
-    <Compile Include="AnalisisExperiencias.cs" />
-    <Compile Include="AnalisisAbandono.cs" />
-    <Compile Include="AnalisisCancelaciones.cs" />
-    <Compile Include="AnalisisSuscripciones.cs" />
-    <Compile Include="AnalisisComercial.cs" />
     <Compile Include="PlanSuscripcion.cs" />
     <Compile Include="Preferencia.cs" />
     <Compile Include="RecuperacionAdmin.cs" />

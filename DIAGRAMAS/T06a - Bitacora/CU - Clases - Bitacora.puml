@@ -1,0 +1,65 @@
+@startuml CU - Clases - Bitacora
+title T06a - Bitacora de sistema y de negocio
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Servicios" {
+  class "Servicios.Bitacora" as SB {
+    + Registrar(modulo, actividad, criticidad)
+    + RegistrarSinSesion(modulo, actividad, criticidad, detalle)
+    + ObtenerTodos() : List<Bitacora>
+    + ObtenerUltimosNDias(dias) : List<Bitacora>
+    + BuscarPorFiltros(desde, hasta, idUsuario, actividad, criticidad)
+  }
+  class "Servicios.BitacoraNegocio" as SBN {
+    + Registrar(tipo, idUsuario, refs, descripcion)
+    + BuscarPorFiltros(...)
+  }
+}
+
+package "BE" {
+  class Bitacora <<entity>> {
+    + Id : int
+    + Fecha : DateTime
+    + IdUsuario : int
+    + Modulo / Actividad / Detalle / IP : string
+    + Criticidad : Criticidad
+  }
+  class BitacoraNegocio <<entity>> {
+    + IdEvento : int
+    + Tipo : string
+    + IdReserva / IdExperiencia / IdCliente : int?
+    + Descripcion : string
+  }
+  enum Criticidad {
+    None
+    Baja
+    Media
+    Alta
+    IntentosLogin
+    RecuperacionClave
+    BloqueosCuenta
+  }
+}
+
+package "Seguridad" {
+  class SessionManager <<Singleton>>
+}
+package "DAL" {
+  class "DAL.Bitacora"
+  class "DAL.BitacoraNegocio"
+}
+
+SB ..> Bitacora
+SB ..> Criticidad
+SB ..> SessionManager : usuario + IP de la sesion
+SB ..> "DAL.Bitacora"
+SBN ..> BitacoraNegocio
+SBN ..> "DAL.BitacoraNegocio"
+
+note bottom of SB
+  Registrar() usa la sesion activa (usuario + IP); RegistrarSinSesion()
+  cubre eventos previos al login (intentos fallidos, bloqueos). Consulta
+  con filtros combinados: parametro nulo/vacio/-1 se ignora.
+end note
+@enduml

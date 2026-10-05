@@ -1,0 +1,40 @@
+@startuml DER - Permisos
+title DER - Permiso / PermisoRelacion / RolPermiso / ControlMapeado (Composite persistido)
+skinparam linetype ortho
+hide circle
+entity "Permiso" as P {
+  * IdPermiso : int <<PK>>
+  --
+  Nombre : nvarchar(100)
+  NombreMenu : nvarchar(100)
+  TipoComponente : nvarchar(100)
+  Estado : bit
+  EsFamilia : bit    ' Familias retiradas del modelo (revision 11/06)
+  EsRol : bit        ' 1 = nodo-rol ; 0 y EsFamilia=0 => Patente (hoja)
+}
+entity "PermisoRelacion" as PR {
+  * IdPadre : int <<PK,FK>>
+  * IdHijo  : int <<PK,FK>>
+}
+entity "RolPermiso (legacy/seed)" as RP {
+  * Rol : nvarchar(100) <<PK>>
+  * IdPermiso : int <<PK,FK>>
+}
+entity "ControlMapeado" as CM {
+  * IdControlMapeado : int <<PK>>
+  --
+  IdPermiso : int <<FK>>     ' patente que gobierna el control
+  Formulario : nvarchar(100)
+  NombreControl : nvarchar(100)
+}
+
+P ||--o{ PR : padre (IdPadre)
+P ||--o{ PR : hijo  (IdHijo)
+P ||--o{ RP : semilla del arbol
+P ||--o{ CM : patente -> control
+note bottom
+  PermisoRelacion es la UNICA fuente de verdad de autorizacion en runtime
+  (arbol Composite padre->hijo, permite rol-en-rol). RolPermiso solo siembra
+  el arbol en la instalacion; el sistema no la escribe en ejecucion.
+end note
+@enduml

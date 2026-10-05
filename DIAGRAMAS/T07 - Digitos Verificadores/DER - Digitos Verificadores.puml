@@ -1,0 +1,40 @@
+@startuml DER - Digitos Verificadores
+title DER - Digitos Verificadores (DVVertical / HistorialIntegridad + DVH por fila)
+skinparam linetype ortho
+hide circle
+
+entity "Tablas protegidas" as P {
+  ' Usuario, Cliente, Empleado, Experiencia, Reserva, Organizador
+  * Id : int <<PK>>
+  --
+  ...columnas de negocio...
+  DVH : int   <<digito verificador horizontal>>  ' por fila
+}
+entity "DVVertical" as DVV {
+  * Id : int <<PK>>
+  --
+  NombreTabla : varchar(100) <<UQ>>
+  DVV : int    ' digito verificador vertical (por tabla)
+  FechaCalculo : datetime
+}
+entity "HistorialIntegridad" as HI {
+  * Id : int <<PK>>
+  --
+  NombreTabla : varchar(100)
+  DVVAlmacenado : int
+  DVVCalculado : int
+  Resultado : bit          ' 1 = integro
+  FilasCorruptas : int
+  FechaVerificacion : datetime
+  DisparadoPor : varchar(50)  ' Arranque / Timer / Manual
+}
+
+DVV ||..|| P  : 1 DVV por tabla protegida (por nombre)
+HI  }o..|| P  : verificaciones registradas por tabla
+
+note bottom
+  Cada fila de las tablas protegidas guarda su DVH; DVVertical guarda un DVV
+  por tabla. HistorialIntegridad audita cada verificacion (arranque, Timer 30',
+  o manual) con el resultado y las filas corruptas detectadas. Fail-closed.
+end note
+@enduml

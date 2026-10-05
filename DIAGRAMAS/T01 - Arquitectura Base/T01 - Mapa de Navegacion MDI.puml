@@ -1,0 +1,42 @@
+@startuml T01 - Mapa de Navegacion MDI
+title T01 - Mapa de Navegacion MDI (PN2 Ventas/Operacion + transversal)
+skinparam state {
+  BackgroundColor #FFF7F0
+  BorderColor #FF6B6B
+}
+state "F00 Login" as L
+state "F01 Menu (contenedor MDI)" as M
+L --> M : autenticacion OK
+
+state M {
+  state "Ventas / Operacion (PN2)" as PN2 {
+    state "F03 Experiencias (catalogo)" as F03
+    state "F06 Catalogos de referencia\n(Organizadores / Categorias / Ciudades)" as F06
+    state "F04 Reservas" as F04
+    state "F05 ReservasRealizadas\n(asistencia + calificacion)" as F05
+    state "F04b Lista de Espera" as F04b
+    F03 --> F04 : consultar disponibilidad
+    F04 --> F04b : sin cupo (lista FIFO)
+    F04 --> F05 : experiencia finalizada
+  }
+  state "Administracion / Transversal" as MAdm {
+    state "F09 Usuarios / Perfiles" as F09
+    state "F08 Bitacora" as F08
+    state "F10 Backup / Integridad" as F10
+    state "Idiomas" as FIDI
+    state "Mi Perfil" as FMP
+  }
+}
+M --> L : Logout (destruye Singleton)
+
+note bottom
+  El menu se construye dinamicamente segun los permisos (Composite) del usuario.
+  Alcance de esta entrega: PN2 Ventas/Operacion (CU06 reserva, CU07 cancelar +
+  lista de espera, CU08 asistencia/calificacion, CU09 experiencia, CU10 catalogos,
+  CU11 disponibilidad, CU12 lista de espera) + servicios transversales
+  (seguridad, perfiles, bitacora, integridad, backup, multiidioma).
+  La disponibilidad (CU11) se consulta dentro de Experiencias/Reservas (no es un form).
+  PN1 Fidelizacion (Clientes/Suscripciones/Planes) se asume preexistente; PN3
+  (Analitica / Recomendaciones) queda para las proximas entregas.
+end note
+@enduml

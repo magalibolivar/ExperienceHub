@@ -13,7 +13,6 @@ namespace BLL
         private readonly DAL.Interfaces.IClienteDAL dalCliente;
         private readonly DAL.Interes         dalInteres  = new DAL.Interes();
         private readonly DAL.Reserva         dalReserva  = new DAL.Reserva();
-        private readonly Suscripcion         bllSus      = new Suscripcion();
         private readonly Servicios.Bitacora        bitacora    = new Servicios.Bitacora();
         private readonly Servicios.BitacoraNegocio bitacoraNeg = new Servicios.BitacoraNegocio();
 
@@ -24,8 +23,10 @@ namespace BLL
         public List<BE.Cliente> ObtenerTodos()      => dalCliente.ObtenerTodos();
         public BE.Cliente ObtenerPorId(int id)      => dalCliente.ObtenerPorId(id);
 
-        // Alta de cliente. Si trae Suscripcion cargada, crea la suscripción inicial;
-        // si trae Intereses, los persiste en ClienteInteres.
+        // Alta de cliente: registra la ficha y, si trae Intereses, los persiste en ClienteInteres.
+        // IMPORTANTE (PN01): el alta NO crea la suscripción. La suscripción Activa nace únicamente al
+        // formalizar una contratación pagada (BLL.Contratacion.Formalizar), tras el cobro en Caja.
+        // El plan es opcional/informativo en el alta; no genera suscripción por sí solo.
         public void Alta(string modulo, BE.Cliente cliente)
         {
             PermisosAccion.Exigir(BE.Patentes.ClientesEditar, BE.Patentes.Clientes);
@@ -39,8 +40,6 @@ namespace BLL
             cliente.IdCliente = idNuevo;
 
             GuardarIntereses(cliente);
-            if (cliente.Suscripcion != null)
-                bllSus.Crear(idNuevo, cliente.Suscripcion.IdPlan, cliente.Suscripcion.FechaVencimiento);
 
             bitacora.Registrar(modulo, $"Alta Cliente: {cliente.NombreCompleto} (DNI {cliente.DNI})", BE.Criticidad.Baja);
             bitacoraNeg.Registrar(BE.TipoEventoNegocio.AltaCliente,
@@ -145,8 +144,8 @@ namespace BLL
                 throw new BE.AppException("err.bll.cliente.fechanac_requerida", "La fecha de nacimiento es obligatoria.");
             if (cliente.FechaNacimiento.Value.Date > DateTime.Today.AddYears(-18))
                 throw new BE.AppException("err.bll.cliente.menor_edad", "El cliente debe ser mayor de 18 años.");
-            if (esAlta && (cliente.Suscripcion == null || cliente.Suscripcion.IdPlan <= 0))
-                throw new BE.AppException("err.bll.cliente.plan_requerido", "Debe seleccionar un plan de suscripción.");
+            // El plan es opcional en el alta: la suscripción Activa se obtiene recién al formalizar
+            // una contratación pagada (PN01), no al registrar al cliente.
         }
     }
 }

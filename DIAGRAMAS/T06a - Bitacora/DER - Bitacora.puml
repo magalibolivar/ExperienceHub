@@ -1,0 +1,32 @@
+@startuml DER - Bitacora
+title DER - Bitacora / BitacoraNegocio
+skinparam linetype ortho
+hide circle
+entity "Bitacora" as B {
+  * Id : int <<PK>>
+  --
+  fecha : datetime
+  usuario : int <<FK, null>>
+  modulo : nvarchar(100)
+  actividad : nvarchar(200)
+  detalle : nvarchar(1000)
+  criticidad : int       ' enum Criticidad (None..IntentosLogin)
+  ip : nvarchar(50)
+}
+entity "BitacoraNegocio" as BN {
+  * IdEvento : int <<PK>>
+  --
+  Fecha : datetime
+  Tipo : nvarchar(100)   ' tipo de evento de negocio
+  IdUsuario : int <<FK, null>>
+  IdReserva : int <<FK, null>>       ' antes IdPedido (migracion 05)
+  IdExperiencia : int <<FK, null>>   ' antes IdPrenda  (migracion 05)
+  IdCliente : int <<FK, null>>
+  Descripcion : nvarchar(500)
+}
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+}
+U ||--o{ B  : usuario
+U ||--o{ BN : IdUsuario
+@enduml

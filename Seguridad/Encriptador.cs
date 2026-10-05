@@ -203,7 +203,7 @@ namespace Seguridad
             {
                 byte[] bytes = null;
                 try { bytes = Convert.FromBase64String(File.ReadAllText(ruta).Trim()); }
-                catch { }
+                catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Encriptador] key.dat ilegible: " + ex.Message); }
 
                 if (bytes != null)
                 {
@@ -213,7 +213,7 @@ namespace Seguridad
                         byte[] clave = ProtectedData.Unprotect(bytes, null, DataProtectionScope.CurrentUser);
                         if (clave.Length == 16) return clave;
                     }
-                    catch { }
+                    catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Encriptador] key.dat no es un blob DPAPI (se intenta legacy): " + ex.Message); }
 
                     // 2) Legacy: clave plana de 16 bytes → migrar a DPAPI conservando la MISMA clave.
                     if (bytes.Length == 16)

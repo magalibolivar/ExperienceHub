@@ -1,0 +1,27 @@
+@startuml T03 - Clases Encriptado
+title T03 - Gestion de Encriptado (clase estatica Encriptador, principio Open/Closed)
+skinparam classAttributeIconSize 0
+
+class Encriptador <<static>> {
+  + Hash(contrasena : string) : string
+  + VerificarContrasena(ingresada, almacenada) : bool
+  + VerificacionSenuelo(contrasena) : bool  ' anti-enumeracion (costo constante)
+  + ValidarContrasena(contrasena) : (valida, mensaje)
+  + Encriptar(texto : string) : string
+  + Desencriptar(cifrado : string) : string
+  + TryDesencriptar(valor : string) : string
+  + ConvertirBase64(data : byte[]) : string
+}
+note right of Encriptador
+  PBKDF2-SHA256 (salt 16B, 100.000 iter, hash 32B)
+  para contrasenas de Usuario.
+  AES-128-CBC (IV aleatorio por operacion)
+  para datos sensibles (DNI del Cliente).
+end note
+
+class "BLL.Usuario" as BU
+class "DAL.Cliente" as DC
+
+BU ..> Encriptador : Hash / VerificarContrasena
+DC ..> Encriptador : Encriptar / TryDesencriptar (DNI)
+@enduml

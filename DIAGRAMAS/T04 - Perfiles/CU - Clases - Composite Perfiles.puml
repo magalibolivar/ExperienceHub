@@ -1,0 +1,52 @@
+@startuml CU - Clases - Composite Perfiles
+title T04 - Gestion de Perfiles (patron Composite)
+skinparam classAttributeIconSize 0
+
+abstract class Componente {
+  + Id : int
+  + Nombre : string
+  + {abstract} Hijos : IList<Componente>
+  + {abstract} AgregarHijo(c : Componente)
+  + {abstract} QuitarHijo(c : Componente)
+  + {abstract} VaciarHijos()
+  + ObtenerPatentesEfectivas() : IList<Patente>  ' dedup + anti-ciclos
+  + {abstract} ObtenerDescripcion(nivel : int) : string
+  # {abstract} RecolectarPatentes(acum, visitados)
+}
+class Patente {
+  + NombreMenu : string
+  + AgregarHijo(c) / QuitarHijo(c) / VaciarHijos()  ' no-op (hoja)
+  # RecolectarPatentes(acum, visitados)  ' se agrega a si misma
+}
+class Familia {
+  - _hijos : List<Componente>
+  + Hijos : IList<Componente>
+  + AgregarHijo(c) / QuitarHijo(c) / VaciarHijos()
+  # RecolectarPatentes(acum, visitados)  ' recursivo sobre hijos
+}
+class Rol {
+  ' nodo-rol del arbol (EsRol=1); admite rol-en-rol
+}
+
+Componente <|-- Patente
+Componente <|-- Familia
+Familia    <|-- Rol
+Familia o--> "*" Componente : hijos (rol-en-rol / patentes)
+
+class "BLL.Familia" as BF {
+  + ObtenerPermisosEfectivos(rol) : List<Permiso>
+  + ObtenerArbolPorRol(rol) : BE.Familia
+  + GuardarAsignacionRol(rol, ids)
+  + CrearRol / RenombrarComponente / EliminarRol
+}
+class "DAL.Permiso" as DP
+BF ..> Componente : arma / recorre el arbol
+BF ..> DP
+DP ..> "Permiso / PermisoRelacion" : persistencia (fuente de verdad en runtime)
+
+note bottom of Rol
+  Las Familias se retiraron del MODELO de dominio (revision 11/06):
+  la clase Familia se conserva como nodo compuesto base de Rol,
+  manteniendo vivo el patron Composite via rol-en-rol.
+end note
+@enduml

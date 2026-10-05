@@ -13,7 +13,7 @@ namespace GUI
     ///
     /// Presenta dos pestañas:
     ///   Tab 1 — Sistema    : eventos de seguridad (login, logout, resets, intentos fallidos)
-    ///   Tab 2 — Negocio    : eventos de negocio (ventas, despachos, stock, clientes)
+    ///   Tab 2 — Negocio    : eventos de negocio (reservas, suscripciones, experiencias, clientes)
     ///
     /// Filtro de fecha unificado: sólo "Últimos N días" (0 = sin filtro de fecha).
     /// Criticidad: "Todas" + valores reales 1-6, sin "None (0)".
@@ -73,7 +73,7 @@ namespace GUI
             Estilo.EstilizarGrid(dgvSistema);
             Estilo.EstilizarGrid(dgvNegocio);
 
-            // Barras de filtros: del rosa viejo (WardrobeFlow) al lienzo del sistema.
+            // Barras de filtros con el lienzo del sistema.
             panelFiltrosSistema.BackColor = Estilo.Lienzo;
             panelFiltrosNegocio.BackColor = Estilo.Lienzo;
 
@@ -159,15 +159,16 @@ namespace GUI
                 Color back, fore;
                 switch (tipo)
                 {
-                    case "Venta":               back = Color.FromArgb(225, 240, 255); fore = Color.FromArgb(30,100,170);  break;
-                    case "Despacho":            back = Color.FromArgb(225, 240, 255); fore = Color.FromArgb(30,100,170);  break;
-                    case "Entrega":             back = Color.FromArgb(220, 248, 220); fore = Color.FromArgb(30,130,30);   break;
-                    case "Cancelacion":         back = Color.FromArgb(255, 225, 225); fore = Color.FromArgb(160,50,50);   break;
-                    case "AltaCliente":         back = Color.FromArgb(225, 248, 225); fore = Color.FromArgb(30,130,30);   break;
-                    case "ModificacionCliente": back = Color.FromArgb(240, 232, 255); fore = Color.FromArgb(100,80,160);  break;
-                    case "AltaPrenda":          back = Color.FromArgb(225, 248, 225); fore = Color.FromArgb(30,130,30);   break;
-                    case "ModificacionPrenda":  back = Color.FromArgb(255, 240, 225); fore = Color.FromArgb(160,100,20);  break;
-                    case "CambioEstadoPrenda":  back = Color.FromArgb(225, 240, 255); fore = Color.FromArgb(30,100,170);  break;
+                    case "Reserva":                 back = Color.FromArgb(225, 240, 255); fore = Color.FromArgb(30,100,170);  break;
+                    case "Confirmacion":            back = Color.FromArgb(220, 248, 220); fore = Color.FromArgb(30,130,30);   break;
+                    case "Asistencia":              back = Color.FromArgb(220, 248, 220); fore = Color.FromArgb(30,130,30);   break;
+                    case "Inasistencia":            back = Color.FromArgb(255, 240, 225); fore = Color.FromArgb(160,100,20);  break;
+                    case "Cancelacion":             back = Color.FromArgb(255, 225, 225); fore = Color.FromArgb(160,50,50);   break;
+                    case "AltaCliente":             back = Color.FromArgb(225, 248, 225); fore = Color.FromArgb(30,130,30);   break;
+                    case "ModificacionCliente":     back = Color.FromArgb(240, 232, 255); fore = Color.FromArgb(100,80,160);  break;
+                    case "AltaExperiencia":         back = Color.FromArgb(225, 248, 225); fore = Color.FromArgb(30,130,30);   break;
+                    case "ModificacionExperiencia": back = Color.FromArgb(255, 240, 225); fore = Color.FromArgb(160,100,20);  break;
+                    case "CambioEstadoExperiencia": back = Color.FromArgb(225, 240, 255); fore = Color.FromArgb(30,100,170);  break;
                     default: continue;
                 }
                 fila.DefaultCellStyle.BackColor = back;
@@ -302,17 +303,18 @@ namespace GUI
                 _tipoEventoDB.Add(dbVal);
             }
 
-            Add("",                   "tevt.todos",          "Todos");
-            Add("Venta",              "tevt.venta",          "Venta");
-            Add("Cancelacion",        "tevt.cancelacion",    "Cancelación");
-            Add("Despacho",           "tevt.despacho",       "Despacho");
-            Add("Entrega",            "tevt.entrega",        "Entrega");
-            Add("AltaPrenda",         "tevt.altaprenda",     "Alta Prenda");
-            Add("ModificacionPrenda", "tevt.modprenda",      "Modificación Prenda");
-            Add("CambioEstadoPrenda", "tevt.cambiostprenda", "Cambio Estado Prenda");
-            Add("AltaCliente",        "tevt.altacliente",    "Alta Cliente");
-            Add("ModificacionCliente","tevt.modcliente",     "Modificación Cliente");
-            Add("BajaCliente",        "tevt.bajacliente",    "Baja Cliente");
+            Add("",                        "tevt.todos",              "Todos");
+            Add("Reserva",                 "tevt.reserva",            "Reserva");
+            Add("Confirmacion",            "tevt.confirmacion",       "Confirmación");
+            Add("Cancelacion",             "tevt.cancelacion",        "Cancelación");
+            Add("Asistencia",              "tevt.asistencia",         "Asistió");
+            Add("Inasistencia",            "tevt.inasistencia",       "No asistió");
+            Add("AltaExperiencia",         "tevt.altaexperiencia",    "Alta Experiencia");
+            Add("ModificacionExperiencia", "tevt.modexperiencia",     "Modificación Experiencia");
+            Add("CambioEstadoExperiencia", "tevt.cambiostexperiencia","Cambio Estado Experiencia");
+            Add("AltaCliente",             "tevt.altacliente",        "Alta Cliente");
+            Add("ModificacionCliente",     "tevt.modcliente",         "Modificación Cliente");
+            Add("BajaCliente",             "tevt.bajacliente",        "Baja Cliente");
 
             cmbTipoEvento.SelectedIndex =
                 (idx >= 0 && idx < cmbTipoEvento.Items.Count) ? idx : 0;
@@ -637,16 +639,17 @@ namespace GUI
             var t = Traductor.ObtenerTraducciones(idioma);
             var mapa = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { "Venta",               "tevt.venta"          },
-                { "Cancelacion",         "tevt.cancelacion"    },
-                { "Despacho",            "tevt.despacho"       },
-                { "Entrega",             "tevt.entrega"        },
-                { "AltaPrenda",          "tevt.altaprenda"     },
-                { "ModificacionPrenda",  "tevt.modprenda"      },
-                { "CambioEstadoPrenda",  "tevt.cambiostprenda" },
-                { "AltaCliente",         "tevt.altacliente"    },
-                { "ModificacionCliente", "tevt.modcliente"     },
-                { "BajaCliente",         "tevt.bajacliente"    },
+                { "Reserva",                 "tevt.reserva"             },
+                { "Confirmacion",            "tevt.confirmacion"        },
+                { "Cancelacion",             "tevt.cancelacion"         },
+                { "Asistencia",              "tevt.asistencia"          },
+                { "Inasistencia",            "tevt.inasistencia"        },
+                { "AltaExperiencia",         "tevt.altaexperiencia"     },
+                { "ModificacionExperiencia", "tevt.modexperiencia"      },
+                { "CambioEstadoExperiencia", "tevt.cambiostexperiencia" },
+                { "AltaCliente",             "tevt.altacliente"         },
+                { "ModificacionCliente",     "tevt.modcliente"          },
+                { "BajaCliente",             "tevt.bajacliente"         },
             };
 
             var partes = new List<string>();

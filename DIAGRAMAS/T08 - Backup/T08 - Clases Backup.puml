@@ -1,0 +1,41 @@
+@startuml T08 - Clases Backup
+title T08 - Gestion de Backup y Restauracion
+skinparam classAttributeIconSize 0
+
+class "BLL.Backup" {
+  + {static} ExtensionCifrada : string = ".ehbak"
+  + RealizarBackup(modulo, dirDestino, claveCifrado) : string
+  + RealizarBackupInicial(modulo, dirDestino, claveCifrado) : string
+  + RestaurarBackup(modulo, rutaArchivo, claveCifrado = null)
+  + EliminarBackup(modulo, rutaArchivo)
+  + ObtenerFechaBackup(rutaArchivo) : DateTime?
+  + ObtenerCambiosDesde(fechaBackup) : List<CambioPosterior>
+  + ExtraerAutorDeNombre(nombreArchivo) : string
+  + {static} EsCifrado(rutaArchivo) : bool
+}
+class "DAL.Backup" {
+  + BACKUP DATABASE (a .bak temporal plano)
+  + RESTORE VERIFYONLY  ' verifica integridad antes de restaurar
+  + RESTORE ... WITH REPLACE (SINGLE_USER)
+  + DirectorioTempSeguro() : string
+}
+class "CifradorArchivos\n(Seguridad)" {
+  + Cifrar(origenPlano, destino, password)   ' AES-128 + PBKDF2
+  + Descifrar(origen, destinoPlano, password)
+}
+class "BLL.Configuracion" {
+  + {static} VerificarIntegridadDV(out ResultadoIntegridad) : bool
+}
+class "Servicios.Bitacora"
+
+"BLL.Backup" ..> "BLL.Configuracion" : exige integridad DV antes de respaldar
+"BLL.Backup" ..> "CifradorArchivos\n(Seguridad)" : cifra el .bak temporal -> .ehbak
+"BLL.Backup" ..> "DAL.Backup"
+"BLL.Backup" ..> "Servicios.Bitacora" : criticidad Alta
+
+note bottom of "BLL.Backup"
+  Genera un .bak plano temporal con SQL y lo CIFRA hacia la ruta final .ehbak
+  (AES-128 + PBKDF2). Restaura: si es .ehbak lo descifra a un temporal; los
+  .bak planos legacy se restauran directo. Operacion exclusiva del Administrador.
+end note
+@enduml

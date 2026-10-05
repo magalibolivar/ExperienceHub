@@ -1,0 +1,66 @@
+@startuml CU - Clases - Digitos Verificadores
+title T07 - Digitos Verificadores (Factory + verificacion DVH/DVV)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Seguridad" {
+  interface ICalculadorDV {
+    + CalcularDVH(params campos : string[]) : int
+    + CalcularDVV(dvhValues : IList<int>) : int
+  }
+  class CalculadorDV <<Factory, static>> {
+    + {static} Crear() : ICalculadorDV
+  }
+  class CalculadorDVImpl {
+    + CalcularDVH(campos) : int   ' incluye posicion de caracter/atributo
+    + CalcularDVV(dvhValues) : int
+  }
+  CalculadorDV ..> ICalculadorDV : crea
+  ICalculadorDV <|.. CalculadorDVImpl
+}
+
+package "BLL" {
+  class Configuracion <<static>> {
+    + VerificarConexionDAL(out err) : bool
+    + VerificarIntegridadDV(out resultado) : bool
+    + RecalcularIntegridadDV()
+    + AsegurarIntegridadUsuarios()
+    + ObtenerHistorialIntegridad(n) : List<HistorialIntegridad>
+  }
+  class ResultadoIntegridad {
+    + Integro : bool
+    + FilasCorruptas : List
+  }
+}
+
+package "DAL" {
+  class "DAL.DigitoVerificador" as DDV {
+    + RecalcularTabla(tabla, pk, columnas)
+    + ObtenerDVVAlmacenado(tabla) : int
+    + GuardarDVV(tabla, dvv)
+  }
+  class "DAL.HistorialIntegridad"
+}
+
+package "BE" {
+  class HistorialIntegridad <<entity>> {
+    + NombreTabla / DisparadoPor : string
+    + DVVAlmacenado / DVVCalculado : int
+    + Resultado : bool
+    + FilasCorruptas : int
+    + FechaVerificacion : DateTime
+  }
+}
+
+Configuracion ..> ResultadoIntegridad
+Configuracion ..> DDV
+DDV ..> CalculadorDV : Crear()
+DDV ..> "DAL.HistorialIntegridad"
+"DAL.HistorialIntegridad" ..> HistorialIntegridad
+
+note bottom of DDV
+  Motor generico: RecalcularTabla(tabla, pk, columnas) opera sobre
+  cualquier entidad (Usuario, Cliente, Empleado, Experiencia, Reserva,
+  Organizador). DVH por fila + DVV por tabla (DVVertical). Fail-closed.
+end note
+@enduml

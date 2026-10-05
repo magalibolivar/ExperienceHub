@@ -41,3 +41,11 @@ WardrobeFlow*.docx
 
 # Documentación .md (no se versiona; se conserva local)
 *.md
+
+# ── Instalador: artefactos generados y material sensible (NO subir) ───────
+# SQL Server LocalDB (~60MB, de Microsoft): lo descarga compilar-y-firmar.ps1.
+Instalador/Redist/
+# Instalador .exe compilado: se regenera con compilar-y-firmar.ps1.
+Instalador/Salida/
+# Certificado de firma con clave privada: jamas al repo.
+*.pfx

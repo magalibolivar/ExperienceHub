@@ -1,0 +1,58 @@
+@startuml CU - Secuencia - Verificacion Integridad
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+
+title T07 - Verificacion de Integridad por Digitos Verificadores (fail-closed)
+participant "Program / Menu\n(arranque + Timer 30')" as P
+participant "BLL.Configuracion" as C
+participant "DAL.DigitoVerificador" as D
+participant "CalculadorDV\n(Factory)" as CDV
+database "SQL Server" as DB
+actor "Administrador" as A
+
+P -> C : VerificarIntegridadDV(out resultado)
+note right of C : En el arranque/login el chequeo\nfail-closed se centra en Usuario.
+loop por cada tabla protegida\n(Usuario, Cliente, Empleado, Experiencia, Reserva, Organizador)
+  C -> D : recalcular tabla (pk, columnas)
+  D -> DB : SELECT filas
+  D -> CDV : Crear() : ICalculadorDV
+  D -> CDV : CalcularDVH(campos...)  ' por fila
+  D -> CDV : CalcularDVV(dvhValues)  ' por tabla
+  D -> DB : comparar con DVH/DVV almacenados
+  D --> C : INTEGRO | COMPROMETIDO (filas)
+end
+alt INTEGRO
+  C --> P : continua el arranque / login
+else COMPROMETIDO
+  C -> DB : registrar en Bitacora + HistorialIntegridad
+  C --> P : bloquear acceso (fail-closed) y avisar
+  A -> C : RecalcularIntegridadDV / Reparar Seleccionadas\n(exige credenciales de Admin - ConfirmarAdminForm)
+  C -> D : recalcular / reparar
+  C -> DB : actualizar DV
+end
+@enduml

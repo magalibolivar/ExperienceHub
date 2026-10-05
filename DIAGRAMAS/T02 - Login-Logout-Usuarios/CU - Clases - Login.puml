@@ -1,0 +1,126 @@
+@startuml CU - Clases - Login
+title CU 001 - Clases de la Autenticacion (Login)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "GUI" {
+  class Login <<Form>> {
+    - usuarioBLL : BLL.Usuario
+    + btnIngresar_Click(sender, e)
+    - MostrarErrorLogin(mensaje, bloqueado)
+    + UpdateLanguage(idioma)
+  }
+  interface IIdiomaObserver <<Observer>> {
+    + UpdateLanguage(idioma)
+  }
+  Login ..|> IIdiomaObserver
+}
+
+package "BLL" {
+  class Usuario {
+    - usuarioDAL : IUsuarioDAL
+    - perfilesBLL : Familia
+    - bitacora : Servicios.Bitacora
+    + {static} MaxIntentosFallidos : int = 3
+    + Login(modulo, username, contrasena) : bool
+    + Logout(modulo)
+    + ObtenerUsuarioActivo() : BE.Usuario
+    - EvaluarBloqueo(u) : (expirado, permanente, minutos)
+  }
+  class Familia {
+    + ObtenerPermisosEfectivos(rol) : List<Permiso>
+  }
+}
+
+package "Seguridad" {
+  class SessionManager <<Singleton>> {
+    - {static} _session : SessionManager
+    + Usuario : BE.Usuario
+    + FechaInicio : DateTime
+    + {static} IsLoggedIn : bool
+    + {static} GetInstance() : SessionManager
+    + {static} Login(usuario)
+    + {static} Logout()
+    + TienePermiso(nombreMenu) : bool
+  }
+  class ContadorSesion <<Singleton>> {
+    - {static} _instancia : ContadorSesion
+    - _intentosFallidos : int
+    + LimiteAlcanzado : bool
+    + IntentosRestantes : int
+    + {static} GetInstance() : ContadorSesion
+    + RegistrarIntento()
+    + Resetear()
+  }
+  class Encriptador <<static>> {
+    + Hash(contrasena) : string
+    + VerificarContrasena(ingresada, hash) : bool
+    + VerificacionSenuelo(contrasena) : bool
+  }
+}
+
+package "Servicios" {
+  class "Servicios.Bitacora" as Bitacora {
+    + Registrar(modulo, actividad, criticidad)
+    + RegistrarSinSesion(modulo, actividad, criticidad, detalle)
+  }
+}
+
+package "DAL" {
+  interface IUsuarioDAL {
+    + ObtenerPorUsername(username) : BE.Usuario
+    + AutoDesbloquear(id)
+    + ResetearIntentosFallidos(username)
+    + BloquearConTiempo(id)
+  }
+  class "DAL.Usuario" as UsuarioDAL {
+    + ObtenerPorUsername(username) : BE.Usuario
+  }
+  UsuarioDAL ..|> IUsuarioDAL
+}
+
+package "BE" {
+  class "BE.Usuario" as UsuarioBE <<entity>> {
+    + Id : int
+    + Username : string
+    + Contrasena : string  ' hash PBKDF2
+    + Bloqueado : bool
+    + IntentosFallidos : int
+    + RequiereCambioClave : bool
+    + Rol / Perfil : string
+    + Permisos : List<Patente>
+  }
+  class LoginException <<exception>> {
+    + Tipo : TipoError
+    + IntentosRestantes : int?
+  }
+  enum TipoError {
+    CamposVacios
+    CredencialesInvalidas
+    CuentaBloqueada
+    LimiteAlcanzado
+  }
+  LoginException +-- TipoError
+}
+
+Login          --> "1" Usuario         : usa
+Login          ..>       LoginException : captura (por Tipo)
+
+Usuario        --> "1" IUsuarioDAL      : depende (inyectable)
+Usuario        --> "1" Familia          : resuelve permisos
+Usuario        ..>       Encriptador    : verifica / senuelo
+Usuario        ..>       ContadorSesion : GetInstance()
+Usuario        ..>       SessionManager : Login / Logout
+Usuario        --> "1" Bitacora         : registra
+Usuario        ..>       LoginException : lanza
+Usuario        ..>       UsuarioBE      : obtiene / valida
+
+SessionManager --> "0..1" UsuarioBE     : sesion activa
+IUsuarioDAL    ..>       UsuarioBE      : devuelve
+
+note bottom of Usuario
+  Patrones en juego: Singleton (SessionManager, ContadorSesion),
+  Observer (Login : IIdiomaObserver) y Composite (Familia -> permisos).
+  El digito verificador NO participa del login (solo en escrituras).
+end note
+@enduml

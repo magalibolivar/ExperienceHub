@@ -1,0 +1,59 @@
+@startuml CU - Secuencia - Perfiles
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title T04 - Perfiles (asignacion de permisos y resolucion recursiva - Composite)
+actor "Administrador" as A
+participant "Perfiles y Permisos\n(GUI, TreeView)" as GUI
+participant "BLL.Familia" as BF
+participant "DAL.Permiso" as DP
+participant "Servicios.Bitacora" as BIT
+database "SQL Server" as DB
+
+A -> GUI : Administrar -> Perfiles y Permisos
+GUI -> BF : ObtenerArbol()
+BF -> DP : ObtenerComponentes + ObtenerRelaciones
+DP -> DB : SELECT Permiso / PermisoRelacion
+DB --> DP : nodos + aristas
+DP --> BF : datos
+BF --> GUI : arbol Composite (roles + patentes)
+
+A -> GUI : selecciona un rol y agrega/quita componentes
+GUI -> BF : GuardarAsignacionRol(rol, idsSeleccionados)
+
+alt genera ciclo (rol dentro de si mismo) o autobloqueo
+  BF --> GUI : AppException (operacion cancelada)
+else valido
+  BF -> DP : sincronizar PermisoRelacion (altas/bajas)
+  DP -> DB : INSERT/DELETE PermisoRelacion
+  BF -> BF : ObtenerPermisosEfectivos(rol)
+  note right of BF : recorrido recursivo del arbol\n(rol -> roles/patentes) con\ndeduplicacion y anti-ciclos
+  BF -> BIT : Registrar(modulo, "Asignacion de permisos", Alta)
+  BF --> GUI : (Agregados, Quitados)
+  GUI --> A : arbol recargado + menu actualizado en vivo
+end
+@enduml

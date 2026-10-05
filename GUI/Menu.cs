@@ -17,16 +17,13 @@ namespace GUI
     /// del usuario logueado, resueltos en el Login desde el árbol Composite
     /// (tabla PermisoRelacion — la única fuente de verdad de autorización).
     ///
-    /// Roles del sistema (documento G04 — ExperienceHub_Iteracion1.docx):
+    /// Roles del sistema:
     ///
-    ///   Administrador     → TODO: Inventario | Ventas | Administrar | Bitácora
-    ///   Supervisor        → Bitácora
-    ///   OperadorLogistico → Inventario (Prendas, Outfits, Categorias, Pedidos Realizados)
-    ///
-    /// Roles adicionales (implementación, no están en G04):
-    ///   Vendedor             → Ventas (Clientes, Planes, Pedidos de Venta)
-    ///   ControladorDeStock   → Inventario (Prendas, Stock)
-    ///   OperadorDeInventario → Ventas (Pedidos Realizados)
+    ///   Administrador → acceso total (PN01 Comercialización | PN02 Reservas | Administración | Bitácora)
+    ///   Supervisor    → Bitácora
+    ///   Venta         → PN01 Comercialización (Clientes, Planes, Suscripciones, Contrataciones)
+    ///                   y PN02 Reservas (Experiencias, Reservas, Reservas realizadas, Lista de espera)
+    ///   Caja          → PN01 Comercialización (cobro de contrataciones)
     ///
     /// Los permisos se leen de BE.Usuario.Permisos via BLL.ObtenerUsuarioActivo().
     /// La GUI nunca accede directamente a Seguridad ni a DAL.
@@ -54,10 +51,6 @@ namespace GUI
         private ToolStripMenuItem _adminUsuariosItem;
         // Submenús de "Administrar" (reorganización): "Usuarios ▸" y "Sistema ▸".
         private ToolStripMenuItem _grpUsuarios, _grpSistema;
-        // Centro de Alertas (ítem top-level con badge de cantidad) — creado por código.
-        private ToolStripMenuItem _alertasItem;
-        private int _alertasCount = -1;
-
         // Helper de traducción con fallback (para ítems creados por código).
         private static string Tx(string key, string fallback)
         {
@@ -170,20 +163,6 @@ namespace GUI
             gestionToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             gestionToolStripMenuItem.DropDownItems.Add(_grpSistema);
 
-            // ── Centro de Alertas ──────────────────────────────────────────────
-            // Ítem top-level visible para todos los usuarios autenticados (igual que
-            // "Panel de Control"). El conteo de alertas se calcula en background.
-            // Alineado a la DERECHA del MenuStrip (bajo la X de la ventana), en la misma barra.
-            _alertasItem = new ToolStripMenuItem
-            {
-                Tag       = "mnu.alertas",
-                Name      = "alertasToolStripMenuItem",
-                Alignment = ToolStripItemAlignment.Right
-            };
-            _alertasItem.Click += AlertasItem_Click;
-            menuStrip1.Items.Add(_alertasItem);
-            RefrescarTextoAlertas();
-
             // Reorganizar la navegación en bloques de negocio (Fidelización / Operación / Analíticas
             // / Administración / Sesión) reutilizando los ítems y formularios ya existentes.
             ReorganizarNavegacionPorBloques();
@@ -191,45 +170,6 @@ namespace GUI
             // Construir menú dinámico según permisos del rol
             RegistroControles.Registrar(this);   // Etapa 4 (C1) — registra los ítems del menú para la pantalla de mapeo
             AplicarPermisos(_usuarioActivo?.Permisos);
-        }
-
-        // Abre el Centro de Alertas como hijo MDI (reusa la instancia abierta si existe).
-        private void AlertasItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-                if (hijo is AlertasForm) { hijo.BringToFront(); return; }
-            new AlertasForm { MdiParent = this }.Show();
-            ActualizarBadgeAlertas(); // refrescar el badge tras consultar
-        }
-
-        // Compone el texto del ítem: icono + etiqueta traducida + (N) si hay alertas.
-        private void RefrescarTextoAlertas()
-        {
-            if (_alertasItem == null) return;
-            string baseTxt = "🔔 " + Tx("mnu.alertas", "Alertas");
-            _alertasItem.Text      = _alertasCount > 0 ? $"{baseTxt} ({_alertasCount})" : baseTxt;
-            _alertasItem.ForeColor = _alertasCount > 0 ? Color.FromArgb(255, 235, 130) : Color.White;
-        }
-
-        // Calcula la cantidad de alertas en background (la lógica vive en BLL.PanelAlertas)
-        // y actualiza el badge sin bloquear la UI.
-        private void ActualizarBadgeAlertas()
-        {
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                int n;
-                try { n = new BLL.PanelAlertas().Contar(); } catch { n = 0; }
-                try
-                {
-                    this.BeginInvoke(new Action(() =>
-                    {
-                        if (IsDisposed) return;
-                        _alertasCount = n;
-                        RefrescarTextoAlertas();
-                    }));
-                }
-                catch { }
-            });
         }
 
         // Abre "Mi Perfil" como diálogo modal (preferencias del usuario en sesión).
@@ -277,18 +217,15 @@ namespace GUI
         /// La lógica es completamente basada en permisos (NombreMenu), no en roles.
         ///
         /// Mapeo NombreMenu → ToolStripMenuItem:
-        ///   mnuPrendas            → prendasToolStripMenuItem       (bajo Inventario)
-        ///   mnuOutfits            → outfitsToolStripMenuItem        (bajo Inventario)
-        ///   mnuCategorias         → categoriasToolStripMenuItem     (bajo Inventario)
-        ///   mnuStock              → stockToolStripMenuItem          (bajo Inventario — pendiente en Designer)
-        ///   mnuClientes           → clientesToolStripMenuItem       (bajo Ventas)
-        ///   mnuPlanSuscripciones  → planesToolStripMenuItem         (bajo Ventas)
-        ///   mnuPedidosVenta       → pedidosVentaToolStripMenuItem   (bajo Ventas)
-        ///   mnuPedidosRealizados  → pedidosRealizadosToolStripMenuItem (bajo Ventas)
-        ///   mnuUsuarios           → gestionToolStripMenuItem        (bajo Administrar)
-        ///   mnuAuditoria          → bitacoraToolStripMenuItem
+        ///   mnuExperiencias        → experienciasToolStripMenuItem        (PN02 Reservas)
+        ///   mnuReservas            → reservasToolStripMenuItem            (PN02 Reservas)
+        ///   mnuReservasRealizadas  → reservasRealizadasToolStripMenuItem  (PN02 Reservas)
+        ///   mnuClientes            → clientesToolStripMenuItem            (PN01 Comercialización)
+        ///   mnuPlanSuscripciones   → planesToolStripMenuItem              (PN01 Comercialización)
+        ///   mnuUsuarios            → gestionToolStripMenuItem             (Administración)
+        ///   mnuAuditoria           → bitacoraToolStripMenuItem
         ///
-        /// Administrador tiene los 10 permisos → ve todo el menú.
+        /// Administrador ve todo el menú (acceso total por perfil).
         /// </summary>
         private void AplicarPermisos(List<BE.Permiso> permisos)
         {
@@ -317,11 +254,11 @@ namespace GUI
             // en tabla no expresa por sí solo.)
             var hojas = new (ToolStripItem Item, string Permiso)[]
             {
-                (prendasToolStripMenuItem,           "mnuExperiencias"),
+                (experienciasToolStripMenuItem,           "mnuExperiencias"),
                 (clientesToolStripMenuItem,          "mnuClientes"),
                 (planesToolStripMenuItem,            "mnuPlanSuscripciones"),
-                (pedidosVentaToolStripMenuItem,      "mnuReservas"),
-                (pedidosRealizadosToolStripMenuItem, "mnuReservasRealizadas"),
+                (reservasToolStripMenuItem,      "mnuReservas"),
+                (reservasRealizadasToolStripMenuItem, "mnuReservasRealizadas"),
                 // Bloque "Administrar" + "Sistema": todo gobernado por la patente de gestión.
                 (usuariosToolStripMenuItem,          "mnuUsuarios"),
                 (perfilesToolStripMenuItem,          "mnuUsuarios"),
@@ -338,21 +275,14 @@ namespace GUI
             foreach (var h in hojas)
                 if (h.Item != null) h.Item.Visible = Permite(h.Permiso);
 
-            // Ítems retirados de la interfaz (módulos no implementados): siempre ocultos.
-            outfitsToolStripMenuItem.Visible    = false;
-            categoriasToolStripMenuItem.Visible = false;
-
             // ── Visibilidad de los BLOQUES de negocio (según patentes de sus ítems) ──
             // Se usa .Available (no .Visible): dentro de un dropdown cerrado, .Visible siempre es false.
-            SetGrupoVisible(_mnuFidelizacion,
-                clientesToolStripMenuItem, planesToolStripMenuItem, _miSuscripciones);
+            SetGrupoVisible(_mnuComercializacion,
+                clientesToolStripMenuItem, planesToolStripMenuItem, _miSuscripciones, _miContrataciones);
 
-            SetGrupoVisible(_mnuOperacion,
-                prendasToolStripMenuItem, pedidosVentaToolStripMenuItem, pedidosRealizadosToolStripMenuItem,
+            SetGrupoVisible(_mnuReservas,
+                experienciasToolStripMenuItem, reservasToolStripMenuItem, reservasRealizadasToolStripMenuItem,
                 _miListaEspera, _miOrganizadores, _miCategorias, _miCiudades);
-
-            SetGrupoVisible(_mnuAnaliticas, reporteJornadaToolStripMenuItem, _miRecomendaciones,
-                _miAnalisisExp, _miClientesRiesgo, _miCancelaciones, _miAnalisisSusc, _miReportesComerciales);
 
             // ── Administración (técnica): submenús + Bitácora ──
             bool tieneUsuarios  = Permite("mnuUsuarios");
@@ -482,11 +412,9 @@ namespace GUI
         // Ítems de los módulos de catálogo/negocio (construidos por código). Se ubican luego en los
         // bloques de negocio del menú (Fidelización / Operación) en ReorganizarNavegacionPorBloques.
         private ToolStripMenuItem _miOrganizadores, _miCategorias, _miCiudades,
-                                  _miSuscripciones, _miListaEspera, _miRecomendaciones;
-        // Ítems analíticos (PdN 3 — CU-ANA-03..07), ubicados en el bloque Analíticas.
-        private ToolStripMenuItem _miAnalisisExp, _miClientesRiesgo, _miCancelaciones, _miAnalisisSusc, _miReportesComerciales;
-        // Grupos (bloques de negocio) del menú principal, creados por código.
-        private ToolStripMenuItem _mnuFidelizacion, _mnuOperacion, _mnuAnaliticas;
+                                  _miSuscripciones, _miListaEspera, _miContrataciones;
+        // Grupos del menú principal (uno por proceso de negocio), creados por código.
+        private ToolStripMenuItem _mnuComercializacion, _mnuReservas;
         // (compat) referencia usada por código legacy null-guardeado; ya no se crea el menú "Catálogos".
         private ToolStripMenuItem _catalogosMenu;
 
@@ -510,330 +438,45 @@ namespace GUI
             _miCategorias      = NuevoItemForm("Categorías",      "mnu.cat.categorias",      typeof(Categorias),          () => new Categorias());
             _miCiudades        = NuevoItemForm("Ciudades",        "mnu.cat.ciudades",        typeof(Ciudades),            () => new Ciudades());
             _miSuscripciones   = NuevoItemForm("Suscripciones",   "mnu.cat.suscripciones",   typeof(SuscripcionesForm),   () => new SuscripcionesForm());
+            _miContrataciones  = NuevoItemForm("Contrataciones (Caja)", "mnu.cat.contrataciones", typeof(ContratacionesForm), () => new ContratacionesForm());
             _miListaEspera     = NuevoItemForm("Lista de espera", "mnu.cat.listaespera",     typeof(ListaEsperaForm),     () => new ListaEsperaForm());
-            _miRecomendaciones = NuevoItemForm("Recomendaciones", "mnu.cat.recomendaciones", typeof(RecomendacionesForm), () => new RecomendacionesForm());
-
-            // PdN 3 — Analítica / Valor Agregado (CU-ANA-03..06)
-            _miAnalisisExp    = NuevoItemForm("Análisis de experiencias", "mnu.ana.experiencias",  typeof(AnalisisExperienciasForm),  () => new AnalisisExperienciasForm());
-            _miClientesRiesgo = NuevoItemForm("Clientes en riesgo",       "mnu.ana.riesgo",         typeof(ClientesEnRiesgoForm),      () => new ClientesEnRiesgoForm());
-            _miCancelaciones  = NuevoItemForm("Análisis de cancelaciones","mnu.ana.cancelaciones",  typeof(AnalisisCancelacionesForm), () => new AnalisisCancelacionesForm());
-            _miAnalisisSusc   = NuevoItemForm("Análisis de suscripciones","mnu.ana.suscripciones",  typeof(AnalisisSuscripcionesForm), () => new AnalisisSuscripcionesForm());
-            _miReportesComerciales = NuevoItemForm("Reportes comerciales","mnu.ana.comercial",      typeof(ReportesComercialesForm),  () => new ReportesComercialesForm());
         }
 
         // ── Reorganización de la navegación en BLOQUES DE NEGOCIO (reutiliza ítems/forms existentes) ──
         //   Panel de Control · Fidelización · Ventas/Operación · Analíticas · Administración · Sesión
         private void ReorganizarNavegacionPorBloques()
         {
-            // 1 · FIDELIZACIÓN — relación con el cliente
-            _mnuFidelizacion = new ToolStripMenuItem(Tx("mnu.blq.fidelizacion", "Fidelización")) { Tag = "mnu.blq.fidelizacion" };
-            _mnuFidelizacion.DropDownItems.Add(clientesToolStripMenuItem);
-            _mnuFidelizacion.DropDownItems.Add(planesToolStripMenuItem);
-            _mnuFidelizacion.DropDownItems.Add(_miSuscripciones);
-            // (Recomendaciones se movió a ANALÍTICA: es un CU de valor agregado, no de Fidelización.)
+            // 1 · PN01 — COMERCIALIZACIÓN DE LA SUSCRIPCIÓN (relación comercial con el cliente)
+            _mnuComercializacion = new ToolStripMenuItem(Tx("mnu.blq.comercializacion", "Comercialización")) { Tag = "mnu.blq.comercializacion" };
+            _mnuComercializacion.DropDownItems.Add(clientesToolStripMenuItem);
+            _mnuComercializacion.DropDownItems.Add(planesToolStripMenuItem);
+            _mnuComercializacion.DropDownItems.Add(_miSuscripciones);
+            _mnuComercializacion.DropDownItems.Add(_miContrataciones);
 
-            // 2 · VENTAS / OPERACIÓN — comercialización y catálogos de experiencias
-            _mnuOperacion = new ToolStripMenuItem(Tx("mnu.blq.operacion", "Ventas / Operación")) { Tag = "mnu.blq.operacion" };
-            _mnuOperacion.DropDownItems.Add(prendasToolStripMenuItem);            // Experiencias
-            _mnuOperacion.DropDownItems.Add(pedidosVentaToolStripMenuItem);       // Reservas
-            _mnuOperacion.DropDownItems.Add(pedidosRealizadosToolStripMenuItem);  // Reservas Realizadas
-            _mnuOperacion.DropDownItems.Add(_miListaEspera);
-            _mnuOperacion.DropDownItems.Add(new ToolStripSeparator());
-            _mnuOperacion.DropDownItems.Add(_miOrganizadores);
-            _mnuOperacion.DropDownItems.Add(_miCategorias);
-            _mnuOperacion.DropDownItems.Add(_miCiudades);
+            // 2 · PN02 — RESERVAS DE EXPERIENCIAS (armado del pedido/reserva + catálogos de apoyo)
+            _mnuReservas = new ToolStripMenuItem(Tx("mnu.blq.reservas", "Reservas")) { Tag = "mnu.blq.reservas" };
+            _mnuReservas.DropDownItems.Add(experienciasToolStripMenuItem);            // Experiencias
+            _mnuReservas.DropDownItems.Add(reservasToolStripMenuItem);       // Reservas
+            _mnuReservas.DropDownItems.Add(reservasRealizadasToolStripMenuItem);  // Reservas Realizadas
+            _mnuReservas.DropDownItems.Add(_miListaEspera);
+            _mnuReservas.DropDownItems.Add(new ToolStripSeparator());
+            _mnuReservas.DropDownItems.Add(_miOrganizadores);
+            _mnuReservas.DropDownItems.Add(_miCategorias);
+            _mnuReservas.DropDownItems.Add(_miCiudades);
 
-            // 3 · ANALÍTICAS — datos operativos → información para decidir
-            _mnuAnaliticas = new ToolStripMenuItem(Tx("mnu.blq.analiticas", "Analíticas")) { Tag = "mnu.blq.analiticas" };
-            bitacoraToolStripMenuItem.DropDownItems.Remove(reporteJornadaToolStripMenuItem); // sale de Bitácora
-            _mnuAnaliticas.DropDownItems.Add(reporteJornadaToolStripMenuItem);  // CU-ANA-01
-            _mnuAnaliticas.DropDownItems.Add(_miRecomendaciones);   // CU-ANA-02 (reubicado desde Fidelización)
-            _mnuAnaliticas.DropDownItems.Add(new ToolStripSeparator());
-            _mnuAnaliticas.DropDownItems.Add(_miAnalisisExp);       // CU-ANA-03
-            _mnuAnaliticas.DropDownItems.Add(_miClientesRiesgo);    // CU-ANA-04
-            _mnuAnaliticas.DropDownItems.Add(_miCancelaciones);     // CU-ANA-05
-            _mnuAnaliticas.DropDownItems.Add(_miAnalisisSusc);      // CU-ANA-06
-            _mnuAnaliticas.DropDownItems.Add(_miReportesComerciales); // CU-ANA-07
-            // (El Dashboard es el "Panel de Control" top-level: punto de entrada/resumen.)
-
-            // 4 · ADMINISTRACIÓN (técnica) — reusa "Administrar" y le suma la Bitácora
+            // 3 · ADMINISTRACIÓN (técnica) — reusa "Administrar" y le suma la Bitácora.
+            //     El Reporte de Jornada queda DENTRO de Bitácora (ya no hay bloque Analíticas).
             gestionToolStripMenuItem.Tag  = "mnu.administracion";
             gestionToolStripMenuItem.Text = Tx("mnu.administracion", "Administración");
-            // Quitar separadores sueltos que hayan quedado en Bitácora tras mover el Reporte.
-            for (int i = bitacoraToolStripMenuItem.DropDownItems.Count - 1; i >= 0; i--)
-                if (bitacoraToolStripMenuItem.DropDownItems[i] is ToolStripSeparator)
-                    bitacoraToolStripMenuItem.DropDownItems.RemoveAt(i);
             gestionToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
             gestionToolStripMenuItem.DropDownItems.Add(bitacoraToolStripMenuItem);
 
-            // ── Reconstruir la barra superior en orden de negocio ──
+            // ── Reconstruir la barra superior por proceso de negocio ──
             menuStrip1.Items.Clear();
-            menuStrip1.Items.Add(panelControlToolStripMenuItem);   // Dashboard / inicio
-            menuStrip1.Items.Add(_mnuFidelizacion);
-            menuStrip1.Items.Add(_mnuOperacion);
-            menuStrip1.Items.Add(_mnuAnaliticas);
+            menuStrip1.Items.Add(_mnuComercializacion);            // PN01
+            menuStrip1.Items.Add(_mnuReservas);                    // PN02
             menuStrip1.Items.Add(gestionToolStripMenuItem);        // Administración
             menuStrip1.Items.Add(usuarioToolStripMenuItem);        // Sesión (Mi Perfil / Cerrar sesión)
-            menuStrip1.Items.Add(_alertasItem);                    // Alertas (alineado a la derecha)
-        }
-
-        // Codificación por COLOR de la paleta según el cuatrimestre en que se implementó cada módulo,
-        // para que el docente identifique de un vistazo qué pertenece a cada entrega:
-        //   VERDE  = 1er cuatrimestre — módulos técnicos / infraestructura (T02, T04, T05, T06, T07/T08).
-        //   CORAL  = 2do cuatrimestre — dominio de negocio de ExperienceHub.
-        // Todo lo demás (transversal: Panel de Control, Sesión) queda en azul oscuro.
-        // Genera un puntito de color (círculo) para marcar el cuatrimestre sin alterar el texto.
-        private static Image PuntoCuatri(Color c)
-        {
-            var bmp = new Bitmap(16, 16);
-            using (var g = Graphics.FromImage(bmp))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                using (var br = new SolidBrush(c)) g.FillEllipse(br, 4, 4, 8, 8);
-            }
-            return bmp;
-        }
-
-        private void CodificarMenuPorCuatrimestre()
-        {
-            // El TEXTO queda en azul oscuro (estética del programa); solo un puntito discreto a la
-            // izquierda marca el cuatrimestre. Los ítems padre también lo llevan.
-            //   AZUL    = 1er cuatri (técnico)  ·  NARANJA = 2do cuatri (negocio)
-            Image dotV = PuntoCuatri(Color.FromArgb(59, 130, 246));  // azul técnico (paleta de categorías)
-            Image dotC = PuntoCuatri(Estilo.Naranja);                // naranja negocio
-            void D(ToolStripItem it, Image dot) { if (it != null) it.Image = dot; }
-
-            // 2do cuatrimestre — NEGOCIO (bloques Fidelización / Operación / Analíticas y sus ítems)
-            D(_mnuFidelizacion, dotC); D(_mnuOperacion, dotC); D(_mnuAnaliticas, dotC);
-            D(clientesToolStripMenuItem,          dotC);
-            D(planesToolStripMenuItem,            dotC);
-            D(_miSuscripciones,                   dotC);
-            D(_miRecomendaciones,                 dotC);
-            D(prendasToolStripMenuItem,           dotC);   // Experiencias
-            D(pedidosVentaToolStripMenuItem,      dotC);   // Reservas
-            D(pedidosRealizadosToolStripMenuItem, dotC);   // Reservas Realizadas
-            D(_miListaEspera,                     dotC);
-            D(_miOrganizadores,                   dotC);
-            D(_miCategorias,                      dotC);
-            D(_miCiudades,                        dotC);
-            D(reporteJornadaToolStripMenuItem,    dotC);   // Reporte (analítica)
-            D(_miAnalisisExp,                     dotC);   // CU-ANA-03
-            D(_miClientesRiesgo,                  dotC);   // CU-ANA-04
-            D(_miCancelaciones,                   dotC);   // CU-ANA-05
-            D(_miAnalisisSusc,                    dotC);   // CU-ANA-06
-            D(_miReportesComerciales,             dotC);   // CU-ANA-07
-
-            // 1er cuatrimestre — TÉCNICO (bloque Administración y sus ítems)
-            D(gestionToolStripMenuItem,           dotV);
-            D(_grpUsuarios,                       dotV);
-            D(usuariosToolStripMenuItem,          dotV);
-            D(_adminUsuariosItem,                 dotV);
-            D(perfilesToolStripMenuItem,          dotV);
-            D(_grpSistema,                        dotV);
-            D(idiomasToolStripMenuItem,           dotV);
-            D(historialUsuariosToolStripMenuItem, dotV);
-            D(backupToolStripMenuItem,            dotV);
-            D(integridadToolStripMenuItem,        dotV);
-            D(bitacoraToolStripMenuItem,          dotV);
-            D(bitSistemaToolStripMenuItem,        dotV);
-            D(bitNegocioToolStripMenuItem,        dotV);
-
-            // Leyenda a la derecha del menú (texto azul oscuro + puntito), para el docente.
-            menuStrip1.Items.Add(new ToolStripLabel("2° cuatri") { Image = dotC, ForeColor = Estilo.AzulOscuro, Alignment = ToolStripItemAlignment.Right });
-            menuStrip1.Items.Add(new ToolStripLabel("1° cuatri") { Image = dotV, ForeColor = Estilo.AzulOscuro, Alignment = ToolStripItemAlignment.Right });
-        }
-
-        private void panelControlToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is DashboardForm)
-                { hijo.BringToFront(); return; }
-            }
-            CrearDashboardDelRol().Show();
-        }
-
-        // Panel de control único: el DashboardForm genérico se adapta por permisos.
-        private Form CrearDashboardDelRol()
-        {
-            var permisos = _usuarioActivo?.Permisos;
-            Form dash = new DashboardForm(permisos) { MdiParent = this };
-            return dash;
-        }
-
-        private void bitSistemaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Bitacora b) { b.SeleccionarTab("sistema"); b.BringToFront(); return; }
-            }
-            new Bitacora("sistema") { MdiParent = this }.Show();
-        }
-
-        private void bitNegocioToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Bitacora b) { b.SeleccionarTab("negocio"); b.BringToFront(); return; }
-            }
-            new Bitacora("negocio") { MdiParent = this }.Show();
-        }
-
-        private void reporteJornadaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is ReporteJornadaForm) { hijo.BringToFront(); return; }
-            }
-            new ReporteJornadaForm(_usuarioActivo?.Permisos) { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre Gestión de Usuarios como hijo MDI. Accesible solo para Administrador.
-        /// </summary>
-        private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Usuarios) { hijo.BringToFront(); return; }
-            }
-            new Usuarios { MdiParent = this }.Show();
-        }
-
-        // Abre el panel de Administración de Usuarios (ABM de datos no sensibles + cambiar rol + historial).
-        private void AdminUsuarios_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is AdministracionUsuariosForm) { hijo.BringToFront(); return; }
-            }
-            new AdministracionUsuariosForm { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre el Gestor de Perfiles y Permisos como hijo MDI — T04 Composite Pattern.
-        /// Accesible solo para Administrador.
-        /// </summary>
-        private void perfilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is GestorPermisos) { hijo.BringToFront(); return; }
-            }
-            new GestorPermisos { MdiParent = this }.Show();
-        }
-
-        private void idiomasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is FormIdiomas) { hijo.BringToFront(); return; }
-            }
-            new FormIdiomas { MdiParent = this }.Show();
-        }
-
-        private void historialUsuariosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is VersionHistorialForm) { hijo.BringToFront(); return; }
-            }
-            new VersionHistorialForm { MdiParent = this }.Show();
-        }
-
-        private void backupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var form = new BackupForm())
-                form.ShowDialog(this);
-        }
-
-        /// <summary>
-        /// Abre el módulo de Prendas como hijo MDI.
-        /// </summary>
-        private void prendasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Experiencias) { hijo.BringToFront(); return; }
-            }
-            new Experiencias { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre el módulo de Outfits como hijo MDI.
-        /// TODO: implementar cuando se cree el formulario Outfits.
-        /// </summary>
-        private void outfitsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var tM = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
-            string T_m(string k, string fb) => tM.ContainsKey(k) ? tM[k].Texto : fb;
-            MessageBox.Show(
-                T_m("msg.modulo.outfits",    "El módulo de Outfits aún no está disponible."),
-                T_m("lbl.proximamente",       "Próximamente"),
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Abre el módulo de Categorías como hijo MDI.
-        /// TODO: implementar cuando se cree el formulario Categorias.
-        /// </summary>
-        private void categoriasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var tM = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
-            string T_m(string k, string fb) => tM.ContainsKey(k) ? tM[k].Texto : fb;
-            MessageBox.Show(
-                T_m("msg.modulo.categorias", "El módulo de Categorías aún no está disponible."),
-                T_m("lbl.proximamente",       "Próximamente"),
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Abre el módulo de Clientes como hijo MDI. Accesible para Vendedor.
-        /// </summary>
-        private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Clientes) { hijo.BringToFront(); return; }
-            }
-            new Clientes { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre el módulo de Planes de Suscripción como hijo MDI.
-        /// </summary>
-        private void planesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Planes) { hijo.BringToFront(); return; }
-            }
-            new Planes { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre el módulo de Pedidos de Venta como hijo MDI. Accesible para Vendedor.
-        /// </summary>
-        private void pedidosVentaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is Reservas) { hijo.BringToFront(); return; }
-            }
-            new Reservas { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Abre el módulo de Pedidos Realizados como hijo MDI.
-        /// Accesible para OperadorDeInventario (mnuPedidosRealizados).
-        /// </summary>
-        private void pedidosRealizadosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is ReservasRealizadas) { hijo.BringToFront(); return; }
-            }
-            new ReservasRealizadas { MdiParent = this }.Show();
         }
 
         // ══════════════════════════════════════════════════════════════════════
@@ -867,7 +510,6 @@ namespace GUI
             menuStrip1.BackColor = Color.White;
             menuStrip1.ForeColor = Estilo.AzulOscuro;
             menuStrip1.Renderer  = new MenuRendererModerno();
-            CodificarMenuPorCuatrimestre();
             if (_tsIdioma != null) { _tsIdioma.BackColor = Estilo.Gris100; }
             if (_lblIdioma != null) { _lblIdioma.ForeColor = Estilo.Gris700; }
 
@@ -876,14 +518,6 @@ namespace GUI
             _timerIntegridad = new System.Windows.Forms.Timer { Interval = 30 * 60 * 1000 };
             _timerIntegridad.Tick += TimerIntegridad_Tick;
             _timerIntegridad.Start();
-
-            // 3. Abrir dashboard inmediatamente — sus datos cargan en background
-            var dash = CrearDashboardDelRol();
-            dash.Show();
-            try { PreferenciasUI.Aplicar(dash); } catch { }
-
-            // Calcular el badge del Centro de Alertas (en background, vía BLL).
-            ActualizarBadgeAlertas();
 
             // 4. Cargar traducciones de BD en background (no bloquea la UI)
             // RF-22/23 — Al ingresar se aplica el idioma PREFERIDO del usuario (persistido en BD).
@@ -969,177 +603,6 @@ namespace GUI
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.TraceError($"[Menu.TimerIntegridad] Error: {ex.Message}");
-            }
-        }
-
-        private void integridadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Form hijo in this.MdiChildren)
-            {
-                if (hijo is DiagnosticoIntegridadForm) { hijo.BringToFront(); return; }
-            }
-            new DiagnosticoIntegridadForm { MdiParent = this }.Show();
-        }
-
-        /// <summary>
-        /// Recibe la notificación del GestorIdioma cuando el idioma cambia.
-        /// Equivalente a UpdateLanguage(IIdioma idioma) del ejemplo de cátedra.
-        /// </summary>
-        public void UpdateLanguage(Idioma idioma)
-        {
-            // Reconstruir el combo por si cambió el CONJUNTO de idiomas disponibles
-            // (p. ej. el admin activó/creó un idioma en Gestión de Idiomas): así el nuevo
-            // idioma aparece al instante en el dropdown, sin reiniciar la aplicación.
-            if (GestorIdioma.IdiomasDisponibles != null && GestorIdioma.IdiomasDisponibles.Count > 0)
-                ReconstruirComboIdioma(GestorIdioma.IdiomasDisponibles);
-            Traducir(idioma);
-            SeleccionarIdiomaEnCombo(idioma.Id);
-        }
-
-        /// <summary>
-        /// Reasigna el .Text de cada ítem del menú leyendo su propiedad Tag como
-        /// clave de traducción — exactamente igual que en el ejemplo de cátedra (frmMain).
-        /// Los Tags se asignan en el Designer; el código no hardcodea ninguna clave.
-        /// </summary>
-        private void Traducir(Idioma idioma)
-        {
-            var t = Traductor.ObtenerTraducciones(idioma);
-
-            // Label dinámico "Idioma:" / "Language:" / "Язык:"
-            if (t.ContainsKey("lbl.idioma"))
-                _lblIdioma.Text = t["lbl.idioma"].Texto;
-
-            // Item "Mi Perfil" (creado en código, sin Tag del Designer)
-            if (_miPerfilItem != null)
-                _miPerfilItem.Text = t.ContainsKey("perfil.menu") ? t["perfil.menu"].Texto : "Mi Perfil";
-
-            Aplicar(usuarioToolStripMenuItem,           t);
-            Aplicar(panelControlToolStripMenuItem,      t);
-            Aplicar(inventarioToolStripMenuItem,        t);
-            Aplicar(prendasToolStripMenuItem,           t);
-            Aplicar(ventasToolStripMenuItem,            t);
-            Aplicar(clientesToolStripMenuItem,          t);
-            Aplicar(planesToolStripMenuItem,            t);
-            Aplicar(pedidosVentaToolStripMenuItem,      t);
-            Aplicar(pedidosRealizadosToolStripMenuItem, t);
-            Aplicar(gestionToolStripMenuItem,           t);
-            Aplicar(_grpUsuarios,                       t);
-            Aplicar(_grpSistema,                        t);
-            Aplicar(usuariosToolStripMenuItem,          t);
-            Aplicar(_adminUsuariosItem,                 t);
-            Aplicar(perfilesToolStripMenuItem,          t);
-            Aplicar(idiomasToolStripMenuItem,           t);
-            Aplicar(historialUsuariosToolStripMenuItem, t);
-            Aplicar(backupToolStripMenuItem,            t);
-            Aplicar(integridadToolStripMenuItem,        t);
-            Aplicar(bitacoraToolStripMenuItem,          t);
-            Aplicar(bitSistemaToolStripMenuItem,        t);
-            Aplicar(bitNegocioToolStripMenuItem,        t);
-            Aplicar(reporteJornadaToolStripMenuItem,    t);
-            Aplicar(cerrarSesionToolStripMenuItem,      t);
-
-            // Bloques de negocio (creados por código) + ítems de catálogo redistribuidos.
-            Aplicar(_mnuFidelizacion,  t);
-            Aplicar(_mnuOperacion,     t);
-            Aplicar(_mnuAnaliticas,    t);
-            Aplicar(_miOrganizadores,  t);
-            Aplicar(_miCategorias,     t);
-            Aplicar(_miCiudades,       t);
-            Aplicar(_miSuscripciones,  t);
-            Aplicar(_miListaEspera,    t);
-            Aplicar(_miRecomendaciones,t);
-            Aplicar(_miAnalisisExp,    t);
-            Aplicar(_miClientesRiesgo, t);
-            Aplicar(_miCancelaciones,  t);
-            Aplicar(_miAnalisisSusc,   t);
-            Aplicar(_miReportesComerciales, t);
-
-            // Menú "Catálogos" (construido por código): traducir el grupo y sus ítems por Tag.
-            if (_catalogosMenu != null)
-            {
-                Aplicar(_catalogosMenu, t);
-                foreach (ToolStripItem sub in _catalogosMenu.DropDownItems)
-                    if (sub is ToolStripMenuItem mi) Aplicar(mi, t);
-            }
-
-            // Ítem de Alertas: tiene icono + badge, se compone aparte (no por Tag directo).
-            RefrescarTextoAlertas();
-        }
-
-        /// <summary>
-        /// Lee el Tag del ítem para obtener la clave y aplica la traducción.
-        /// Equivalente al patrón if (item.Tag != null && traducciones.ContainsKey(...))
-        /// del ejemplo de cátedra — el Tag actúa como clave del diccionario.
-        /// </summary>
-        private static void Aplicar(ToolStripMenuItem item,
-            IDictionary<string, Traduccion> t)
-        {
-            if (item != null && item.Tag != null && t.ContainsKey(item.Tag.ToString()))
-                item.Text = t[item.Tag.ToString()].Texto;
-        }
-
-        // ── Helpers de la barra de idioma (dropdown) ──────────────────────────
-
-        /// <summary>
-        /// Llena el combo del ToolStrip con los idiomas (de BD o fallback). Un idioma nuevo
-        /// aparece solo, sin tocar este código.
-        /// </summary>
-        private void ReconstruirComboIdioma(IList<Idioma> idiomas)
-        {
-            if (_cmbIdiomaMenu == null) return;
-            _suprimirIdiomaMenu = true;
-            _cmbIdiomaMenu.ComboBox.DataSource    = null;
-            _cmbIdiomaMenu.ComboBox.DisplayMember = "Nombre";
-            _cmbIdiomaMenu.ComboBox.ValueMember   = "Id";
-            _cmbIdiomaMenu.ComboBox.DataSource    = new List<Idioma>(idiomas);
-            _suprimirIdiomaMenu = false;
-            SeleccionarIdiomaEnCombo(GestorIdioma.IdiomaActual?.Id ?? "ES");
-        }
-
-        /// <summary>Selecciona en el combo el idioma indicado, SIN disparar el cambio (uso interno).</summary>
-        private void SeleccionarIdiomaEnCombo(string codigo)
-        {
-            if (_cmbIdiomaMenu?.ComboBox?.Items == null) return;
-            for (int i = 0; i < _cmbIdiomaMenu.ComboBox.Items.Count; i++)
-                if (_cmbIdiomaMenu.ComboBox.Items[i] is Idioma idm &&
-                    string.Equals(idm.Id, codigo, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (_cmbIdiomaMenu.SelectedIndex != i)
-                    {
-                        bool prev = _suprimirIdiomaMenu;
-                        _suprimirIdiomaMenu = true;
-                        _cmbIdiomaMenu.SelectedIndex = i;
-                        _suprimirIdiomaMenu = prev;
-                    }
-                    break;
-                }
-        }
-
-        /// <summary>
-        /// Cambio de idioma desde el combo: aplica vía Observer (todos los forms se traducen)
-        /// y persiste la preferencia del usuario en BD.
-        /// </summary>
-        private void CmbIdiomaMenu_Changed(object sender, EventArgs e)
-        {
-            if (_suprimirIdiomaMenu) return;
-            var idioma = _cmbIdiomaMenu.SelectedItem as Idioma;
-            if (idioma == null) return;
-
-            try
-            {
-                var dictTrad = new BLL.IdiomaService().CargarTraducciones(idioma.Id);
-                GestorIdioma.CambiarIdioma(idioma, dictTrad);
-            }
-            catch { GestorIdioma.CambiarIdioma(idioma); }
-
-            try
-            {
-                if (_usuarioActivo != null)
-                    new BLL.Usuario().GuardarPreferenciaIdioma(_usuarioActivo.Id, idioma.Id);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.TraceError($"[Menu] Error al guardar preferencia de idioma: {ex.Message}");
             }
         }
 

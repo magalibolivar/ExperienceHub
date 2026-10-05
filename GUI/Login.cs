@@ -16,7 +16,7 @@ namespace GUI
     /// ExperienceHub — Login de Empleados. Rediseño 1:1 con el mockup de marca:
     /// panel izquierdo con foto de atardecer + tarjeta glass (logo + marca + slogan);
     /// panel derecho con "Portal de Administración", campos con ícono y placeholder,
-    /// "Recordarme", botón coral "Ingresar", link de contraseña y footer idioma/versión.
+    /// botón coral "Ingresar", link de contraseña y footer idioma/versión.
     ///
     /// PATRÓN OBSERVER — T05: implementa IIdiomaObserver (se suscribe al GestorIdioma).
     /// Toda la lógica de autenticación/seguridad se conserva intacta.
@@ -31,7 +31,6 @@ namespace GUI
 
         private bool _uiBuilt;
         private TarjetaPanel _fUser, _fPass;
-        private CheckBox _chkRecordar;
         private Label _lblIdioma, _lblVersion;
         private Image _bgImg, _markImg;
         private bool _btnHover;
@@ -90,9 +89,9 @@ namespace GUI
 
             // Campos con ícono (Segoe MDL2 Assets) y placeholder.
             _fUser = CampoRedondeado(new Point(X, 214), W,"");   // contacto
-            ReubicarTextBox(txtUsuario, _fUser, "Usuario", conAccion: false);
+            ReubicarTextBox(txtUsuario, _fUser, "Usuario", conAccion: false, tagKey: "lbl.usuario");
             _fPass = CampoRedondeado(new Point(X, 276), W,"");   // candado
-            ReubicarTextBox(txtContraseña, _fPass, "Contraseña", conAccion: true);
+            ReubicarTextBox(txtContraseña, _fPass, "Contraseña", conAccion: true, tagKey: "lbl.contrasena");
             txtContraseña.PasswordChar = '●';
 
             // Mostrar/ocultar contraseña (ojito) — misma funcionalidad que el login de WardrobeFlow.
@@ -111,15 +110,6 @@ namespace GUI
             };
             _fPass.Controls.Add(btnOjo);
             btnOjo.BringToFront();
-
-            // Recordarme.
-            _chkRecordar = new CheckBox
-            {
-                Text = "Recordarme", Location = new Point(X, 338), Size = new Size(200, 24),
-                ForeColor = Estilo.AzulOscuro, BackColor = Color.White, Cursor = Cursors.Hand,
-                Font = Estilo.Normal(9.5f)
-            };
-            pnlCard.Controls.Add(_chkRecordar);
 
             // Botón "Ingresar" (coral sólido redondeado).
             lblUsuario.Visible = false; lblContraseña.Visible = false;
@@ -157,7 +147,7 @@ namespace GUI
             const int footY = 556, footH = 24;
             _lblIdioma = new Label
             {
-                Text = "Idioma", AutoSize = false, Size = new Size(56, footH), Location = new Point(108, footY),
+                Text = "Idioma", Tag = "lbl.idioma", AutoSize = false, Size = new Size(56, footH), Location = new Point(108, footY),
                 TextAlign = ContentAlignment.MiddleRight, ForeColor = Estilo.Gris700, BackColor = Color.White,
                 Font = Estilo.Normal(9f)
             };
@@ -195,7 +185,7 @@ namespace GUI
             return p;
         }
 
-        private void ReubicarTextBox(TextBox tb, TarjetaPanel panel, string placeholder, bool conAccion)
+        private void ReubicarTextBox(TextBox tb, TarjetaPanel panel, string placeholder, bool conAccion, string tagKey = null)
         {
             tb.Parent      = panel;
             tb.BorderStyle = BorderStyle.None;
@@ -214,7 +204,7 @@ namespace GUI
             // lógica de login) y usa un gris #6B7280 con contraste ≥4.5:1 sobre blanco (WCAG AA).
             var ph = new Label
             {
-                Text = placeholder, AutoSize = false, Location = new Point(48, 13),
+                Text = placeholder, Tag = tagKey, AutoSize = false, Location = new Point(48, 13),
                 Size = new Size(tb.Width, 22), Font = Estilo.Normal(11f),
                 ForeColor = Color.FromArgb(107, 114, 128), BackColor = Color.White,
                 TextAlign = ContentAlignment.MiddleLeft, Cursor = Cursors.IBeam
@@ -306,7 +296,10 @@ namespace GUI
                 float startX = cx + (cw - total) / 2f;
                 g.DrawString(a, fWord, bNavy, startX, wy, stf);
                 g.DrawString(b2, fWord, bCoral, startX + sa.Width, wy, stf);
-                g.DrawString("Descubrí experiencias. Viví momentos.", fSlogan, bGrey,
+                var trad = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
+                string slogan = (trad != null && trad.ContainsKey("lbl.brand.slogan"))
+                    ? trad["lbl.brand.slogan"].Texto : "Descubrí experiencias. Viví momentos.";
+                g.DrawString(slogan, fSlogan, bGrey,
                     new RectangleF(cx + 16, cy + 286, cw - 32, 40), sf);
             }
         }
@@ -390,7 +383,7 @@ namespace GUI
             catch { GestorIdioma.CambiarIdioma(idioma); }
         }
 
-        // ── "Recordarme": recuerda el último usuario (HKCU) ───────────────────────────────────
+        // ── Último usuario: precarga el nombre del último empleado que ingresó (HKCU) ───────────
         private void CargarRecordado()
         {
             try
@@ -398,7 +391,7 @@ namespace GUI
                 using (var k = Registry.CurrentUser.OpenSubKey(REG_KEY))
                 {
                     var u = k?.GetValue("LastUser") as string;
-                    if (!string.IsNullOrEmpty(u)) { txtUsuario.Text = u; if (_chkRecordar != null) _chkRecordar.Checked = true; }
+                    if (!string.IsNullOrEmpty(u)) txtUsuario.Text = u;
                 }
             }
             catch { }
@@ -410,8 +403,7 @@ namespace GUI
             {
                 using (var k = Registry.CurrentUser.CreateSubKey(REG_KEY))
                 {
-                    if (_chkRecordar != null && _chkRecordar.Checked) k.SetValue("LastUser", txtUsuario.Text.Trim());
-                    else k.DeleteValue("LastUser", false);
+                    k.SetValue("LastUser", txtUsuario.Text.Trim());
                 }
             }
             catch { }
@@ -471,17 +463,34 @@ namespace GUI
             var tituloForm = Tx(this.Tag?.ToString());
             if (tituloForm != null) this.Text = tituloForm;
 
-            var bienvenido = Tx(lblAccent.Tag?.ToString());
-            if (bienvenido != null) lblAccent.Text = bienvenido;
+            // Re-traduce TODO control con un Tag que sea una clave conocida: el título, los links,
+            // las labels del footer y los placeholders superpuestos (Usuario/Contraseña).
+            TraducirArbol(this, t);
 
-            var ingresar = Tx(btnIngresar.Tag?.ToString());
-            if (ingresar != null) { btnIngresar.Text = ingresar; btnIngresar.Invalidate(); }
+            // Footer "Versión": la palabra se traduce; el número de versión es fijo.
+            if (_lblVersion != null) _lblVersion.Text = "|   " + (Tx("lbl.version") ?? "Versión 1.0.0");
 
-            var olvide = Tx(lnkOlvidaste.Tag?.ToString());
-            if (olvide != null) lnkOlvidaste.Text = olvide;
+            // Slogan de marca del panel izquierdo (lo dibuja PnlLeft_Paint por GDI): forzar el
+            // re-dibujo para que tome el idioma nuevo.
+            pnlLeft.Invalidate();
 
-            var emg = Tx(_lnkEmergencia?.Tag?.ToString());
-            if (emg != null && _lnkEmergencia != null) _lnkEmergencia.Text = emg;
+            btnIngresar.Invalidate();
+        }
+
+        // Recorre el árbol de controles y asigna el texto traducido a cada uno cuyo Tag sea una
+        // clave presente en el diccionario. Así los controles creados por código (placeholders,
+        // idioma, etc.) participan del cambio de idioma igual que los del Designer.
+        private static void TraducirArbol(Control root, System.Collections.Generic.IDictionary<string, Traduccion> t)
+        {
+            foreach (Control c in root.Controls)
+            {
+                if (c.Tag is string clave && t.ContainsKey(clave))
+                {
+                    c.Text = t[clave].Texto;
+                    if (c is Button) c.Invalidate();
+                }
+                if (c.HasChildren) TraducirArbol(c, t);
+            }
         }
 
         // ── Eventos de negocio ────────────────────────────────────────────────────

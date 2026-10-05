@@ -67,6 +67,7 @@
     <Compile Include="Interes.cs" />
     <Compile Include="Experiencia.cs" />
     <Compile Include="Suscripcion.cs" />
+    <Compile Include="Contratacion.cs" />
     <Compile Include="Reserva.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="ListaEspera.cs" />
@@ -79,6 +80,8 @@
     <Compile Include="Preferencia.cs" />
     <Compile Include="HistorialIntegridad.cs" />
     <Compile Include="Usuario.cs" />
+    <Compile Include="Usuario.Seguridad.cs" />
+    <Compile Include="Usuario.Integridad.cs" />
     <Compile Include="VersionUsuario.cs" />
   </ItemGroup>
   <ItemGroup>

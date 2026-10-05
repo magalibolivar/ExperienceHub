@@ -1,0 +1,49 @@
+@startuml DER - Persistencia (vision general)
+title T01 - Esquema de persistencia (vision general por grupos)
+skinparam linetype ortho
+hide circle
+skinparam packageStyle rectangle
+
+package "Seguridad / Usuarios" {
+  entity "Usuario" as U { * IdUsuario <<PK>> }
+  entity "Empleado" as E { * IdEmpleado <<PK>> / IdUsuario <<FK>> }
+  entity "Permiso" as P { * IdPermiso <<PK>> }
+  entity "PermisoRelacion" as PR { IdPadre <<FK>> / IdHijo <<FK>> }
+  entity "ClaveRecuperacion" as CR { * IdClave <<PK>> }
+}
+package "Negocio (dominio)" {
+  entity "Cliente" as Cl { * IdCliente <<PK>> }
+  entity "Suscripcion" as Su { * IdSuscripcion <<PK>> }
+  entity "PlanSuscripcion" as Pl { * IdPlan <<PK>> }
+  entity "Experiencia" as Ex { * IdExperiencia <<PK>> }
+  entity "Reserva" as Re { * IdReserva <<PK>> }
+  entity "ListaEspera" as LE { * IdListaEspera <<PK>> }
+  entity "Calificacion" as Ca { * IdCalificacion <<PK>> }
+}
+package "Auditoria / Integridad / i18n" {
+  entity "Bitacora" as B { * Id <<PK>> }
+  entity "BitacoraNegocio" as BN { * IdEvento <<PK>> }
+  entity "HistorialUsuario" as HU { * IdVersion <<PK>> }
+  entity "HistorialIntegridad" as HI { * Id <<PK>> }
+  entity "DVVertical" as DV { * Id <<PK>> }
+  entity "Idioma / Control / Traduccion" as I18N
+}
+
+E --> U
+P --> PR
+U --> HU
+Cl --> Su
+Su --> Pl
+Cl --> Re
+Ex --> Re
+Ex --> LE
+Re --> Ca
+U --> B
+Re ..> BN
+
+note bottom
+  Vista de arquitectura de datos (alta): agrupa las tablas por responsabilidad.
+  El detalle completo de atributos y cardinalidades esta en G07 - Modelo de Datos
+  Integrado y en los DER por tema. Persistencia: SQL Server via ADO.NET (Acceso).
+end note
+@enduml

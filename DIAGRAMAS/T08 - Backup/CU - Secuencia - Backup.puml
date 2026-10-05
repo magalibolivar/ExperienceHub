@@ -1,0 +1,70 @@
+@startuml CU - Secuencia - Backup
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title T08 - Backup y Restauracion (cifrado .ehbak con verificacion previa)
+actor "Administrador" as A
+participant "BackupForm\n(GUI)" as GUI
+participant "BLL.Backup" as BB
+participant "BLL.Configuracion" as CFG
+participant "DAL.Backup" as DB2
+participant "CifradorArchivos" as CIF
+participant "Servicios.Bitacora" as BIT
+database "SQL Server" as DB
+
+group Generar backup
+  A -> GUI : Generar backup (contrasena)
+  GUI -> BB : RealizarBackup(modulo, dirDestino, clave)
+  BB -> CFG : VerificarIntegridadDV(out resultado)
+  alt integridad COMPROMETIDA
+    CFG --> BB : false
+    BB --> GUI : AppException (respaldo cancelado)
+  else INTEGRO
+    BB -> DB2 : BACKUP DATABASE -> .bak temporal
+    DB2 -> DB : BACKUP DATABASE
+    BB -> CIF : Cifrar(bakTemporal, destino, clave)
+    note right of CIF : AES-128 + PBKDF2\nsalida: *.ehbak
+    BB -> BIT : Registrar(modulo, "Backup generado", Alta)
+    BB --> GUI : ruta .ehbak
+    GUI --> A : respaldo creado
+  end
+end
+
+group Restaurar backup
+  A -> GUI : Restaurar (archivo, contrasena)
+  GUI -> BB : RestaurarBackup(modulo, ruta, clave)
+  alt archivo .ehbak (cifrado)
+    BB -> CIF : Descifrar(ruta, bakTemporal, clave)
+  end
+  BB -> DB2 : RESTORE VERIFYONLY
+  DB2 -> DB : RESTORE VERIFYONLY
+  BB -> DB2 : RESTORE ... WITH REPLACE (SINGLE_USER)
+  DB2 -> DB : RESTORE DATABASE
+  BB -> BIT : Registrar(modulo, "Backup restaurado", Alta)
+  BB --> GUI : ok -> la aplicacion reinicia
+end
+@enduml

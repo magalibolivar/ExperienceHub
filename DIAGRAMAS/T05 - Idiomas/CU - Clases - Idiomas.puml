@@ -1,0 +1,61 @@
+@startuml CU - Clases - Idiomas
+title T05 - Multiidioma (patron Observer)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Servicios.Multiidioma" {
+  interface IIdiomaObserver <<Observer>> {
+    + UpdateLanguage(idioma : Idioma)
+  }
+  class GestorIdioma <<Subject, static>> {
+    + {static} IdiomaActual : Idioma
+    + {static} SuscribirObservador(o : IIdiomaObserver)
+    + {static} DesuscribirObservador(o : IIdiomaObserver)
+    + {static} CambiarIdioma(idioma, traducciones)
+    - {static} Notificar(idioma)
+  }
+  class Traductor <<static>> {
+    + {static} ObtenerIdiomas() : IList<Idioma>
+    + {static} ObtenerTraducciones(idioma) : Dictionary
+    + {static} ObtenerIdiomaDefault() : Idioma
+  }
+}
+
+package "GUI" {
+  class FormBase <<Form>>
+  class "Form A / Form B / ..." as Forms
+  FormBase ..|> IIdiomaObserver
+  Forms --|> FormBase
+}
+
+package "BLL" {
+  class IdiomaService {
+    + ObtenerIdiomasActivos() : List<Idioma>
+    + CrearIdioma(codigo, nombre)
+    + ActivarIdioma(id) / DesactivarIdioma(id)
+    + CargarTraducciones(codigo) : Dictionary
+    + GuardarTraduccion(idControl, idIdioma, texto)
+    + ContarTraduccionesFaltantes(idIdioma) : int
+  }
+}
+
+package "DAL" {
+  class "DAL.Idioma"
+  class "DAL.Traduccion"
+  class "DAL.Control"
+}
+
+GestorIdioma o--> "*" IIdiomaObserver : observadores suscritos
+GestorIdioma ..> Traductor
+Forms ..> GestorIdioma : Suscribir / Desuscribir
+Forms ..> Traductor : Tx(clave)
+IdiomaService ..> "DAL.Idioma"
+IdiomaService ..> "DAL.Traduccion"
+IdiomaService ..> "DAL.Control"
+
+note bottom of GestorIdioma
+  Al cambiar el idioma, el Subject notifica a todos los formularios
+  suscritos (UpdateLanguage) y estos re-traducen en caliente. Fallback
+  por clave: una traduccion vacia cae al idioma por defecto.
+end note
+@enduml

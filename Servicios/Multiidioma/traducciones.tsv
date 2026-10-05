@@ -4136,3 +4136,251 @@ ES	eh.dash.revisar	Revisar
 EN	eh.dash.revisar	Review
 PT	eh.dash.revisar	Rever
 RU	eh.dash.revisar	Проверить
+ES	eh.frm.backup	Backup y Restauración
+EN	eh.frm.backup	Backup and Restore
+PT	eh.frm.backup	Backup e Restauração
+RU	eh.frm.backup	Резервное копирование и восстановление
+ES	eh.bak.header.desc	Copias de seguridad cifradas (.ehbak) y restauración de la base de datos.
+EN	eh.bak.header.desc	Encrypted backups (.ehbak) and database restoration.
+PT	eh.bak.header.desc	Cópias de segurança cifradas (.ehbak) e restauração da base de dados.
+RU	eh.bak.header.desc	Шифрованные резервные копии (.ehbak) и восстановление базы данных.
+ES	eh.frm.bitacora	Bitácora
+EN	eh.frm.bitacora	Audit Log
+PT	eh.frm.bitacora	Registro de Auditoria
+RU	eh.frm.bitacora	Журнал аудита
+ES	eh.bit.header.desc	Auditoría de operaciones del sistema y del negocio. Filtrá por fecha, usuario, actividad o criticidad.
+EN	eh.bit.header.desc	Audit of system and business operations. Filter by date, user, activity or severity.
+PT	eh.bit.header.desc	Auditoria de operações do sistema e do negócio. Filtre por data, usuário, atividade ou criticidade.
+RU	eh.bit.header.desc	Аудит системных и бизнес-операций. Фильтруйте по дате, пользователю, действию или критичности.
+ES	eh.frm.clientes	Clientes
+EN	eh.frm.clientes	Clients
+PT	eh.frm.clientes	Clientes
+RU	eh.frm.clientes	Клиенты
+ES	eh.cli.header.desc	Clientes suscriptores del servicio. Registrá, editá o filtrá por nombre, DNI o email.
+EN	eh.cli.header.desc	Subscriber clients of the service. Register, edit or filter by name, ID or email.
+PT	eh.cli.header.desc	Clientes assinantes do serviço. Cadastre, edite ou filtre por nome, documento ou e-mail.
+RU	eh.cli.header.desc	Клиенты-подписчики сервиса. Добавляйте, редактируйте или фильтруйте по имени, документу или эл. почте.
+ES	eh.frm.contrataciones	Comercialización de la suscripción
+EN	eh.frm.contrataciones	Subscription Sales
+PT	eh.frm.contrataciones	Comercialização da assinatura
+RU	eh.frm.contrataciones	Оформление подписки
+ES	eh.con.header.desc	Venta registra la contratación (pendiente de pago); Caja cobra y emite el comprobante; Venta formaliza la suscripción.
+EN	eh.con.header.desc	Sales registers the contract (pending payment); Cashier charges and issues the receipt; Sales formalizes the subscription.
+PT	eh.con.header.desc	Vendas registra a contratação (pendente de pagamento); Caixa cobra e emite o comprovante; Vendas formaliza a assinatura.
+RU	eh.con.header.desc	Отдел продаж регистрирует договор (ожидает оплаты); Касса принимает оплату и выдаёт чек; Отдел продаж оформляет подписку.
+ES	eh.diag.header.desc	Verificación de dígitos verificadores (DVH/DVV) por entidad protegida.
+EN	eh.diag.header.desc	Verification of check digits (DVH/DVV) per protected entity.
+PT	eh.diag.header.desc	Verificação de dígitos verificadores (DVH/DVV) por entidade protegida.
+RU	eh.diag.header.desc	Проверка контрольных цифр (DVH/DVV) по защищённой сущности.
+ES	eh.frm.idiomas	Idiomas
+EN	eh.frm.idiomas	Languages
+PT	eh.frm.idiomas	Idiomas
+RU	eh.frm.idiomas	Языки
+ES	eh.idi.header.desc	Idiomas y traducciones de la interfaz. El cambio de idioma es dinámico (patrón Observer).
+EN	eh.idi.header.desc	Interface languages and translations. Language switching is dynamic (Observer pattern).
+PT	eh.idi.header.desc	Idiomas e traduções da interface. A troca de idioma é dinâmica (padrão Observer).
+RU	eh.idi.header.desc	Языки и переводы интерфейса. Смена языка динамическая (паттерн «Наблюдатель»).
+ES	eh.frm.planes	Planes
+EN	eh.frm.planes	Plans
+PT	eh.frm.planes	Planos
+RU	eh.frm.planes	Планы
+ES	eh.plan.header.desc	Configuración de los planes de suscripción: reservas mensuales incluidas y precio.
+EN	eh.plan.header.desc	Subscription plan setup: monthly reservations included and price.
+PT	eh.plan.header.desc	Configuração dos planos de assinatura: reservas mensais incluídas e preço.
+RU	eh.plan.header.desc	Настройка планов подписки: включённые ежемесячные брони и цена.
+ES	eh.frm.usuarios	Usuarios
+EN	eh.frm.usuarios	Users
+PT	eh.frm.usuarios	Usuários
+RU	eh.frm.usuarios	Пользователи
+ES	eh.usr.header.desc	Alta, edición y baja de los usuarios del sistema y su rol.
+EN	eh.usr.header.desc	Create, edit and remove system users and their role.
+PT	eh.usr.header.desc	Criação, edição e exclusão dos usuários do sistema e seu papel.
+RU	eh.usr.header.desc	Создание, редактирование и удаление пользователей системы и их ролей.
+ES	eh.cat.header.desc	Catálogo de categorías para clasificar las experiencias.
+EN	eh.cat.header.desc	Catalog of categories to classify experiences.
+PT	eh.cat.header.desc	Catálogo de categorias para classificar as experiências.
+RU	eh.cat.header.desc	Каталог категорий для классификации впечатлений.
+ES	eh.ciu.header.desc	Catálogo de ciudades donde se ofrecen las experiencias.
+EN	eh.ciu.header.desc	Catalog of cities where experiences are offered.
+PT	eh.ciu.header.desc	Catálogo de cidades onde as experiências são oferecidas.
+RU	eh.ciu.header.desc	Каталог городов, где предлагаются впечатления.
+ES	eh.exp.header.desc	Catálogo de experiencias. Seleccioná una para editarla o creá una nueva.
+EN	eh.exp.header.desc	Experience catalog. Select one to edit it or create a new one.
+PT	eh.exp.header.desc	Catálogo de experiências. Selecione uma para editá-la ou crie uma nova.
+RU	eh.exp.header.desc	Каталог впечатлений. Выберите, чтобы отредактировать, или создайте новое.
+ES	eh.le.header.desc	Cuando se libera un cupo, se ofrece al primero de la fila. Confirmá su oferta para generar la reserva.
+EN	eh.le.header.desc	When a spot opens up, it is offered to the first in line. Confirm their offer to create the reservation.
+PT	eh.le.header.desc	Quando uma vaga é liberada, é oferecida ao primeiro da fila. Confirme a oferta para gerar a reserva.
+RU	eh.le.header.desc	Когда освобождается место, оно предлагается первому в очереди. Подтвердите предложение, чтобы создать бронь.
+ES	eh.org.header.desc	Proveedores que organizan las experiencias del catálogo.
+EN	eh.org.header.desc	Providers that organize the catalog experiences.
+PT	eh.org.header.desc	Fornecedores que organizam as experiências do catálogo.
+RU	eh.org.header.desc	Поставщики, которые организуют впечатления каталога.
+ES	eh.res.header.desc	Asigná una experiencia a un cliente respetando su suscripción, o gestioná las reservas existentes.
+EN	eh.res.header.desc	Assign an experience to a client respecting their subscription, or manage existing reservations.
+PT	eh.res.header.desc	Atribua uma experiência a um cliente respeitando sua assinatura, ou gerencie as reservas existentes.
+RU	eh.res.header.desc	Назначьте впечатление клиенту с учётом его подписки или управляйте существующими бронями.
+ES	eh.rr.header.desc	Registrá la asistencia del cliente y su calificación de la experiencia.
+EN	eh.rr.header.desc	Record the client's attendance and their rating of the experience.
+PT	eh.rr.header.desc	Registre a presença do cliente e sua avaliação da experiência.
+RU	eh.rr.header.desc	Отметьте посещение клиента и его оценку впечатления.
+ES	eh.sus.header.desc	Estado de la suscripción del cliente y acciones: renovar, suspender o reactivar.
+EN	eh.sus.header.desc	Client's subscription status and actions: renew, suspend or reactivate.
+PT	eh.sus.header.desc	Estado da assinatura do cliente e ações: renovar, suspender ou reativar.
+RU	eh.sus.header.desc	Статус подписки клиента и действия: продлить, приостановить или возобновить.
+ES	eh.btn.cancelarreserva	Cancelar
+EN	eh.btn.cancelarreserva	Cancel
+PT	eh.btn.cancelarreserva	Cancelar
+RU	eh.btn.cancelarreserva	Отменить
+ES	eh.btn.cobrar	Cobrar (pago OK)
+EN	eh.btn.cobrar	Charge (payment OK)
+PT	eh.btn.cobrar	Cobrar (pagamento OK)
+RU	eh.btn.cobrar	Принять оплату (успех)
+ES	eh.btn.formalizar	Formalizar suscripción
+EN	eh.btn.formalizar	Formalize subscription
+PT	eh.btn.formalizar	Formalizar assinatura
+RU	eh.btn.formalizar	Оформить подписку
+ES	eh.btn.intento	Intento fallido
+EN	eh.btn.intento	Failed attempt
+PT	eh.btn.intento	Tentativa falha
+RU	eh.btn.intento	Неудачная попытка
+ES	eh.btn.nuevacontratacion	Registrar contratación
+EN	eh.btn.nuevacontratacion	Register contract
+PT	eh.btn.nuevacontratacion	Registrar contratação
+RU	eh.btn.nuevacontratacion	Зарегистрировать договор
+ES	eh.lbl.mediopago	Medio de pago
+EN	eh.lbl.mediopago	Payment method
+PT	eh.lbl.mediopago	Meio de pagamento
+RU	eh.lbl.mediopago	Способ оплаты
+ES	eh.lbl.plan	Plan
+EN	eh.lbl.plan	Plan
+PT	eh.lbl.plan	Plano
+RU	eh.lbl.plan	План
+ES	eh.lbl.vencimiento	Vencimiento
+EN	eh.lbl.vencimiento	Expiration
+PT	eh.lbl.vencimiento	Vencimento
+RU	eh.lbl.vencimiento	Срок действия
+ES	eh.cat.form.nueva	Nueva categoría
+EN	eh.cat.form.nueva	New category
+PT	eh.cat.form.nueva	Nova categoria
+RU	eh.cat.form.nueva	Новая категория
+ES	eh.ciu.form.nueva	Nueva ciudad
+EN	eh.ciu.form.nueva	New city
+PT	eh.ciu.form.nueva	Nova cidade
+RU	eh.ciu.form.nueva	Новый город
+ES	eh.org.form.nuevo	Nuevo organizador
+EN	eh.org.form.nuevo	New organizer
+PT	eh.org.form.nuevo	Novo organizador
+RU	eh.org.form.nuevo	Новый организатор
+ES	eh.exp.form.nueva	Nueva experiencia
+EN	eh.exp.form.nueva	New experience
+PT	eh.exp.form.nueva	Nova experiência
+RU	eh.exp.form.nueva	Новое впечатление
+ES	eh.res.form.nueva	Nueva reserva
+EN	eh.res.form.nueva	New reservation
+PT	eh.res.form.nueva	Nova reserva
+RU	eh.res.form.nueva	Новая бронь
+ES	eh.empty.categorias	No hay categorías cargadas todavía.\nCreá la primera con «Guardar».
+EN	eh.empty.categorias	No categories added yet.\nCreate the first one with «Save».
+PT	eh.empty.categorias	Ainda não há categorias cadastradas.\nCrie a primeira com «Salvar».
+RU	eh.empty.categorias	Категории ещё не добавлены.\nСоздайте первую кнопкой «Сохранить».
+ES	eh.empty.ciudades	No hay ciudades cargadas todavía.\nCreá la primera con «Guardar».
+EN	eh.empty.ciudades	No cities added yet.\nCreate the first one with «Save».
+PT	eh.empty.ciudades	Ainda não há cidades cadastradas.\nCrie a primeira com «Salvar».
+RU	eh.empty.ciudades	Города ещё не добавлены.\nСоздайте первый кнопкой «Сохранить».
+ES	eh.empty.clientes	No se encontraron clientes con el filtro aplicado.
+EN	eh.empty.clientes	No clients found with the applied filter.
+PT	eh.empty.clientes	Nenhum cliente encontrado com o filtro aplicado.
+RU	eh.empty.clientes	Клиенты по заданному фильтру не найдены.
+ES	eh.empty.contrataciones	No hay contrataciones en proceso.\nRegistrá una nueva (Venta) para iniciar el cobro.
+EN	eh.empty.contrataciones	No contracts in process.\nRegister a new one (Sales) to start the charge.
+PT	eh.empty.contrataciones	Não há contratações em andamento.\nRegistre uma nova (Vendas) para iniciar a cobrança.
+RU	eh.empty.contrataciones	Нет договоров в обработке.\nЗарегистрируйте новый (Продажи), чтобы начать оплату.
+ES	eh.empty.experiencias	No hay experiencias en el catálogo todavía.\nCreá la primera con «Guardar».
+EN	eh.empty.experiencias	No experiences in the catalog yet.\nCreate the first one with «Save».
+PT	eh.empty.experiencias	Ainda não há experiências no catálogo.\nCrie a primeira com «Salvar».
+RU	eh.empty.experiencias	В каталоге ещё нет впечатлений.\nСоздайте первое кнопкой «Сохранить».
+ES	eh.empty.listaespera	Elegí una experiencia para ver su lista de espera.\nSi está completa, acá aparece la fila FIFO.
+EN	eh.empty.listaespera	Select an experience to see its waiting list.\nIf it is full, the FIFO queue appears here.
+PT	eh.empty.listaespera	Selecione uma experiência para ver sua lista de espera.\nSe estiver lotada, a fila FIFO aparece aqui.
+RU	eh.empty.listaespera	Выберите впечатление, чтобы увидеть его лист ожидания.\nЕсли мест нет, здесь появится очередь FIFO.
+ES	eh.empty.organizadores	No hay organizadores cargados todavía.\nCreá el primero con «Guardar».
+EN	eh.empty.organizadores	No organizers added yet.\nCreate the first one with «Save».
+PT	eh.empty.organizadores	Ainda não há organizadores cadastrados.\nCrie o primeiro com «Salvar».
+RU	eh.empty.organizadores	Организаторы ещё не добавлены.\nСоздайте первого кнопкой «Сохранить».
+ES	eh.empty.planes	No hay planes de suscripción cargados todavía.
+EN	eh.empty.planes	No subscription plans added yet.
+PT	eh.empty.planes	Ainda não há planos de assinatura cadastrados.
+RU	eh.empty.planes	Планы подписки ещё не добавлены.
+ES	eh.empty.reservas	Todavía no hay reservas registradas.
+EN	eh.empty.reservas	No reservations registered yet.
+PT	eh.empty.reservas	Ainda não há reservas registradas.
+RU	eh.empty.reservas	Брони ещё не зарегистрированы.
+ES	eh.empty.reservasreal	No hay reservas para gestionar.\nAcá aparecen las confirmadas (para asistencia) y las ya realizadas (para calificar).
+EN	eh.empty.reservasreal	No reservations to manage.\nConfirmed ones (for attendance) and completed ones (for rating) appear here.
+PT	eh.empty.reservasreal	Não há reservas para gerenciar.\nAqui aparecem as confirmadas (para presença) e as já realizadas (para avaliar).
+RU	eh.empty.reservasreal	Нет броней для управления.\nЗдесь появляются подтверждённые (для отметки посещения) и уже проведённые (для оценки).
+ES	eh.sec.cliente	Cliente
+EN	eh.sec.cliente	Client
+PT	eh.sec.cliente	Cliente
+RU	eh.sec.cliente	Клиент
+ES	eh.sec.contacto	Contacto
+EN	eh.sec.contacto	Contact
+PT	eh.sec.contacto	Contato
+RU	eh.sec.contacto	Контакт
+ES	eh.sec.datos	Datos
+EN	eh.sec.datos	Details
+PT	eh.sec.datos	Dados
+RU	eh.sec.datos	Данные
+ES	eh.sec.disponibilidad	Disponibilidad
+EN	eh.sec.disponibilidad	Availability
+PT	eh.sec.disponibilidad	Disponibilidade
+RU	eh.sec.disponibilidad	Доступность
+ES	eh.sec.fechahora	Fecha y horario
+EN	eh.sec.fechahora	Date and time
+PT	eh.sec.fechahora	Data e horário
+RU	eh.sec.fechahora	Дата и время
+ES	eh.sec.informacion	Información
+EN	eh.sec.informacion	Information
+PT	eh.sec.informacion	Informação
+RU	eh.sec.informacion	Информация
+ES	eh.sec.organizador	Organizador
+EN	eh.sec.organizador	Organizer
+PT	eh.sec.organizador	Organizador
+RU	eh.sec.organizador	Организатор
+ES	eh.sec.renovacion	Renovación
+EN	eh.sec.renovacion	Renewal
+PT	eh.sec.renovacion	Renovação
+RU	eh.sec.renovacion	Продление
+ES	eh.sec.reserva	Datos de la reserva
+EN	eh.sec.reserva	Reservation details
+PT	eh.sec.reserva	Dados da reserva
+RU	eh.sec.reserva	Данные брони
+ES	eh.sec.resumen	Resumen
+EN	eh.sec.resumen	Summary
+PT	eh.sec.resumen	Resumo
+RU	eh.sec.resumen	Сводка
+ES	eh.sec.suscactual	Suscripción actual
+EN	eh.sec.suscactual	Current subscription
+PT	eh.sec.suscactual	Assinatura atual
+RU	eh.sec.suscactual	Текущая подписка
+ES	eh.sec.ubicacion	Ubicación
+EN	eh.sec.ubicacion	Location
+PT	eh.sec.ubicacion	Localização
+RU	eh.sec.ubicacion	Местоположение
+ES	mnu.blq.comercializacion	Comercialización
+EN	mnu.blq.comercializacion	Sales
+PT	mnu.blq.comercializacion	Comercialização
+RU	mnu.blq.comercializacion	Коммерциализация
+ES	mnu.blq.reservas	Reservas
+EN	mnu.blq.reservas	Reservations
+PT	mnu.blq.reservas	Reservas
+RU	mnu.blq.reservas	Брони
+ES	lbl.version	Versión 1.0.0
+EN	lbl.version	Version 1.0.0
+PT	lbl.version	Versão 1.0.0
+RU	lbl.version	Версия 1.0.0
+ES	lbl.brand.slogan	Descubrí experiencias. Viví momentos.
+EN	lbl.brand.slogan	Discover experiences. Live moments.
+PT	lbl.brand.slogan	Descubra experiências. Viva momentos.
+RU	lbl.brand.slogan	Открывайте впечатления. Живите моментами.

@@ -1,0 +1,55 @@
+@startuml CU - Secuencia - Cambio de Idioma
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+
+title T05 - Cambio de Idioma en caliente (patron Observer)
+actor "Usuario" as U
+participant "Menu / MiPerfil / Login" as F
+participant "BLL.IdiomaService" as IS
+participant "GestorIdioma\n(Subject, static)" as G
+participant "Traductor" as T
+participant "Form A\n<<IIdiomaObserver>>" as A
+participant "Form B\n<<IIdiomaObserver>>" as B
+database "SQL Server\n(Traduccion)" as DB
+
+note over A,B : cada form abierto se suscribe al abrirse\n(GestorIdioma.SuscribirObservador) y se\ndesuscribe al cerrarse (DesuscribirObservador).
+
+U -> F : selecciona idioma (ej. EN)
+F -> IS : CargarTraducciones("EN")
+IS -> DB : SELECT clave, texto FROM Traduccion
+DB --> IS : filas (con fallback por clave al idioma por defecto)
+IS --> F : diccionario en memoria
+F -> G : CambiarIdioma(idioma, traducciones)
+G -> G : Notificar(idioma)
+G -> A : UpdateLanguage(idioma)
+A -> T : ObtenerTraducciones(idioma) / Tx(clave)
+G -> B : UpdateLanguage(idioma)
+B -> T : ObtenerTraducciones(idioma) / Tx(clave)
+G -> DB : persistir preferencia de idioma del usuario
+note right of G : No depende de hojas de recursos\nestaticas ni esta acoplado a la UI.\nUna traduccion en blanco no pisa el\ntexto por defecto (revision 11/06).
+@enduml

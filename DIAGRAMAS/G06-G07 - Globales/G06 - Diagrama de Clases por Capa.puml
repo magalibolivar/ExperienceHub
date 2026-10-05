@@ -1,0 +1,99 @@
+@startuml G06 - Diagrama de Clases por Capa
+' ExperienceHub - Diagrama de clases parcial por capa.
+' Separa aspectos TECNICOS (celeste) de NEGOCIO (amarillo).
+' Los diagramas parciales por capa se integran en esta vista estructural.
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor<<tec>> #CFE8FF
+  BackgroundColor<<neg>> #FFF2CC
+  BorderColor #1B2A4A
+}
+legend top
+  Celeste <<tec>> = aspecto tecnico (transversal, agnostico del dominio)
+  Amarillo <<neg>> = aspecto de negocio (propio de ExperienceHub)
+endlegend
+
+package "BE (Entidades)" {
+  class Experiencia <<neg>>
+  class Reserva <<neg>>
+  class ReservaHistorial <<neg>>
+  class Organizador <<neg>>
+  class Categoria <<neg>>
+  class Ciudad <<neg>>
+  class Interes <<neg>>
+  class Calificacion <<neg>>
+  class ListaEspera <<neg>>
+  class Suscripcion <<neg>>
+  class Cliente <<neg>>
+  class PlanSuscripcion <<neg>>
+
+  abstract class Componente <<tec>>
+  class Patente <<tec>>
+  class Familia <<tec>>
+  class Rol <<tec>>
+  class Usuario <<tec>>
+  class VersionUsuario <<tec>>
+  class Permiso <<tec>>
+  class Empleado <<tec>>
+}
+
+package "BLL (Logica de Negocio)" {
+  class "BLL.Experiencia" <<neg>>
+  class "BLL.Reserva" <<neg>>
+  class "BLL.Suscripcion" <<neg>>
+  class "BLL.ListaEspera" <<neg>>
+  class "BLL.Calificacion" <<neg>>
+  class "BLL.Recomendacion" <<neg>>
+  class "BLL.Cliente" <<neg>>
+  class "BLL.PlanSuscripcion" <<neg>>
+
+  class "BLL.Usuario" <<tec>>
+  class "BLL.Familia" <<tec>>
+  class "BLL.CuidadorHistorial" <<tec>>
+  class "BLL.Configuracion" <<tec>>
+  class "BLL.PermisosAccion" <<tec>>
+  class "BLL.Backup" <<tec>>
+  class "BLL.Bitacora" <<tec>>
+}
+
+package "DAL (Acceso a Datos)" {
+  class "DAL.Acceso" <<tec>>
+  class "DAL.BaseDAL" <<tec>>
+  class "DAL.Reserva" <<neg>>
+  class "DAL.Experiencia" <<neg>>
+  class "DAL.DigitoVerificador" <<tec>>
+}
+
+package "Seguridad / Servicios (transversal)" {
+  class SessionManager <<tec>>
+  class Encriptador <<tec>>
+  class CalculadorDV <<tec>>
+  class GestorIdioma <<tec>>
+  class "Servicios.Bitacora" <<tec>>
+}
+
+Componente <|-- Patente
+Componente <|-- Familia
+Familia <|-- Rol
+Familia o-- Componente : compone (Composite, rol-en-rol)
+Usuario ..> VersionUsuario : Memento
+Cliente --> Suscripcion
+Suscripcion --> PlanSuscripcion
+Reserva --> Experiencia
+Reserva --> Cliente
+Experiencia --> Categoria
+Experiencia --> Ciudad
+Experiencia --> Organizador
+Experiencia --> ListaEspera
+Reserva --> Calificacion
+
+"BLL.Reserva" ..> "DAL.Reserva"
+"BLL.Experiencia" ..> "DAL.Experiencia"
+"DAL.Reserva" --|> "DAL.BaseDAL"
+"DAL.Experiencia" --|> "DAL.BaseDAL"
+"DAL.BaseDAL" ..> "DAL.Acceso"
+"BLL.Reserva" ..> SessionManager
+"DAL.Reserva" ..> "DAL.DigitoVerificador"
+"DAL.DigitoVerificador" ..> CalculadorDV
+@enduml

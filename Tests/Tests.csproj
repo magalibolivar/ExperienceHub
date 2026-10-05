@@ -40,7 +40,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnaliticaCUTests.cs" />
     <Compile Include="BackupTests.cs" />
     <Compile Include="CasosPruebaEspecialesTests.cs" />
     <Compile Include="ClaveEmergenciaTests.cs" />
@@ -58,9 +57,11 @@
     <Compile Include="PermisosAccionTests.cs" />
     <Compile Include="TraductorI18nTests.cs" />
     <Compile Include="SerializadorCsvTests.cs" />
-    <Compile Include="PanelAlertasTests.cs" />
     <Compile Include="ReglasNegocioTests.cs" />
     <Compile Include="IntegracionReservaTests.cs" />
+    <Compile Include="ArmarPedidoPN01Tests.cs" />
+    <Compile Include="ContratacionPN01Tests.cs" />
+    <Compile Include="CupoReservaTests.cs" />
     <None Include="App.config" />
     <Compile Include="ReporteTendenciaTests.cs" />
     <Compile Include="Fakes\FakeBackupDAL.cs" />

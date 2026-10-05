@@ -1,0 +1,49 @@
+@startuml
+title PN02 - Modelo Conceptual (Comercializacion y prestacion)
+hide circle
+hide methods
+class Cliente {
+  dni
+  nombre
+  ciudad
+}
+class Interes {
+  nombre
+}
+class PlanSuscripcion {
+  nombre
+  reservasMes
+  premium
+}
+class Suscripcion {
+  fechaInicio
+  fechaFin
+  estado
+  consumoMes
+}
+class Experiencia {
+  nombre
+  fecha
+  cupo
+  estado
+}
+class Reserva {
+  fecha
+  estado
+}
+class ListaEspera {
+  orden
+}
+class Calificacion {
+  puntaje
+  comentario
+}
+Cliente "1" -- "0..*" Interes : declara
+Cliente "1" -- "0..1" Suscripcion : contrata
+Suscripcion "0..*" -- "1" PlanSuscripcion : se rige por
+Cliente "1" -- "0..*" Reserva : realiza
+Reserva "0..*" -- "1" Experiencia : sobre
+Reserva "1" -- "0..1" Calificacion : genera
+Experiencia "1" -- "0..*" ListaEspera : gestiona
+Cliente "1" -- "0..*" ListaEspera : espera en
+@enduml

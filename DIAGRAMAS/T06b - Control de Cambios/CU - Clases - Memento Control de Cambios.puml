@@ -1,0 +1,61 @@
+@startuml CU - Clases - Memento Control de Cambios
+title T06b - Control de Cambios (patron Memento) - Usuario + rollback de Reserva
+skinparam classAttributeIconSize 0
+
+package "BE.Memento (patron formal)" {
+  interface IOriginator {
+    + CrearMemento(actor, detalle) : IMemento
+    + RestaurarDesde(m : IMemento)
+  }
+  interface IMemento {
+    + Fecha : DateTime
+    + Actor : string
+    + Detalle : string
+  }
+
+  class Usuario <<Originator>> {
+    + CrearMemento(actor, detalle) : IMemento
+    + RestaurarDesde(m : IMemento)  ' NO restaura la clave
+  }
+  class VersionUsuario <<Memento>> {
+    + UsernameSnap / NombreSnap / ApellidoSnap
+    + FechaNacSnap / EmailSnap
+    + EstadoSnap / IntentosSnap
+    - ClaveSnap  ' trazabilidad interna; nunca se expone ni se revierte
+  }
+}
+
+class "BLL.CuidadorHistorial" <<Caretaker>> {
+  + Guardar(idUsuario, m : IMemento)
+  + ObtenerHistorial(idUsuario) : List<IMemento>
+  + Obtener(idVersion) : IMemento
+}
+
+IOriginator <|.. Usuario
+IMemento    <|.. VersionUsuario
+Usuario ..> VersionUsuario : crea / restaura
+"BLL.CuidadorHistorial" o--> VersionUsuario : persiste en HistorialUsuario
+
+package "Rollback de negocio (historico, sin interfaz formal)" {
+  class "BLL.Reserva" {
+    + RestaurarOperacion(modulo, idReserva, idOperacion)
+    + ObtenerHistorial(idReserva, ...)
+    - RegistrarHistorial(idReserva, accion, cambios)
+  }
+  class ReservaHistorial <<historial campo a campo>> {
+    + IdOperacion / Accion / Campo
+    + ValorAnterior / ValorNuevo
+    + IdUsuario / NombreUsuario / Fecha
+  }
+}
+"BLL.Reserva" ..> ReservaHistorial : lee/escribe cambios por operacion
+"BLL.Reserva" ..> "DAL.Reserva" : RestaurarOperacionAtomica(...)
+
+note bottom
+  Usuario aplica el patron Memento FORMAL (IOriginator/IMemento).
+  La Reserva NO implementa esas interfaces: su "rollback" es un
+  historico campo a campo (ReservaHistorial) que BLL.Reserva revierte
+  de forma atomica y registra como una NUEVA entrada (accion RESTAURAR).
+  La contrasena del usuario nunca se versiona ni se revierte.
+end note
+@enduml

@@ -1,0 +1,34 @@
+@startuml DER - Logout
+title DER - Logout (persistencia del cierre de sesion)
+skinparam linetype ortho
+hide circle
+
+entity "Usuario" as U {
+  * IdUsuario : int <<PK>>
+  --
+  Username : nvarchar(100) <<UQ>>
+  Rol : nvarchar(100)
+  Estado : bit
+  IdIdioma : varchar(5)     ' su preferencia se conserva para el proximo login
+}
+
+entity "Bitacora" as B {
+  * Id : int <<PK>>
+  --
+  fecha : datetime
+  usuario : int <<FK>>       ' usuario que cerro sesion
+  modulo : nvarchar          ' modulo desde el que se cerro
+  actividad : nvarchar       ' "Cierre Sesion"
+  criticidad : int           ' None (0)
+  ip : nvarchar              ' IP capturada de la sesion activa
+}
+
+U ||--o{ B : registra el evento de cierre
+
+note bottom
+  El Logout NO modifica datos de Usuario: solo INSERTA una fila en Bitacora
+  con actividad "Cierre Sesion" (criticidad None). El estado de sesion vive
+  en memoria (SessionManager, patron Singleton): Logout() hace _session = null,
+  por lo que no hay tabla de sesiones persistida. La app reinicia hacia el Login.
+end note
+@enduml

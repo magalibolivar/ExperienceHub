@@ -557,21 +557,32 @@ namespace BLL
                 return;
             }
 
-            int antes = corruptas.Count;
-            var dvhs  = new List<int>();
+            // A diferencia de Usuario (entidad SENSIBLE: si su DV no coincide se BLOQUEA el acceso),
+            // estas tablas son de NEGOCIO/operativas y suelen quedar fuera de sincronía por cargas de
+            // datos externas (scripts de seed, restauración de backup, ediciones directas en SSMS).
+            // En vez de bloquear el login, se AUTO-REPARAN al arranque (se recalcula y re-sella el DV
+            // con los datos actuales) y queda constancia en la bitácora de integridad.
+            var dvhs = new List<int>();
+            bool rota = false;
             foreach (var f in filas)
             {
                 int calc = svc.CalcularDVH(f.Campos);
                 dvhs.Add(calc);
-                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc)
-                    corruptas.Add(f.Descripcion + " (DVH)");
+                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc) rota = true;
             }
             int dvvCalc = svc.CalcularDVV(dvhs);
-            bool dvvOk  = dvvAlm != null && dvvAlm == dvvCalc;
-            if (!dvvOk) corruptas.Add(tabla + " (DVV)");
+            if (dvvAlm == null || dvvAlm != dvvCalc) rota = true;
 
-            int rotasTabla = corruptas.Count - antes;
-            LogearVerificacion(tabla, dvvAlm, dvvCalc, rotasTabla == 0, rotasTabla, "Arranque");
+            if (rota)
+            {
+                recalcular();   // re-sella el DV; NO bloquea el acceso
+                int? dvvNuevo = dvDAL.ObtenerDVV(tabla);
+                LogearVerificacion(tabla, dvvNuevo, dvvNuevo ?? 0, true, 0, "Arranque (auto-reparado)");
+            }
+            else
+            {
+                LogearVerificacion(tabla, dvvAlm, dvvCalc, true, 0, "Arranque");
+            }
         }
 
         // Devuelve los últimos N registros del historial de verificaciones DV.

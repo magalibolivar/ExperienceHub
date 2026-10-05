@@ -17,6 +17,10 @@ namespace BLL.Interfaces
         List<BE.Reserva> ObtenerPorCliente(int idCliente);
         BE.Reserva       ObtenerPorId(int id);
 
+        // PN01 — pasos previos a armar el pedido (solo lectura)
+        BE.SituacionCliente       ConsultarSituacionCliente(int idCliente);          // CU03-VEN
+        BE.ResultadoDisponibilidad VerificarDisponibilidad(int idExperiencia, int lugares); // CU01-DEP
+
         int  CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados);
         void Confirmar(string modulo, BE.Reserva reserva);
         void RegistrarAsistencia(string modulo, BE.Reserva reserva, bool asistio);

@@ -1,0 +1,59 @@
+@startuml CU - Secuencia - Flujo General por Capas
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+skinparam databaseBackgroundColor #243B53
+skinparam databaseBorderColor #243B53
+skinparam databaseFontColor #FFFFFF
+' =====================================================
+title G - Flujo general de una operacion (patron por capas GUI -> BLL -> DAL)
+actor "Usuario" as U
+participant "Formulario\n(GUI : FormBase)" as GUI
+participant "BLL.<Entidad>" as BLL
+participant "PermisosAccion" as PA
+participant "DAL.<Entidad>\n(: BaseDAL)" as DAL
+participant "DAL.Acceso\n(Singleton)" as AC
+participant "Servicios.Bitacora" as BIT
+database "SQL Server" as DB
+
+U -> GUI : dispara una accion (click)
+GUI -> BLL : operacion de negocio(parametros)
+BLL -> PA : Exigir(patenteEditar, patenteVer)
+PA --> BLL : ok (fail-closed si no tiene permiso)
+BLL -> BLL : validar reglas de negocio
+BLL -> DAL : Insertar / Modificar / Obtener
+DAL -> AC : Escribir / Leer (SQL parametrizado)
+AC -> DB : comando ADO.NET
+DB --> AC : filas / filas afectadas
+AC --> DAL : resultado
+DAL -> DAL : recalcular DVH de la fila (T07)
+DAL --> BLL : entidad / id
+BLL -> BIT : Registrar(modulo, actividad, criticidad)
+BLL --> GUI : resultado
+GUI --> U : mensaje / grilla actualizada
+
+note over GUI,DAL
+  La GUI nunca accede a DAL ni a Seguridad: solo invoca BLL.
+  Toda validacion vive en BLL; DAL usa siempre el Singleton Acceso.
+end note
+@enduml
