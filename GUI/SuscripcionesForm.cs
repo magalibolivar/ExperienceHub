@@ -126,8 +126,14 @@ namespace GUI
                     return;
                 }
                 _rvPlan.Text     = s.NombrePlan; _rvPlan.ForeColor = Estilo.AzulOscuro;
-                _rvEstado.Text   = s.Estado.ToString();
-                _rvEstado.ForeColor = s.EstaVigente() ? Estilo.Verde : Estilo.Rojo;
+                // El Estado en la base no se pasa a "Vencida" solo por fecha: una suscripción
+                // Activa pero pasada de FechaVencimiento sigue guardada como Activa. Mostrarla
+                // como "Vencida" evita el texto "Activa" pintado en rojo (texto y color coinciden).
+                bool vigente = s.EstaVigente();
+                _rvEstado.Text = (s.Estado == BE.EstadoSuscripcion.Activa && !vigente)
+                    ? BE.EstadoSuscripcion.Vencida.ToString()
+                    : s.Estado.ToString();
+                _rvEstado.ForeColor = vigente ? Estilo.Verde : Estilo.Rojo;
                 _rvVence.Text    = s.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "sin límite";
                 _rvReservas.Text = $"{s.ReservasConsumidasMes} / {s.ReservasDelPlan} usadas  ·  restan {s.ReservasRestantes()}";
             }

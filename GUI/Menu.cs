@@ -520,9 +520,10 @@ namespace GUI
             _timerIntegridad.Start();
 
             // 4. Cargar traducciones de BD en background (no bloquea la UI)
-            // RF-22/23 — Al ingresar se aplica el idioma PREFERIDO del usuario (persistido en BD).
-            // El login queda en el idioma elegido en esa pantalla; el Menú ya abre en el del usuario.
-            string codigoPref = _usuarioActivo?.IdIdioma ?? GestorIdioma.IdiomaActual?.Id ?? "ES";
+            // El Menú abre en el idioma ELEGIDO EN EL LOGIN (no se pisa con la preferencia
+            // guardada del usuario). GestorIdioma.IdiomaActual ya refleja lo seleccionado en
+            // la pantalla de login; si no se eligió nada, cae al idioma por defecto (ES).
+            string codigoPref = GestorIdioma.IdiomaActual?.Id ?? "ES";
             System.Threading.Tasks.Task.Run(() =>
             {
                 try

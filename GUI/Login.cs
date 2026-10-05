@@ -161,7 +161,8 @@ namespace GUI
             };
             pnlCard.Controls.Add(_lblVersion);
 
-            CargarRecordado();
+            // El campo Usuario arranca VACÍO a propósito: no se precarga el último usuario
+            // (antes CargarRecordado() lo autocompletaba con "admin", el último que ingresó).
             Estilo.AplicarFuente(this);   // Montserrat en los controles nuevos (saltea íconos)
         }
 
