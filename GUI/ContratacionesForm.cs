@@ -21,7 +21,7 @@ namespace GUI
         private readonly BLL.PlanSuscripcion _bllPlan = new BLL.PlanSuscripcion();
         private const string MODULO = "Comercializacion";
 
-        private ComboBox _cboCliente, _cboPlan, _cboMedio;
+        private ComboBox _cboCliente, _cboPlan, _cboMedio, _cboCuotas;
         private DataGridView _grid;
 
         public ContratacionesForm()
@@ -43,11 +43,15 @@ namespace GUI
             _cboPlan    = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
             _cboMedio   = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
             _cboMedio.DataSource = Enum.GetValues(typeof(BE.MedioPago));
+            // Cuotas: solo se habilitan para Tarjeta; para el resto queda en 1 y deshabilitado.
+            _cboCuotas  = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+            _cboMedio.SelectedIndexChanged += (s, e) => ActualizarCuotas();
 
             var filtros = UI.BarraFiltros(
                 UI.FiltroCampo("Cliente",       _cboCliente, 240, "eh.lbl.cliente"),
                 UI.FiltroCampo("Plan",          _cboPlan,    200, "eh.lbl.plan"),
-                UI.FiltroCampo("Medio de pago", _cboMedio,   160, "eh.lbl.mediopago"));
+                UI.FiltroCampo("Medio de pago", _cboMedio,   160, "eh.lbl.mediopago"),
+                UI.FiltroCampo("Cuotas",        _cboCuotas,  110, "eh.lbl.cuotas"));
 
             var barra = UI.BarraAccionesLR(
                 new[]
@@ -91,8 +95,18 @@ namespace GUI
                 _cboPlan.DataSource    = _bllPlan.ObtenerActivos(); _cboPlan.DisplayMember   = "Nombre";          _cboPlan.ValueMember    = "IdPlan";
             }
             catch (Exception ex) { MostrarError(ex); }
+            ActualizarCuotas();
             Cargar();
             Traducir();
+        }
+
+        // Habilita y puebla el combo de cuotas según el medio de pago (solo Tarjeta financia).
+        private void ActualizarCuotas()
+        {
+            var medio = _cboMedio.SelectedItem is BE.MedioPago m ? m : BE.MedioPago.Efectivo;
+            _cboCuotas.DataSource = BE.Contratacion.CuotasPermitidas(medio);
+            _cboCuotas.Enabled    = medio == BE.MedioPago.Tarjeta;
+            _cboCuotas.SelectedItem = 1;
         }
 
         private void Cargar()
@@ -130,12 +144,20 @@ namespace GUI
             var c = Seleccionada();
             if (c == null) { MostrarError("Seleccioná una contratación de la cola."); return; }
             if (!(_cboMedio.SelectedItem is BE.MedioPago medio)) { MostrarError("Indicá el medio de pago."); return; }
+            int cuotas = _cboCuotas.SelectedItem is int q ? q : 1;
             try
             {
-                var r = _bll.RegistrarCobro(MODULO, c.IdContratacion, medio, pagoOk);
+                var r = _bll.RegistrarCobro(MODULO, c.IdContratacion, medio, cuotas, pagoOk);
                 if (r.Estado == BE.EstadoContratacion.Pagada)
+                {
+                    string detalleCuotas = r.Cuotas > 1
+                        ? $" {r.Cuotas} cuotas de ${BE.Contratacion.ImportePorCuota(r.Importe, r.Cuotas):0.00}" +
+                          (r.RecargoPorcentaje > 0 ? $" (+{r.RecargoPorcentaje:0.##}% financiación)" : "") +
+                          $" — total ${r.ImporteTotal:0.00}."
+                        : $" Total ${r.ImporteTotal:0.00}.";
                     Estilo.Exito(this, "Pago concretado",
-                        $"Comprobante {r.NumeroComprobante}. Ahora formalizá la suscripción.");
+                        $"Comprobante {r.NumeroComprobante}.{detalleCuotas} Ahora formalizá la suscripción.");
+                }
                 else if (r.Estado == BE.EstadoContratacion.Cancelada)
                     Estilo.Error(this, "Contratación cancelada",
                         $"Se alcanzaron {BLL.Contratacion.MAX_INTENTOS_PAGO} intentos de pago fallidos. La contratación quedó cancelada.");

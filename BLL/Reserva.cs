@@ -125,6 +125,17 @@ namespace BLL
                     "El cliente ya tiene una reserva pendiente sin confirmar. Confirmala o cancelala antes de armar una nueva.");
 
             var experiencia = ObtenerExperienciaValidada(idExperiencia);
+
+            // Cupo RETENIDO por lista de espera: si hay una oferta vigente para OTRO cliente, su cupo
+            // liberado está reservado para él mientras la oferta no venza. Solo el cliente ofrecido
+            // (vía ConfirmarOferta → este mismo método) puede tomarlo.
+            var ofertaEspera = dalEspera.ObtenerOfertaVigente(idExperiencia);
+            if (ofertaEspera != null
+                && !ofertaEspera.OfertaVencida(ListaEspera.HORAS_VIGENCIA_OFERTA, DateTime.Now)
+                && ofertaEspera.IdCliente != idCliente)
+                throw new BE.AppException("err.bll.reserva.cupo_reservado_espera",
+                    "El cupo liberado de '{0}' está reservado para la lista de espera.", experiencia.Nombre);
+
             var plan = dalPlan.ObtenerPorId(cliente.Suscripcion.IdPlan);
 
             // Regla 3 — no superar la cantidad de reservas del plan
@@ -375,7 +386,9 @@ namespace BLL
             var primero = dalEspera.ObtenerPrimeroEnEspera(idExperiencia);
             if (primero == null) return;
 
-            dalEspera.CambiarEstado(primero.IdListaEspera, BE.EstadoListaEspera.Ofrecido);
+            // Se ofrece y se sella la fecha: desde acá corre el plazo de vigencia y el cupo queda
+            // RETENIDO para este cliente (CrearReserva rechaza que lo tome otro mientras siga vigente).
+            dalEspera.Ofrecer(primero.IdListaEspera, DateTime.Now);
             bitacoraNeg.Registrar(BE.TipoEventoNegocio.PromocionListaEspera,
                 $"Cupo liberado en '{primero.NombreExperiencia}' ofrecido a {primero.NombreCliente} (1° en espera)",
                 idExperiencia: idExperiencia, idCliente: primero.IdCliente);

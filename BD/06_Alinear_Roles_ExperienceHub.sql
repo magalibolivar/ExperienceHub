@@ -20,8 +20,23 @@ UPDATE Permiso SET Nombre = N'Coordinador de Experiencias'
     WHERE Nombre = N'GerenteInventario' AND EsRol = 1;
 GO
 
-DECLARE @agente INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas'          AND EsRol = 1);
-DECLARE @coord  INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Coordinador de Experiencias' AND EsRol = 1);
+-- 1b) IDEMPOTENCIA: si una corrida previa ya renombró el rol y el seed base volvió a crear
+--     el rol origen (que el paso 1 vuelve a renombrar), quedan DOS filas con el mismo Nombre
+--     y los DECLARE escalares fallan ("subquery returned more than 1 value"). Se eliminan las
+--     COPIAS (toda fila-rol con otra del mismo Nombre de menor IdPermiso), conservando la
+--     canónica. Como el paso 2 reconstruye las patentes de estos roles, no hace falta repuntar
+--     relaciones: se borran primero las relaciones de las copias (FK) y luego las copias.
+DELETE r FROM PermisoRelacion r
+WHERE EXISTS (SELECT 1 FROM Permiso p WHERE p.IdPermiso IN (r.IdPadre, r.IdHijo) AND p.EsRol = 1
+              AND EXISTS (SELECT 1 FROM Permiso o WHERE o.EsRol = 1 AND o.Nombre = p.Nombre AND o.IdPermiso < p.IdPermiso));
+GO
+DELETE p FROM Permiso p
+WHERE p.EsRol = 1
+  AND EXISTS (SELECT 1 FROM Permiso o WHERE o.EsRol = 1 AND o.Nombre = p.Nombre AND o.IdPermiso < p.IdPermiso);
+GO
+
+DECLARE @agente INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas'          AND EsRol = 1 ORDER BY IdPermiso);
+DECLARE @coord  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Coordinador de Experiencias' AND EsRol = 1 ORDER BY IdPermiso);
 
 -- 2) Limpiar TODAS las relaciones que involucren a los roles reconstruidos u obsoletos
 --    (como padre o como hijo), para rearmarlas limpias.
@@ -36,8 +51,8 @@ WHERE h.Nombre IN (N'GerenteComercial', N'OperadorDeInventario', N'OperadorLogis
                    N'Agente de Reservas', N'Coordinador de Experiencias');
 GO
 
-DECLARE @agente INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas'          AND EsRol = 1);
-DECLARE @coord  INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Coordinador de Experiencias' AND EsRol = 1);
+DECLARE @agente INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas'          AND EsRol = 1 ORDER BY IdPermiso);
+DECLARE @coord  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Coordinador de Experiencias' AND EsRol = 1 ORDER BY IdPermiso);
 
 -- 3) Patentes del Agente de Reservas (operación comercial + lectura del catálogo).
 INSERT INTO PermisoRelacion (IdPadre, IdHijo)

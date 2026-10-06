@@ -20,6 +20,9 @@ BEGIN
         FechaPago         DATETIME       NULL,
         NumeroComprobante NVARCHAR(40)   NULL,
         FechaComprobante  DATETIME       NULL,
+        Cuotas            INT            NULL,                -- cuotas elegidas al cobrar (solo Tarjeta financia; 1 = pago unico)
+        RecargoPorcentaje DECIMAL(5, 2)  NULL,                -- recargo por financiacion sellado al cobrar (ej. 20.00 = 20%)
+        ImporteTotal      DECIMAL(10, 2) NULL,                -- total financiado cobrado (Importe + recargo)
         IdSuscripcion     INT            NULL REFERENCES Suscripcion(IdSuscripcion),
         FechaAlta         DATETIME       NOT NULL DEFAULT GETDATE()
     );

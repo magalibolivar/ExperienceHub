@@ -11,7 +11,7 @@ namespace DAL
         private readonly Acceso acceso = Acceso.GetInstance();
 
         private const string SELECT_BASE =
-            "SELECT le.IdListaEspera, le.IdExperiencia, le.IdCliente, le.Posicion, le.FechaIngreso, le.Estado, " +
+            "SELECT le.IdListaEspera, le.IdExperiencia, le.IdCliente, le.Posicion, le.FechaIngreso, le.Estado, le.FechaOferta, " +
             "       c.Nombre + ' ' + c.Apellido AS NombreCliente, e.Nombre AS NombreExperiencia " +
             "FROM ListaEspera le " +
             "LEFT JOIN Cliente     c ON c.IdCliente     = le.IdCliente " +
@@ -44,6 +44,33 @@ namespace DAL
                     new SqlParameter("@Esperando", (object)(int)BE.EstadoListaEspera.Esperando)
                 });
             return tabla.Rows.Count == 0 ? null : Mapear(tabla.Rows[0]);
+        }
+
+        /// <summary>Oferta vigente de una experiencia (entrada en estado Ofrecido). Null si no hay.</summary>
+        public BE.ListaEspera ObtenerOfertaVigente(int idExperiencia)
+        {
+            DataTable tabla = acceso.Leer(
+                SELECT_BASE.Replace("SELECT le.", "SELECT TOP 1 le.") +
+                "WHERE le.IdExperiencia = @IdExp AND le.Estado = @Ofrecido ORDER BY le.Posicion",
+                new[]
+                {
+                    new SqlParameter("@IdExp", idExperiencia),
+                    new SqlParameter("@Ofrecido", (object)(int)BE.EstadoListaEspera.Ofrecido)
+                });
+            return tabla.Rows.Count == 0 ? null : Mapear(tabla.Rows[0]);
+        }
+
+        /// <summary>Ofrece el cupo a una entrada: la marca Ofrecido y sella la fecha de la oferta.</summary>
+        public void Ofrecer(int idListaEspera, DateTime fechaOferta)
+        {
+            acceso.Escribir(
+                "UPDATE ListaEspera SET Estado=@Ofrecido, FechaOferta=@Fecha WHERE IdListaEspera=@Id",
+                new[]
+                {
+                    new SqlParameter("@Ofrecido", (object)(int)BE.EstadoListaEspera.Ofrecido),
+                    new SqlParameter("@Fecha", fechaOferta),
+                    new SqlParameter("@Id", idListaEspera)
+                });
         }
 
         /// <summary>Todas las entradas de una experiencia (cualquier estado), en orden de posición.</summary>
@@ -101,6 +128,8 @@ namespace DAL
             Posicion          = Convert.ToInt32(row["Posicion"]),
             FechaIngreso      = Convert.ToDateTime(row["FechaIngreso"]),
             Estado            = (BE.EstadoListaEspera)Convert.ToInt32(row["Estado"]),
+            FechaOferta       = row.Table.Columns.Contains("FechaOferta") && row["FechaOferta"] != DBNull.Value
+                                    ? (DateTime?)Convert.ToDateTime(row["FechaOferta"]) : null,
             NombreCliente     = row["NombreCliente"] != DBNull.Value ? row["NombreCliente"].ToString() : null,
             NombreExperiencia = row["NombreExperiencia"] != DBNull.Value ? row["NombreExperiencia"].ToString() : null
         };

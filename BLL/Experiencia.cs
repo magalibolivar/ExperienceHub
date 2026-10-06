@@ -18,6 +18,8 @@ namespace BLL
 
         public List<BE.Experiencia> ObtenerTodos()              => dalExp.ObtenerTodos();
         public List<BE.Experiencia> ObtenerDisponibles()        => dalExp.ObtenerDisponibles();
+        /// <summary>Programadas (con cupo) + Completas (candidatas a lista de espera), para el módulo de Reservas.</summary>
+        public List<BE.Experiencia> ObtenerParaReserva()        => dalExp.ObtenerParaReserva();
         public List<BE.Experiencia> ObtenerPorCiudad(int id)    => dalExp.ObtenerPorCiudad(id);
         public BE.Experiencia       ObtenerPorId(int id)        => dalExp.ObtenerPorId(id);
 

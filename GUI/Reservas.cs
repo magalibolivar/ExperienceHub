@@ -119,7 +119,7 @@ namespace GUI
             try
             {
                 _cboCliente.DataSource = _bllCli.ObtenerTodos(); _cboCliente.DisplayMember = "NombreCompleto"; _cboCliente.ValueMember = "IdCliente";
-                _cboExperiencia.DataSource = _bllExp.ObtenerDisponibles(); _cboExperiencia.DisplayMember = "Nombre"; _cboExperiencia.ValueMember = "IdExperiencia";
+                _cboExperiencia.DataSource = _bllExp.ObtenerParaReserva(); _cboExperiencia.DisplayMember = "Nombre"; _cboExperiencia.ValueMember = "IdExperiencia";
             }
             catch (Exception ex) { MostrarError(ex); }
         }
@@ -180,13 +180,32 @@ namespace GUI
 
         private void Crear()
         {
+            if (!(_cboCliente.SelectedValue is int idCli) || !(_cboExperiencia.SelectedValue is int idExp))
+            { MostrarError("Seleccioná un cliente y una experiencia."); return; }
             try
             {
-                if (!(_cboCliente.SelectedValue is int idCli) || !(_cboExperiencia.SelectedValue is int idExp))
-                { MostrarError("Seleccioná un cliente y una experiencia."); return; }
                 _bll.CrearReserva(MODULO, idCli, idExp, (int)_numInvitados.Value);
                 Estilo.Exito(this, "¡Reserva confirmada!", "La reserva se creó correctamente. ¡A disfrutar la experiencia!");
                 RecargarCombos(); Cargar(); ActualizarResumen();
+            }
+            // Experiencia sin cupo: ofrecer ingresar a la lista de espera (flujo PN02).
+            catch (BE.AppException ax) when (ax.Clave == "err.bll.reserva.sin_cupo")
+            {
+                if (MessageBox.Show(this,
+                        "La experiencia está completa. ¿Querés ingresar al cliente a la lista de espera?",
+                        "Sin cupo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    OfrecerIngresoListaEspera(idCli, idExp);
+            }
+            catch (Exception ex) { MostrarError(ex); }
+        }
+
+        // Ingresa al cliente a la lista de espera de la experiencia (reutiliza la regla 8 de BLL).
+        private void OfrecerIngresoListaEspera(int idCliente, int idExperiencia)
+        {
+            try
+            {
+                int pos = _bllEsp.Ingresar(MODULO, idExperiencia, idCliente);
+                Estilo.Info(this, "En lista de espera", $"Te avisamos si se libera un lugar. Posición {pos} en la fila.");
             }
             catch (Exception ex) { MostrarError(ex); }
         }

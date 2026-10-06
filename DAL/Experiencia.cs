@@ -63,6 +63,33 @@ namespace DAL
             return lista;
         }
 
+        /// <summary>
+        /// Experiencias futuras para el módulo de Reservas: Programadas (con cupo) y Completas
+        /// (sin cupo, candidatas a lista de espera). A diferencia de ObtenerDisponibles(), NO filtra
+        /// por cupo, para que una experiencia completa sea seleccionable y se pueda ingresar a su
+        /// lista de espera.
+        /// </summary>
+        public List<BE.Experiencia> ObtenerParaReserva()
+        {
+            var lista = new List<BE.Experiencia>();
+            try
+            {
+                DataTable tabla = acceso.Leer(
+                    SELECT_BASE +
+                    "WHERE e.Estado IN (@Programada, @Completa) " +
+                    "AND (CAST(e.Fecha AS DATETIME) + CAST(e.HoraInicio AS DATETIME)) > GETDATE() " +
+                    "ORDER BY e.Fecha, e.HoraInicio",
+                    new[]
+                    {
+                        new SqlParameter("@Programada", (object)(int)BE.EstadoExperiencia.Programada),
+                        new SqlParameter("@Completa",   (object)(int)BE.EstadoExperiencia.Completa)
+                    });
+                foreach (DataRow row in tabla.Rows) lista.Add(Mapear(row));
+            }
+            catch (Exception ex) { throw new Exception("Error al obtener experiencias para reservar.", ex); }
+            return lista;
+        }
+
         /// <summary>Experiencias de una ciudad (para respetar la ciudad del cliente).</summary>
         public List<BE.Experiencia> ObtenerPorCiudad(int idCiudad)
         {

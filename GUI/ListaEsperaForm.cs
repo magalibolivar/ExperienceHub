@@ -33,7 +33,11 @@ namespace GUI
 
             var barra = UI.BarraAccionesLR(
                 new[] { UI.Secundario("Refrescar", "eh.btn.refrescar", (s, e) => Cargar()) },
-                new[] { UI.Primario("Confirmar oferta → reserva", "eh.btn.confirmaroferta", (s, e) => Confirmar()) });
+                new[]
+                {
+                    UI.Peligro("Rechazar oferta → siguiente", "eh.btn.rechazaroferta", (s, e) => Rechazar()),
+                    UI.Primario("Confirmar oferta → reserva",  "eh.btn.confirmaroferta", (s, e) => Confirmar())
+                });
 
             var header = UI.Encabezado("Lista de Espera",
                 "Cuando se libera un cupo, se ofrece al primero de la fila. Confirmá su oferta para generar la reserva.",
@@ -70,8 +74,11 @@ namespace GUI
             {
                 if (_cboExperiencia.SelectedValue is int idExp)
                 {
+                    // Avanza la cola si la oferta vigente venció antes de mostrar la lista.
+                    _bll.ProcesarVencimientos(idExp);
                     _grid.DataSource = _bll.ObtenerTodas(idExp);
-                    UI.Columnas(_grid, ("Posicion", 12), ("NombreCliente", 46), ("Estado", 22), ("FechaIngreso", 20));
+                    UI.Columnas(_grid, ("Posicion", 10), ("NombreCliente", 38), ("Estado", 18),
+                                       ("FechaIngreso", 17), ("FechaOferta", 17));
                 }
             }
             catch (Exception ex) { MostrarError(ex); }
@@ -85,6 +92,19 @@ namespace GUI
             {
                 int idReserva = _bll.ConfirmarOferta(MODULO, entrada);
                 Estilo.Exito(this, "¡Cupo confirmado!", $"Se creó la reserva #{idReserva} desde la lista de espera.");
+                Cargar();
+            }
+            catch (Exception ex) { MostrarError(ex); }
+        }
+
+        private void Rechazar()
+        {
+            var entrada = _grid.CurrentRow?.DataBoundItem as BE.ListaEspera;
+            if (entrada == null) { MostrarError("Seleccioná la entrada con la oferta vigente."); return; }
+            try
+            {
+                _bll.RechazarOferta(MODULO, entrada);
+                MostrarOk("Oferta rechazada. El cupo se ofreció al siguiente de la fila (si había).");
                 Cargar();
             }
             catch (Exception ex) { MostrarError(ex); }

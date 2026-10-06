@@ -74,10 +74,15 @@ namespace BLL
         /// fallido; al alcanzar <see cref="MAX_INTENTOS_PAGO"/> la contratación queda Cancelada.
         /// Devuelve la contratación actualizada.
         /// </summary>
-        public BE.Contratacion RegistrarCobro(string modulo, int idContratacion, BE.MedioPago medio, bool pagoConcretado)
+        public BE.Contratacion RegistrarCobro(string modulo, int idContratacion, BE.MedioPago medio, int cuotas, bool pagoConcretado)
         {
             // Caja: cobra y, si se agotan los intentos, cancela la contratación.
             PermisosAccion.Exigir(BE.Patentes.ContratacionCaja, BE.Patentes.ContratacionCaja);
+
+            // Regla de negocio: las cuotas deben ser válidas para el medio (solo Tarjeta financia).
+            if (!BE.Contratacion.CuotasValidas(medio, cuotas))
+                throw new BE.AppException("err.bll.contratacion.cuotas_invalidas",
+                    "El medio de pago '{0}' no admite {1} cuota(s).", medio, cuotas);
 
             var c = dal.ObtenerPorId(idContratacion)
                 ?? throw new BE.AppException("err.bll.contratacion.inexistente", "La contratación no existe.");
@@ -89,9 +94,17 @@ namespace BLL
             {
                 DateTime fecha = DateTime.Now;
                 string nro = BE.Contratacion.GenerarNumeroComprobante(idContratacion, fecha);
-                dal.RegistrarPago(idContratacion, medio, nro, fecha);
+
+                // Se SELLAN el recargo y el total financiado con el que realmente se cobra (no se recalculan).
+                decimal recargo = BE.Contratacion.RecargoPorCuotas(cuotas);
+                decimal total   = BE.Contratacion.ImporteConRecargo(c.Importe, cuotas);
+                decimal porCuota = BE.Contratacion.ImportePorCuota(c.Importe, cuotas);
+
+                dal.RegistrarPago(idContratacion, medio, nro, fecha, cuotas, recargo, total);
                 bitacora.Registrar(modulo,
-                    $"Cobro CONCRETADO contratación #{idContratacion} — {medio} — comprobante {nro}",
+                    $"Cobro CONCRETADO contratación #{idContratacion} — {medio} — {cuotas} cuota(s)" +
+                    (recargo > 0 ? $" (+{recargo:0.##}% financiación)" : "") +
+                    $" — total ${total:0.00} ({cuotas}x ${porCuota:0.00}) — comprobante {nro}",
                     BE.Criticidad.Media);
             }
             else

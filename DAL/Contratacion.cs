@@ -18,6 +18,7 @@ namespace DAL
         private const string SELECT_BASE =
             "SELECT ct.IdContratacion, ct.IdCliente, ct.IdPlan, ct.Importe, ct.Estado, ct.IntentosPago, " +
             "       ct.MedioPago, ct.FechaPago, ct.NumeroComprobante, ct.FechaComprobante, " +
+            "       ct.Cuotas, ct.RecargoPorcentaje, ct.ImporteTotal, " +
             "       ct.IdSuscripcion, ct.FechaAlta, " +
             "       c.Nombre + ' ' + c.Apellido AS NombreCliente, p.Nombre AS NombrePlan " +
             "FROM Contratacion ct " +
@@ -78,11 +79,13 @@ namespace DAL
         /// CU01-CAJ + CU02-CAJ (cobro + comprobante en un paso): marca Pagada, registra el medio,
         /// la fecha y el número de comprobante. Revalida PendienteDePago en el WHERE.
         /// </summary>
-        public void RegistrarPago(int idContratacion, BE.MedioPago medio, string numeroComprobante, DateTime fecha)
+        public void RegistrarPago(int idContratacion, BE.MedioPago medio, string numeroComprobante, DateTime fecha,
+                                  int cuotas, decimal recargoPorcentaje, decimal importeTotal)
         {
             int filas = acceso.Escribir(
                 "UPDATE Contratacion SET Estado=@Pagada, MedioPago=@Medio, FechaPago=@Fecha, " +
-                "NumeroComprobante=@Nro, FechaComprobante=@Fecha " +
+                "NumeroComprobante=@Nro, FechaComprobante=@Fecha, " +
+                "Cuotas=@Cuotas, RecargoPorcentaje=@Recargo, ImporteTotal=@Total " +
                 "WHERE IdContratacion=@Id AND Estado=@Pend",
                 new[]
                 {
@@ -90,6 +93,9 @@ namespace DAL
                     new SqlParameter("@Medio", (object)(int)medio),
                     new SqlParameter("@Fecha", fecha),
                     new SqlParameter("@Nro", (object)numeroComprobante ?? DBNull.Value),
+                    new SqlParameter("@Cuotas", cuotas),
+                    new SqlParameter("@Recargo", recargoPorcentaje),
+                    new SqlParameter("@Total", importeTotal),
                     new SqlParameter("@Id", idContratacion),
                     new SqlParameter("@Pend", (object)(int)BE.EstadoContratacion.PendienteDePago)
                 });
@@ -169,6 +175,9 @@ namespace DAL
             FechaPago         = row["FechaPago"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(row["FechaPago"]) : null,
             NumeroComprobante = row["NumeroComprobante"] != DBNull.Value ? row["NumeroComprobante"].ToString() : null,
             FechaComprobante  = row["FechaComprobante"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(row["FechaComprobante"]) : null,
+            Cuotas            = row["Cuotas"]            != DBNull.Value ? Convert.ToInt32(row["Cuotas"]) : 1,
+            RecargoPorcentaje = row["RecargoPorcentaje"] != DBNull.Value ? Convert.ToDecimal(row["RecargoPorcentaje"]) : 0m,
+            ImporteTotal      = row["ImporteTotal"]      != DBNull.Value ? Convert.ToDecimal(row["ImporteTotal"]) : Convert.ToDecimal(row["Importe"]),
             IdSuscripcion     = row["IdSuscripcion"] != DBNull.Value ? (int?)Convert.ToInt32(row["IdSuscripcion"]) : null,
             FechaAlta         = Convert.ToDateTime(row["FechaAlta"]),
             NombreCliente     = row["NombreCliente"] != DBNull.Value ? row["NombreCliente"].ToString() : null,

@@ -24,10 +24,10 @@ IF NOT EXISTS (SELECT 1 FROM Permiso WHERE Nombre = N'Caja' AND EsRol = 1)
     VALUES (N'Caja', NULL, N'Rol', 1, 1, 1);
 GO
 
-DECLARE @venta     INT = (SELECT IdPermiso FROM Permiso WHERE NombreMenu = 'mnuContratacionVenta');
-DECLARE @caja      INT = (SELECT IdPermiso FROM Permiso WHERE NombreMenu = 'mnuContratacionCaja');
-DECLARE @rolAgente INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas' AND EsRol = 1);
-DECLARE @rolCaja   INT = (SELECT IdPermiso FROM Permiso WHERE Nombre = N'Caja' AND EsRol = 1);
+DECLARE @venta     INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuContratacionVenta' ORDER BY IdPermiso);
+DECLARE @caja      INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuContratacionCaja'  ORDER BY IdPermiso);
+DECLARE @rolAgente INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Agente de Reservas' AND EsRol = 1 ORDER BY IdPermiso);
+DECLARE @rolCaja   INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Caja' AND EsRol = 1 ORDER BY IdPermiso);
 
 -- Venta → Agente de Reservas (quien atiende y formaliza)
 IF @rolAgente IS NOT NULL AND @venta IS NOT NULL

@@ -61,6 +61,7 @@
     <Compile Include="IntegracionReservaTests.cs" />
     <Compile Include="ArmarPedidoPN01Tests.cs" />
     <Compile Include="ContratacionPN01Tests.cs" />
+    <Compile Include="ListaEsperaReglasTests.cs" />
     <Compile Include="CupoReservaTests.cs" />
     <None Include="App.config" />
     <Compile Include="ReporteTendenciaTests.cs" />

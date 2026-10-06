@@ -271,9 +271,23 @@ namespace GUI
                 (bitSistemaToolStripMenuItem,        "mnuAuditoria"),
                 (bitNegocioToolStripMenuItem,        "mnuAuditoria"),
                 (reporteJornadaToolStripMenuItem,    "mnuAuditoria"),
+                // Ítems de negocio construidos por código (antes quedaban SIEMPRE visibles — fuga de
+                // permisos). Cada uno se gobierna ahora por su patente; el Administrador los sigue
+                // viendo por bypass de 'Permite()'.
+                (_miListaEspera,   "mnuListaEspera"),
+                (_miOrganizadores, "mnuOrganizadores"),
+                (_miCategorias,    "mnuCategorias"),
+                (_miCiudades,      "mnuCiudades"),
+                // Suscripciones la opera el Agente (comercialización), no el Coordinador.
+                (_miSuscripciones, "mnuContratacionVenta"),
             };
             foreach (var h in hojas)
                 if (h.Item != null) h.Item.Visible = Permite(h.Permiso);
+
+            // Contrataciones (Caja): Venta la crea/formaliza y Caja la cobra, así que es visible con
+            // CUALQUIERA de las dos patentes (OR), que el mapa plano de arriba no expresa.
+            if (_miContrataciones != null)
+                _miContrataciones.Visible = Permite("mnuContratacionVenta") || Permite("mnuContratacionCaja");
 
             // ── Visibilidad de los BLOQUES de negocio (según patentes de sus ítems) ──
             // Se usa .Available (no .Visible): dentro de un dropdown cerrado, .Visible siempre es false.

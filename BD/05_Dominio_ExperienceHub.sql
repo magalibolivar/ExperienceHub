@@ -236,7 +236,8 @@ BEGIN
         IdCliente     INT NOT NULL REFERENCES Cliente(IdCliente),
         Posicion      INT NOT NULL,
         FechaIngreso  DATETIME NOT NULL DEFAULT GETDATE(),
-        Estado        INT NOT NULL DEFAULT 0    -- EstadoListaEspera
+        Estado        INT NOT NULL DEFAULT 0,   -- EstadoListaEspera
+        FechaOferta   DATETIME NULL             -- instante en que se ofrecio el cupo (corre el plazo de vigencia)
     );
     CREATE INDEX IX_ListaEspera_Experiencia ON ListaEspera(IdExperiencia);
 END

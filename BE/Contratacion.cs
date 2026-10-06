@@ -13,7 +13,7 @@ namespace BE
         public int               IdContratacion    { get; set; }
         public int               IdCliente         { get; set; }
         public int               IdPlan            { get; set; }
-        /// <summary>Importe a cobrar (precio del plan al momento de contratar).</summary>
+        /// <summary>Importe BASE a cobrar (precio del plan al momento de contratar, sin financiación).</summary>
         public decimal           Importe           { get; set; }
 
         public EstadoContratacion Estado           { get; set; } = EstadoContratacion.PendienteDePago;
@@ -23,6 +23,18 @@ namespace BE
         /// <summary>Medio con el que se cobró (null hasta que se concreta el pago).</summary>
         public MedioPago?        Medio             { get; set; }
         public DateTime?         FechaPago         { get; set; }
+
+        // ── Financiación en cuotas (solo Tarjeta) — se SELLAN al cobrar ──────────
+        /// <summary>Cantidad de cuotas elegidas al cobrar (1 = pago único; >1 solo con Tarjeta).</summary>
+        public int               Cuotas            { get; set; } = 1;
+        /// <summary>
+        /// Recargo por financiación APLICADO al cobrar, en porcentaje (ej. 20.00 = 20%).
+        /// Se persiste para no recalcular: si mañana cambian las tasas, el comprobante histórico
+        /// conserva el valor con el que realmente se cobró.
+        /// </summary>
+        public decimal           RecargoPorcentaje { get; set; }
+        /// <summary>Total financiado cobrado (Importe base + recargo), sellado al cobrar.</summary>
+        public decimal           ImporteTotal      { get; set; }
 
         /// <summary>Número de comprobante emitido al cobrar (CU02-CAJ).</summary>
         public string           NumeroComprobante  { get; set; }
@@ -59,5 +71,47 @@ namespace BE
         /// </summary>
         public static string GenerarNumeroComprobante(int idContratacion, DateTime fechaCobro)
             => $"CMP-{idContratacion:D6}-{fechaCobro:yyyyMMddHHmmss}";
+
+        // ── Financiación en cuotas (reglas PURAS, sin BD ni sesión) ──────────────
+        // Tabla de recargo por financiación, en porcentaje. Documentada acá como única fuente de
+        // verdad (si se quisiera parametrizar por BD/config, este es el único punto a tocar).
+        //   1 cuota  → 0%   (pago único, sin interés)
+        //   3 cuotas → 10%
+        //   6 cuotas → 20%
+        //  12 cuotas → 40%
+        public const decimal RECARGO_3_CUOTAS  = 10m;
+        public const decimal RECARGO_6_CUOTAS  = 20m;
+        public const decimal RECARGO_12_CUOTAS = 40m;
+
+        /// <summary>
+        /// Cantidades de cuotas ofrecidas según el medio de pago: solo Tarjeta financia; Efectivo
+        /// y Transferencia son siempre pago único (1 cuota).
+        /// </summary>
+        public static int[] CuotasPermitidas(MedioPago medio)
+            => medio == MedioPago.Tarjeta ? new[] { 1, 3, 6, 12 } : new[] { 1 };
+
+        /// <summary>¿La cantidad de cuotas es válida para ese medio de pago?</summary>
+        public static bool CuotasValidas(MedioPago medio, int cuotas)
+            => System.Array.IndexOf(CuotasPermitidas(medio), cuotas) >= 0;
+
+        /// <summary>Recargo por financiación (en %) correspondiente a la cantidad de cuotas.</summary>
+        public static decimal RecargoPorCuotas(int cuotas)
+        {
+            switch (cuotas)
+            {
+                case 3:  return RECARGO_3_CUOTAS;
+                case 6:  return RECARGO_6_CUOTAS;
+                case 12: return RECARGO_12_CUOTAS;
+                default: return 0m;   // 1 cuota (o valor no financiable) → sin recargo
+            }
+        }
+
+        /// <summary>Total a cobrar (importe base + recargo por financiación), redondeado a 2 decimales.</summary>
+        public static decimal ImporteConRecargo(decimal importeBase, int cuotas)
+            => System.Math.Round(importeBase * (1m + RecargoPorCuotas(cuotas) / 100m), 2);
+
+        /// <summary>Importe de cada cuota (total financiado dividido en la cantidad de cuotas).</summary>
+        public static decimal ImportePorCuota(decimal importeBase, int cuotas)
+            => System.Math.Round(ImporteConRecargo(importeBase, cuotas) / System.Math.Max(1, cuotas), 2);
     }
 }
