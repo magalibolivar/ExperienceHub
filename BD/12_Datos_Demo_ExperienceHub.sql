@@ -262,6 +262,12 @@ LEFT JOIN (
 ) x ON x.IdCliente = s.IdCliente;
 GO
 
+-- 10b) Sellar el PeriodoConsumo al mes actual en las suscripciones que no lo tengan, para que la
+--      tarea de arranque (ciclo de vida) NO reinicie el consumo recien calculado.
+UPDATE Suscripcion SET PeriodoConsumo = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+WHERE PeriodoConsumo IS NULL;
+GO
+
 /* ----------------------------------------------------------------------------
    11) Forzar el recalculo de integridad (DVH/DVV) en el proximo arranque para
        las tablas de negocio tocadas (se auto-reparan sin bloquear el login).

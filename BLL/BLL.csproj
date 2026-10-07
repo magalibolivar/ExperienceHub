@@ -60,6 +60,7 @@
     <Compile Include="Ciudad.cs" />
     <Compile Include="Suscripcion.cs" />
     <Compile Include="Contratacion.cs" />
+    <Compile Include="Recomendacion.cs" />
     <Compile Include="Interes.cs" />
     <Compile Include="ListaEspera.cs" />
     <Compile Include="Calificacion.cs" />

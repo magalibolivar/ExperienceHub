@@ -2608,10 +2608,16 @@ BEGIN
         FechaInicio           DATE NOT NULL,
         FechaVencimiento      DATE NULL,
         Estado                INT NOT NULL DEFAULT 0,   -- EstadoSuscripcion
-        ReservasConsumidasMes INT NOT NULL DEFAULT 0
+        ReservasConsumidasMes INT NOT NULL DEFAULT 0,
+        PeriodoConsumo        DATE NULL                 -- mes del consumo en curso (reinicio mensual del cupo)
     );
     CREATE INDEX IX_Suscripcion_Cliente ON Suscripcion(IdCliente);
 END
+GO
+
+-- Ciclo de vida de la suscripcion: columna de periodo de consumo (idempotente).
+IF COL_LENGTH('Suscripcion','PeriodoConsumo') IS NULL
+    ALTER TABLE Suscripcion ADD PeriodoConsumo DATE NULL;
 GO
 
 /* ----------------------------------------------------------------------------
@@ -3373,6 +3379,12 @@ LEFT JOIN (
       AND YEAR(e.Fecha) = YEAR(GETDATE()) AND MONTH(e.Fecha) = MONTH(GETDATE())
     GROUP BY r.IdCliente
 ) x ON x.IdCliente = s.IdCliente;
+GO
+
+-- 10b) Sellar el PeriodoConsumo al mes actual en las suscripciones que no lo tengan, para que la
+--      tarea de arranque (ciclo de vida) NO reinicie el consumo recien calculado.
+UPDATE Suscripcion SET PeriodoConsumo = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+WHERE PeriodoConsumo IS NULL;
 GO
 
 /* ----------------------------------------------------------------------------

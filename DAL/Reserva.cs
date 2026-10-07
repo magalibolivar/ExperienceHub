@@ -85,6 +85,62 @@ namespace DAL
             return lista;
         }
 
+        // ── Fidelización / recomendaciones ──────────────────────────────────────
+
+        /// <summary>Cantidad de experiencias a las que el cliente efectivamente asistió (fidelidad).</summary>
+        public int ContarAsistencias(int idCliente)
+        {
+            var dt = acceso.Leer(
+                "SELECT COUNT(*) AS Total FROM Reserva WHERE IdCliente=@Id AND Estado=@Asistio",
+                new[]
+                {
+                    new SqlParameter("@Id", idCliente),
+                    new SqlParameter("@Asistio", (object)(int)BE.EstadoReserva.Asistio)
+                });
+            return dt.Rows.Count > 0 ? Convert.ToInt32(dt.Rows[0]["Total"]) : 0;
+        }
+
+        /// <summary>
+        /// Historial de categorías del cliente: IdCategoria → cantidad de reservas no canceladas
+        /// (Asistió/Confirmada) de esa categoría. Insumo para puntuar las recomendaciones.
+        /// </summary>
+        public Dictionary<int, int> ContarPorCategoriaDelHistorial(int idCliente)
+        {
+            var mapa = new Dictionary<int, int>();
+            DataTable dt = acceso.Leer(
+                "SELECT e.IdCategoria, COUNT(*) AS Cant " +
+                "FROM Reserva r JOIN Experiencia e ON e.IdExperiencia = r.IdExperiencia " +
+                "WHERE r.IdCliente=@Id AND r.Estado IN (@Asistio, @Conf) " +
+                "GROUP BY e.IdCategoria",
+                new[]
+                {
+                    new SqlParameter("@Id", idCliente),
+                    new SqlParameter("@Asistio", (object)(int)BE.EstadoReserva.Asistio),
+                    new SqlParameter("@Conf", (object)(int)BE.EstadoReserva.Confirmada)
+                });
+            foreach (DataRow row in dt.Rows)
+                mapa[Convert.ToInt32(row["IdCategoria"])] = Convert.ToInt32(row["Cant"]);
+            return mapa;
+        }
+
+        /// <summary>Reservas Asistió del cliente que todavía NO fueron calificadas (seguimiento post-experiencia).</summary>
+        public List<BE.Reserva> ObtenerAsistidasSinCalificar(int idCliente)
+        {
+            var lista = new List<BE.Reserva>();
+            DataTable tabla = acceso.Leer(
+                SELECT_BASE +
+                "WHERE r.IdCliente=@Id AND r.Estado=@Asistio " +
+                "AND NOT EXISTS (SELECT 1 FROM Calificacion c WHERE c.IdReserva = r.IdReserva) " +
+                "ORDER BY r.FechaReserva DESC",
+                new[]
+                {
+                    new SqlParameter("@Id", idCliente),
+                    new SqlParameter("@Asistio", (object)(int)BE.EstadoReserva.Asistio)
+                });
+            foreach (DataRow row in tabla.Rows) lista.Add(Mapear(row));
+            return lista;
+        }
+
         /// <summary>True si el cliente ya asistió antes a esa experiencia (regla 5).</summary>
         public bool ExisteAsistenciaPrevia(int idCliente, int idExperiencia)
         {

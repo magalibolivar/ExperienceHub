@@ -22,6 +22,12 @@ namespace BE
         /// <summary>Reservas ya consumidas en el período mensual en curso.</summary>
         public int               ReservasConsumidasMes { get; set; }
 
+        /// <summary>
+        /// Mes del período de consumo en curso (primer día del mes). Cuando el mes cambia, la tarea
+        /// de sistema reinicia <see cref="ReservasConsumidasMes"/>. Null = aún no sellado.
+        /// </summary>
+        public DateTime?         PeriodoConsumo        { get; set; }
+
         // Datos por JOIN (no persisten)
         public string            NombrePlan            { get; set; }
         /// <summary>Reservas mensuales que otorga el plan (cargado por JOIN).</summary>
@@ -65,5 +71,43 @@ namespace BE
             FechaVencimiento.HasValue
                 ? Math.Max(0, (FechaVencimiento.Value.Date - DateTime.Today).Days)
                 : int.MaxValue;
+
+        // ── Ciclo de vida (decisiones PURAS: sin BD ni sesión, testeables) ──────
+
+        /// <summary>True si la suscripción venció por fecha (independiente del estado guardado).</summary>
+        public bool EstaVencida(DateTime hoy)
+            => FechaVencimiento.HasValue && FechaVencimiento.Value.Date < hoy.Date;
+
+        /// <summary>
+        /// Estado REAL considerando la fecha: una Activa cuyo vencimiento ya pasó se considera Vencida,
+        /// aunque en la BD todavía figure Activa (hasta que la tarea de sistema la actualice).
+        /// Suspendida y Vencida se devuelven tal cual.
+        /// </summary>
+        public EstadoSuscripcion EstadoVigenciaCalculado(DateTime hoy)
+            => (Estado == EstadoSuscripcion.Activa && EstaVencida(hoy))
+                ? EstadoSuscripcion.Vencida
+                : Estado;
+
+        /// <summary>Se renueva una suscripción que no esté ya activa-y-vigente (vencida o suspendida, o activa por extender).</summary>
+        public bool PuedeRenovar() => true;
+
+        /// <summary>Solo se suspende una suscripción Activa.</summary>
+        public bool PuedeSuspender() => Estado == EstadoSuscripcion.Activa;
+
+        /// <summary>Solo se reactiva una suscripción Suspendida.</summary>
+        public bool PuedeReactivar() => Estado == EstadoSuscripcion.Suspendida;
+
+        /// <summary>
+        /// ¿Hay que reiniciar el consumo mensual? True si todavía no se selló un período, o si el
+        /// período sellado es de un mes anterior al de <paramref name="hoy"/> (rollover mensual).
+        /// </summary>
+        public static bool DebeReiniciarConsumo(DateTime hoy, DateTime? periodoActual)
+        {
+            if (!periodoActual.HasValue) return true;
+            return periodoActual.Value.Year != hoy.Year || periodoActual.Value.Month != hoy.Month;
+        }
+
+        /// <summary>Primer día del mes de una fecha (sello del período de consumo).</summary>
+        public static DateTime InicioDeMes(DateTime fecha) => new DateTime(fecha.Year, fecha.Month, 1);
     }
 }

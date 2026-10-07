@@ -92,6 +92,9 @@ namespace GUI
         {
             base.OnLoad(e);
             GestorIdioma.SuscribirObservador(this);
+            // Mantenimiento perezoso: vence las suscripciones pasadas de plazo y reinicia el cupo
+            // mensual al abrir el módulo, para que el estado mostrado esté al día.
+            try { _bll.ActualizarEstadosPorFecha(); } catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Suscripciones] " + ex.Message); }
             Recargar();
             Traducir();
         }
@@ -126,15 +129,19 @@ namespace GUI
                     return;
                 }
                 _rvPlan.Text     = s.NombrePlan; _rvPlan.ForeColor = Estilo.AzulOscuro;
-                // El Estado en la base no se pasa a "Vencida" solo por fecha: una suscripción
-                // Activa pero pasada de FechaVencimiento sigue guardada como Activa. Mostrarla
-                // como "Vencida" evita el texto "Activa" pintado en rojo (texto y color coinciden).
+                // Estado REAL considerando la fecha: una Activa pasada de vencimiento se muestra
+                // como Vencida (el texto y el color coinciden), sin esperar a la tarea de sistema.
                 bool vigente = s.EstaVigente();
-                _rvEstado.Text = (s.Estado == BE.EstadoSuscripcion.Activa && !vigente)
-                    ? BE.EstadoSuscripcion.Vencida.ToString()
-                    : s.Estado.ToString();
-                _rvEstado.ForeColor = vigente ? Estilo.Verde : Estilo.Rojo;
-                _rvVence.Text    = s.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "sin límite";
+                bool porVencer = s.ProximaAVencer(7);
+                _rvEstado.Text = s.EstadoVigenciaCalculado(DateTime.Today).ToString();
+                _rvEstado.ForeColor = !vigente ? Estilo.Rojo : (porVencer ? Estilo.Coral : Estilo.Verde);
+
+                string vence = s.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "sin límite";
+                if (vigente && porVencer)
+                    vence += $"  ·  ⚠ vence en {s.DiasHastaVencimiento()} día(s)";
+                _rvVence.Text = vence;
+                _rvVence.ForeColor = (vigente && porVencer) ? Estilo.Coral : Estilo.AzulOscuro;
+
                 _rvReservas.Text = $"{s.ReservasConsumidasMes} / {s.ReservasDelPlan} usadas  ·  restan {s.ReservasRestantes()}";
             }
             catch (Exception ex) { MostrarError(ex); }

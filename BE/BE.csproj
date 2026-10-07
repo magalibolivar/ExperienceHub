@@ -88,6 +88,8 @@
     <Compile Include="EstadoContratacion.cs" />
     <Compile Include="MedioPago.cs" />
     <Compile Include="Contratacion.cs" />
+    <Compile Include="NivelFidelidad.cs" />
+    <Compile Include="Recomendacion.cs" />
     <Compile Include="EstadoComercialCliente.cs" />
     <Compile Include="OcupacionStock.cs" />
     <Compile Include="FilaUsuarioDV.cs" />

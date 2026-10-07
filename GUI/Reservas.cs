@@ -8,11 +8,12 @@ namespace GUI
     /// <summary>Módulo de Reservas (code-only): asignar una experiencia a un cliente según su suscripción.</summary>
     public class Reservas : FormBase, IIdiomaObserver
     {
-        private readonly BLL.Reserva     _bll     = new BLL.Reserva();
-        private readonly BLL.Cliente     _bllCli  = new BLL.Cliente();
-        private readonly BLL.Experiencia _bllExp  = new BLL.Experiencia();
-        private readonly BLL.ListaEspera _bllEsp  = new BLL.ListaEspera();
-        private readonly BLL.Suscripcion _bllSus  = new BLL.Suscripcion();
+        private readonly BLL.Reserva     _bll      = new BLL.Reserva();
+        private readonly BLL.Cliente     _bllCli   = new BLL.Cliente();
+        private readonly BLL.Experiencia _bllExp   = new BLL.Experiencia();
+        private readonly BLL.ListaEspera _bllEsp   = new BLL.ListaEspera();
+        private readonly BLL.Suscripcion _bllSus   = new BLL.Suscripcion();
+        private readonly BLL.Recomendacion _bllRec = new BLL.Recomendacion();
         private const string MODULO = "Reservas";
 
         private DataGridView _grid;
@@ -20,7 +21,9 @@ namespace GUI
         private NumericUpDown _numInvitados;
         private Button _btnCrear;
         // Valores del panel de resumen
-        private Label _rvCliente, _rvPlan, _rvReservas, _rvExperiencia, _rvFecha, _rvCupo, _rvEstado;
+        private Label _rvCliente, _rvPlan, _rvReservas, _rvExperiencia, _rvFecha, _rvCupo, _rvEstado, _rvFidelidad, _rvRecom;
+        // Experiencia sugerida al cliente seleccionado (para el botón "Usar sugerida").
+        private int? _idRecomendado;
 
         public Reservas()
         {
@@ -56,8 +59,10 @@ namespace GUI
 
             var resumen = UI.Resumen();
             _rvCliente     = UI.FilaResumenValor(resumen, "Cliente");
+            _rvFidelidad   = UI.FilaResumenValor(resumen, "Fidelidad");
             _rvPlan        = UI.FilaResumenValor(resumen, "Plan");
             _rvReservas    = UI.FilaResumenValor(resumen, "Reservas disp.");
+            _rvRecom       = UI.FilaResumenValor(resumen, "Sugerida");
             _rvExperiencia = UI.FilaResumenValor(resumen, "Experiencia");
             _rvFecha       = UI.FilaResumenValor(resumen, "Fecha / hora");
             _rvCupo        = UI.FilaResumenValor(resumen, "Cupo disp.");
@@ -71,6 +76,7 @@ namespace GUI
             _btnCrear = UI.Primario("Crear reserva", "eh.btn.crearreserva", (s, e) => Crear());
             var barra = UI.BarraAcciones(
                 _btnCrear,
+                UI.Secundario("Usar sugerida", "eh.btn.usarsugerida", (s, e) => UsarSugerida()),
                 UI.Secundario("Lista de espera", "eh.btn.listaespera", (s, e) => IngresarListaEspera()));
             barra.BackColor = Color.White;
 
@@ -158,6 +164,8 @@ namespace GUI
                 _rvCupo.Text        = exp != null ? $"{exp.CupoDisponible} / {exp.CupoMaximo}" : "—";
                 _rvEstado.Text      = "Pendiente";
 
+                ActualizarFidelizacion(cli);
+
                 BE.Suscripcion s = cli != null ? _bllSus.ObtenerVigentePorCliente(cli.IdCliente) : null;
                 if (s == null)
                 {
@@ -208,6 +216,45 @@ namespace GUI
                 Estilo.Info(this, "En lista de espera", $"Te avisamos si se libera un lugar. Posición {pos} en la fila.");
             }
             catch (Exception ex) { MostrarError(ex); }
+        }
+
+        // Fidelización: badge de nivel del cliente + experiencia sugerida según su historial.
+        private void ActualizarFidelizacion(BE.Cliente cli)
+        {
+            _idRecomendado = null;
+            if (_rvFidelidad == null) return;
+            if (cli == null)
+            {
+                _rvFidelidad.Text = "—"; _rvFidelidad.ForeColor = Estilo.AzulOscuro;
+                _rvRecom.Text = "—";     _rvRecom.ForeColor = Estilo.AzulOscuro;
+                return;
+            }
+            try
+            {
+                var nivel = _bllRec.NivelFidelidad(cli.IdCliente);
+                _rvFidelidad.Text = BE.Fidelidad.Etiqueta(nivel);
+                _rvFidelidad.ForeColor = nivel == BE.NivelFidelidad.VIP ? Estilo.Coral
+                                       : nivel == BE.NivelFidelidad.Frecuente ? Estilo.Verde
+                                       : Estilo.AzulOscuro;
+
+                var recs = _bllRec.RecomendarPara(cli.IdCliente, 1);
+                if (recs.Count > 0)
+                {
+                    _idRecomendado = recs[0].Experiencia.IdExperiencia;
+                    _rvRecom.Text  = $"{recs[0].Experiencia.Nombre}  ·  {recs[0].Motivo}";
+                }
+                else _rvRecom.Text = "Sin sugerencias por ahora";
+                _rvRecom.ForeColor = Estilo.AzulOscuro;
+            }
+            catch (Exception ex) { _rvFidelidad.Text = "—"; _rvRecom.Text = ex.Message; }
+        }
+
+        // Carga en el combo la experiencia sugerida para el cliente (si hay).
+        private void UsarSugerida()
+        {
+            if (!_idRecomendado.HasValue) { MostrarError("No hay una experiencia sugerida para este cliente."); return; }
+            try { _cboExperiencia.SelectedValue = _idRecomendado.Value; } catch { }
+            ActualizarResumen();
         }
 
         private void IngresarListaEspera()

@@ -176,7 +176,8 @@ BEGIN
         FechaInicio           DATE NOT NULL,
         FechaVencimiento      DATE NULL,
         Estado                INT NOT NULL DEFAULT 0,   -- EstadoSuscripcion
-        ReservasConsumidasMes INT NOT NULL DEFAULT 0
+        ReservasConsumidasMes INT NOT NULL DEFAULT 0,
+        PeriodoConsumo        DATE NULL                 -- mes del consumo en curso (reinicio mensual del cupo)
     );
     CREATE INDEX IX_Suscripcion_Cliente ON Suscripcion(IdCliente);
 END

@@ -82,6 +82,7 @@ namespace GUI
                     _grid.Columns["FechaHoraExperiencia"].HeaderText = "Fecha de la experiencia";
                 if (_grid.Columns.Contains("Puntaje"))
                     _grid.Columns["Puntaje"].HeaderText = "Calificación";
+                ResaltarPendientesDeCalificar();
                 ActualizarBotones();
             }
             catch (Exception ex) { MostrarError(ex); }
@@ -95,6 +96,24 @@ namespace GUI
             e.Value = (e.Value == null || e.Value == DBNull.Value) ? "—" : "★ " + e.Value + "/5";
             e.FormattingApplied = true;
             e.CellStyle.ForeColor = (e.Value as string) == "—" ? Estilo.Gris400 : Estilo.Naranja;
+        }
+
+        // Seguimiento post-experiencia: resalta las reservas con asistencia registrada que todavía
+        // NO fueron calificadas (ámbar), para que el operador cierre el círculo pidiendo la opinión.
+        private void ResaltarPendientesDeCalificar()
+        {
+            var ambar = Color.FromArgb(255, 249, 231);
+            int pendientes = 0;
+            foreach (DataGridViewRow fila in _grid.Rows)
+            {
+                if (fila.DataBoundItem is BE.Reserva r && r.Estado == BE.EstadoReserva.Asistio && r.Puntaje == null)
+                {
+                    fila.DefaultCellStyle.BackColor = ambar;
+                    pendientes++;
+                }
+            }
+            if (pendientes > 0)
+                MostrarOk($"{pendientes} experiencia(s) con asistencia pendientes de calificar (resaltadas).");
         }
 
         private BE.Reserva Sel() => _grid.CurrentRow?.DataBoundItem as BE.Reserva;

@@ -49,3 +49,7 @@ Instalador/Redist/
 Instalador/Salida/
 # Certificado de firma con clave privada: jamas al repo.
 *.pfx
+
+# Backups del editor drawio
+.$*.drawio.bkp
+*.drawio.BACKUP*

@@ -85,6 +85,11 @@ namespace GUI
             try { new BLL.Experiencia().ActualizarEstadosPorFecha(); }
             catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Program] ActualizarEstadosPorFecha: " + ex.Message); }
 
+            // Ciclo de vida de suscripciones: vence las que pasaron su plazo y reinicia el cupo
+            // mensual al cambiar de mes. Tarea de sistema; un fallo no debe impedir el arranque.
+            try { new BLL.Suscripcion().ActualizarEstadosPorFecha(); }
+            catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Program] Suscripcion.ActualizarEstadosPorFecha: " + ex.Message); }
+
             using (var frmLogin = new Login())
             {
                 if (frmLogin.ShowDialog() != DialogResult.OK)
