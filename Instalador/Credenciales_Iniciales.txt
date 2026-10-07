@@ -2,37 +2,30 @@
  ExperienceHub - Credenciales iniciales
 ===========================================================
 
-La base de datos se instala con estos usuarios ya creados.
-Las claves se guardan HASHEADAS (PBKDF2-SHA256) en la base;
-este archivo es la unica copia en texto plano.
+Un usuario por cada rol que interviene en los procesos de negocio
+PN01 (Comercializacion de la suscripcion) y PN02 (Reserva de
+experiencias). La clave sigue el patron: usuario + "1!".
 
-Agrupados por ROL efectivo (el que determina las pantallas):
+Las claves se guardan HASHEADAS (PBKDF2-SHA256) en la base; este
+archivo es la unica copia en texto plano.
 
-  ADMINISTRADOR  (acceso total)
-    admin        / administrador1!
+-----------------------------------------------------------
+  ROL                          USUARIO       CLAVE
+-----------------------------------------------------------
+  Administrador                admin         admin1!
+  Agente de Reservas           agente        agente1!
+  Coordinador de Experiencias  coordinador   coordinador1!
+  Caja                         caja          caja1!
+  Auditor                      auditor       auditor1!
+-----------------------------------------------------------
 
-  AGENTE DE RESERVAS  (PN01 venta: Clientes, Contratacion-Venta;
-                       PN02: Experiencias, Reservas, Reservas Realizadas, Lista de Espera)
-    gcomercial   / usuario1!
-    supervisor   / supervisor1!
-    vendedor     / vendedor1!
-
-  COORDINADOR DE EXPERIENCIAS  (catalogo: Experiencias, Categorias,
-                                Ciudades, Organizadores, Planes)
-    encargado    / usuario1!
-    stock        / controladorstock1!
-    operador     / operador1!
-    ginventario  / usuario1!
-    logistico    / usuario1!
-
-  AUDITOR  (solo Bitacora + Reporte de Jornada)
-    auditor      / usuario1!
-
-  CAJA  (solo cobro de contrataciones, PN01)
-    caja         / usuario1!
+Como probar los procesos:
+  - PN01 (venta): 'agente' registra y formaliza la contratacion;
+    'caja' cobra y emite el comprobante (con cuotas si es Tarjeta).
+  - PN02 (reservas): 'agente' (Agente de Reservas) reserva y gestiona
+    la lista de espera; 'coordinador' (Coordinador de Experiencias)
+    mantiene el catalogo (experiencias, categorias, ciudades).
+  - Acceso total: 'admin'.
 
 IMPORTANTE
-- En el primer inicio de sesion puede pedirse cambiar la clave.
-- Cambia la clave del usuario 'admin' despues de la primera entrada.
-- Guarda este archivo en un lugar seguro o borralo tras configurar
-  las cuentas definitivas.
+- Cambia la clave de 'admin' despues de la primera entrada (Mi Perfil).

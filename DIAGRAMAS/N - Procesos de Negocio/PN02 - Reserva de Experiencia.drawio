@@ -1,0 +1,265 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="PN02 - Reserva de Experiencia" id="pn02">
+    <mxGraphModel dx="1188" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="3360" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ================= LANE CLIENTE ================= -->
+        <mxCell id="laneCli" value="Cliente (externo)" style="swimlane;whiteSpace=wrap;html=1;horizontal=1;startSize=30;fillColor=none;strokeColor=#666666;fontSize=14;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="420" height="3280" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="Inicio" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="40" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_solicitar" value="Solicitar reserva de experiencia" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="110" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_brindar" value="Brindar identificación" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="280" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_aviso1" value="Recibir aviso (sin suscripción vigente)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="650" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fin1" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="750" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_avisoLim" value="Recibir aviso (límite del plan)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="920" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_finLim" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="1020" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_aviso2" value="Recibir aviso (reserva Pendiente)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="1320" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fin2" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="1420" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_consultar" value="Consultar experiencias" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="1540" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_seleccionar" value="Seleccionar experiencia" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="1620" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_indicar" value="Indicar cantidad de lugares / invitados" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="1700" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ajusta" value="¿Ajusta la selección?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneCli" vertex="1">
+          <mxGeometry x="110" y="2070" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="c_desistir1" value="Desistir" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" parent="laneCli" vertex="1">
+          <mxGeometry x="10" y="2230" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_finDes1" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="55" y="2320" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="c_recibConfirm" value="Recibir confirmación" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="2380" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fin_ok" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="2470" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d_espera" value="¿Desea ingresar a lista de espera?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneCli" vertex="1">
+          <mxGeometry x="110" y="2600" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="c_recibPos" value="Recibir su posición" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCli" vertex="1">
+          <mxGeometry x="100" y="2780" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fin4" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="175" y="2870" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="d_otra" value="¿Desea seleccionar otra experiencia?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneCli" vertex="1">
+          <mxGeometry x="110" y="2920" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="c_desistir2" value="Desistir" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;" parent="laneCli" vertex="1">
+          <mxGeometry x="10" y="3080" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fin5" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCli" vertex="1">
+          <mxGeometry x="55" y="3170" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="noteIdent" value="&lt;b&gt;Identificación&lt;/b&gt;&lt;br&gt;DNI, Nombre, Apellido" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneCli" vertex="1">
+          <mxGeometry x="305" y="275" width="105" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="noteDetalle" value="&lt;b&gt;Detalle de reserva&lt;/b&gt;&lt;br&gt;Experiencia, Fecha, Horario, N° de personas" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneCli" vertex="1">
+          <mxGeometry x="300" y="1695" width="110" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ================= LANE AGENTE DE RESERVAS ================= -->
+        <mxCell id="laneAg" value="Agente de Reservas" style="swimlane;whiteSpace=wrap;html=1;horizontal=1;startSize=30;fillColor=none;strokeColor=#666666;fontSize=14;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="460" y="40" width="560" height="3280" as="geometry" />
+        </mxCell>
+        <mxCell id="v_solicId" value="Solicitar identificación del cliente" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="190" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_identif" value="Identificar cliente" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="360" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_verifSus" value="Verificar suscripción" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="440" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_vig" value="¿Suscripción vigente?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneAg" vertex="1">
+          <mxGeometry x="95" y="520" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="v_infoImpos" value="Informar imposibilidad de reservar" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="650" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_quedan" value="¿Le quedan reservas en el mes?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneAg" vertex="1">
+          <mxGeometry x="95" y="780" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="v_infoLimite" value="Informar límite del plan" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="920" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_verifPend" value="Verificar reserva Pendiente" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="1070" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_pend" value="¿Tiene una reserva Pendiente sin resolver?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneAg" vertex="1">
+          <mxGeometry x="90" y="1160" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="v_infoPend" value="Informar existencia de reserva Pendiente" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="1320" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_presentar" value="Presentar experiencias disponibles" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="1460" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_validar" value="Validar condiciones del plan" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="1780" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_cumple" value="¿Cumple las condiciones?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneAg" vertex="1">
+          <mxGeometry x="95" y="1860" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="v_infoMotivo" value="Informar motivo" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="330" y="1970" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_verifCupo" value="Verificar cupo de la experiencia" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="2020" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_cupo" value="¿Hay cupo suficiente?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="laneAg" vertex="1">
+          <mxGeometry x="95" y="2110" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="v_registrar" value="Registrar reserva (descuenta cupo y consume una reserva del plan)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="50" y="2280" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="v_confirmar" value="Confirmar reserva" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="2390" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_infoFalta" value="Informar falta de disponibilidad" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="80" y="2520" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="v_ingresar" value="Ingresar a lista de espera (posición FIFO)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneAg" vertex="1">
+          <mxGeometry x="50" y="2780" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="noteFicha" value="&lt;b&gt;Ficha del Cliente&lt;/b&gt;&lt;br&gt;Suscripción, Plan, Reservas, Datos del cliente" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="340" y="358" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="noteNoVig" value="&lt;b&gt;Aviso de suscripción no vigente&lt;/b&gt;" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="340" y="648" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="noteRestr" value="&lt;b&gt;Restricciones del plan&lt;/b&gt;&lt;br&gt;Límite de reservas del plan en el mes" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="340" y="915" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="noteAvisoPend" value="&lt;b&gt;Aviso de reserva Pendiente&lt;/b&gt;" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="340" y="1320" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="noteCond" value="&lt;b&gt;Condiciones&lt;/b&gt;&lt;br&gt;Premium, edad mínima, invitados, ciudad, experiencia ya realizada, superposición de horarios" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="310" y="1830" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="noteResPend" value="&lt;b&gt;Reserva Pendiente&lt;/b&gt;" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="350" y="2285" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="noteConfirm" value="&lt;b&gt;Confirmación de la reserva&lt;/b&gt;&lt;br&gt;Voucher / constancia" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneAg" vertex="1">
+          <mxGeometry x="350" y="2395" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ================= LANE COORDINADOR DE EXPERIENCIAS ================= -->
+        <mxCell id="laneCoord" value="Coordinador de Experiencias" style="swimlane;whiteSpace=wrap;html=1;horizontal=1;startSize=30;fillColor=none;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="1020" y="40" width="380" height="3280" as="geometry" />
+        </mxCell>
+        <mxCell id="coord_s" value="Inicio" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCoord" vertex="1">
+          <mxGeometry x="130" y="1310" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="coord_prog" value="Programar experiencias (cupo, fecha, edad mínima, premium)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="laneCoord" vertex="1">
+          <mxGeometry x="35" y="1380" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="coord_fin" value="Fin" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;fontColor=#ffffff;fontSize=9;" parent="laneCoord" vertex="1">
+          <mxGeometry x="290" y="1395" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="noteAgenda" value="&lt;b&gt;Agenda de experiencias&lt;/b&gt;&lt;br&gt;Experiencia, Fecha, Horario, Lugar, Cupos" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;size=14;fontSize=9;align=left;verticalAlign=top;spacingLeft=4;spacingTop=3;" parent="laneCoord" vertex="1">
+          <mxGeometry x="35" y="1500" width="210" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ================= FLUJO ================= -->
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="s1" target="c_solicitar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_solicitar" target="v_solicId" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_solicId" target="c_brindar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_brindar" target="v_identif" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_identif" target="v_verifSus" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_verifSus" target="d_vig" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f7" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_vig" target="v_infoImpos" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_infoImpos" target="c_aviso1" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_aviso1" target="e_fin1" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f10" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_vig" target="d_quedan" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="760" y="610" /><mxPoint x="760" y="820" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f11" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_quedan" target="v_infoLimite" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_infoLimite" target="c_avisoLim" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_avisoLim" target="e_finLim" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f14" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_quedan" target="v_verifPend" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="770" y="870" /><mxPoint x="770" y="1135" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_verifPend" target="d_pend" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f16" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_pend" target="v_infoPend" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_infoPend" target="c_aviso2" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_aviso2" target="e_fin2" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f19" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_pend" target="v_presentar" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="780" y="1255" /><mxPoint x="780" y="1525" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_presentar" target="c_consultar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_consultar" target="c_seleccionar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_seleccionar" target="c_indicar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_indicar" target="v_validar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_validar" target="d_cumple" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f25" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_cumple" target="v_infoMotivo" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_infoMotivo" target="c_ajusta" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f27" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="c_ajusta" target="c_seleccionar" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="115" y="2160" /><mxPoint x="115" y="1685" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f28" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_ajusta" target="c_desistir1" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_desistir1" target="e_finDes1" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f30" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_cumple" target="v_verifCupo" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_verifCupo" target="d_cupo" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f32" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_cupo" target="v_registrar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_registrar" target="v_confirmar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_confirmar" target="c_recibConfirm" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_recibConfirm" target="e_fin_ok" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f36" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="d_cupo" target="v_infoFalta" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="490" y="2200" /><mxPoint x="490" y="2585" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_infoFalta" target="d_espera" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f38" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_espera" target="v_ingresar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="v_ingresar" target="c_recibPos" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_recibPos" target="e_fin4" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f41" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_espera" target="d_otra" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f42" value="Sí (otra)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="d_otra" target="c_consultar" edge="1">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="90" y="3010" /><mxPoint x="90" y="1605" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="f43" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="d_otra" target="c_desistir2" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="c_desistir2" target="e_fin5" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="coord_s" target="coord_prog" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" parent="1" source="coord_prog" target="coord_fin" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="dIdent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="c_brindar" target="noteIdent" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dFicha" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_identif" target="noteFicha" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dNoVig" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_infoImpos" target="noteNoVig" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dRestr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_infoLimite" target="noteRestr" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dAvisoPend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_infoPend" target="noteAvisoPend" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dDetalle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="c_indicar" target="noteDetalle" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dCond" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="d_cumple" target="noteCond" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dResPend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_registrar" target="noteResPend" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dConfirm" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="v_confirmar" target="noteConfirm" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dAgendaOut" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="coord_prog" target="noteAgenda" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="dAgendaIn" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#D6B656;" parent="1" source="noteAgenda" target="v_presentar" edge="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
