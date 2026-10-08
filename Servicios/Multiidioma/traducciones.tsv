@@ -4168,6 +4168,54 @@ ES	eh.con.header.desc	Venta registra la contratación (pendiente de pago); Caja 
 EN	eh.con.header.desc	Sales registers the contract (pending payment); Cashier charges and issues the receipt; Sales formalizes the subscription.
 PT	eh.con.header.desc	Vendas registra a contratação (pendente de pagamento); Caixa cobra e emite o comprovante; Vendas formaliza a assinatura.
 RU	eh.con.header.desc	Отдел продаж регистрирует договор (ожидает оплаты); Касса принимает оплату и выдаёт чек; Отдел продаж оформляет подписку.
+ES	eh.con.sec.venta	① Venta · Registrar contratación
+EN	eh.con.sec.venta	① Sales · Register contract
+PT	eh.con.sec.venta	① Vendas · Registrar contratação
+RU	eh.con.sec.venta	① Продажи · Регистрация договора
+ES	eh.con.sec.caja	② Caja · Cobrar
+EN	eh.con.sec.caja	② Cashier · Charge
+PT	eh.con.sec.caja	② Caixa · Cobrar
+RU	eh.con.sec.caja	② Касса · Оплата
+ES	eh.con.sec.formalizar	③ Venta · Formalizar suscripción
+EN	eh.con.sec.formalizar	③ Sales · Formalize subscription
+PT	eh.con.sec.formalizar	③ Vendas · Formalizar assinatura
+RU	eh.con.sec.formalizar	③ Продажи · Оформить подписку
+ES	eh.con.hint.sel	Seleccioná una fila para ver el próximo paso.
+EN	eh.con.hint.sel	Select a row to see the next step.
+PT	eh.con.hint.sel	Selecione uma linha para ver o próximo passo.
+RU	eh.con.hint.sel	Выберите строку, чтобы увидеть следующий шаг.
+ES	eh.con.hint.pend	pendiente de pago → cobrá en ② Caja.
+EN	eh.con.hint.pend	pending payment → charge in ② Cashier.
+PT	eh.con.hint.pend	pendente de pagamento → cobre em ② Caixa.
+RU	eh.con.hint.pend	ожидает оплаты → примите оплату в ② Кассе.
+ES	eh.con.hint.pag	pagada → formalizá en ③ Venta.
+EN	eh.con.hint.pag	paid → formalize in ③ Sales.
+PT	eh.con.hint.pag	paga → formalize em ③ Vendas.
+RU	eh.con.hint.pag	оплачено → оформите в ③ Продажах.
+ES	eh.frm.membresia	Membresía del cliente
+EN	eh.frm.membresia	Client membership
+PT	eh.frm.membresia	Assinatura do cliente
+RU	eh.frm.membresia	Членство клиента
+ES	eh.mem.header.desc	Comercialización y gestión de la suscripción en una pantalla. Venta y Caja ven solo su parte; el administrador, todo.
+EN	eh.mem.header.desc	Sales and subscription management in one screen. Sales and Cashier see only their part; the administrator sees everything.
+PT	eh.mem.header.desc	Comercialização e gestão da assinatura em uma tela. Vendas e Caixa veem só a sua parte; o administrador vê tudo.
+RU	eh.mem.header.desc	Продажа и управление подпиской на одном экране. Продажи и Касса видят только свою часть; администратор — всё.
+ES	eh.mem.sec.contratacion	Contratación en proceso
+EN	eh.mem.sec.contratacion	Contract in progress
+PT	eh.mem.sec.contratacion	Contratação em andamento
+RU	eh.mem.sec.contratacion	Договор в процессе
+ES	eh.mem.sec.venta	Venta
+EN	eh.mem.sec.venta	Sales
+PT	eh.mem.sec.venta	Vendas
+RU	eh.mem.sec.venta	Продажи
+ES	eh.mem.sec.caja	Caja
+EN	eh.mem.sec.caja	Cashier
+PT	eh.mem.sec.caja	Caixa
+RU	eh.mem.sec.caja	Касса
+ES	mnu.cat.membresia	Membresía del cliente
+EN	mnu.cat.membresia	Client membership
+PT	mnu.cat.membresia	Assinatura do cliente
+RU	mnu.cat.membresia	Членство клиента
 ES	eh.diag.header.desc	Verificación de dígitos verificadores (DVH/DVV) por entidad protegida.
 EN	eh.diag.header.desc	Verification of check digits (DVH/DVV) per protected entity.
 PT	eh.diag.header.desc	Verificação de dígitos verificadores (DVH/DVV) por entidade protegida.
@@ -4232,18 +4280,18 @@ ES	eh.btn.cancelarreserva	Cancelar
 EN	eh.btn.cancelarreserva	Cancel
 PT	eh.btn.cancelarreserva	Cancelar
 RU	eh.btn.cancelarreserva	Отменить
-ES	eh.btn.cobrar	Cobrar (pago OK)
-EN	eh.btn.cobrar	Charge (payment OK)
-PT	eh.btn.cobrar	Cobrar (pagamento OK)
-RU	eh.btn.cobrar	Принять оплату (успех)
+ES	eh.btn.cobrar	Registrar pago aprobado
+EN	eh.btn.cobrar	Register approved payment
+PT	eh.btn.cobrar	Registrar pagamento aprovado
+RU	eh.btn.cobrar	Зарегистрировать успешную оплату
 ES	eh.btn.formalizar	Formalizar suscripción
 EN	eh.btn.formalizar	Formalize subscription
 PT	eh.btn.formalizar	Formalizar assinatura
 RU	eh.btn.formalizar	Оформить подписку
-ES	eh.btn.intento	Intento fallido
-EN	eh.btn.intento	Failed attempt
-PT	eh.btn.intento	Tentativa falha
-RU	eh.btn.intento	Неудачная попытка
+ES	eh.btn.intento	Registrar pago rechazado
+EN	eh.btn.intento	Register rejected payment
+PT	eh.btn.intento	Registrar pagamento rejeitado
+RU	eh.btn.intento	Зарегистрировать отклонённую оплату
 ES	eh.btn.nuevacontratacion	Registrar contratación
 EN	eh.btn.nuevacontratacion	Register contract
 PT	eh.btn.nuevacontratacion	Registrar contratação

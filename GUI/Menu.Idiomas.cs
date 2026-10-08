@@ -76,8 +76,7 @@ namespace GUI
             Aplicar(_miOrganizadores,  t);
             Aplicar(_miCategorias,     t);
             Aplicar(_miCiudades,       t);
-            Aplicar(_miSuscripciones,  t);
-            Aplicar(_miContrataciones, t);
+            Aplicar(_miMembresia,      t);
             Aplicar(_miListaEspera,    t);
 
             // Menú "Catálogos" (construido por código): traducir el grupo y sus ítems por Tag.

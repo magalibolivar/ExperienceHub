@@ -278,21 +278,20 @@ namespace GUI
                 (_miOrganizadores, "mnuOrganizadores"),
                 (_miCategorias,    "mnuCategorias"),
                 (_miCiudades,      "mnuCiudades"),
-                // Suscripciones la opera el Agente (comercialización), no el Coordinador.
-                (_miSuscripciones, "mnuContratacionVenta"),
             };
             foreach (var h in hojas)
                 if (h.Item != null) h.Item.Visible = Permite(h.Permiso);
 
-            // Contrataciones (Caja): Venta la crea/formaliza y Caja la cobra, así que es visible con
-            // CUALQUIERA de las dos patentes (OR), que el mapa plano de arriba no expresa.
-            if (_miContrataciones != null)
-                _miContrataciones.Visible = Permite("mnuContratacionVenta") || Permite("mnuContratacionCaja");
+            // Membresía del cliente: unifica comercialización (Venta + Caja) y gestión de la suscripción.
+            // El ítem es visible con CUALQUIERA de las dos patentes (OR); dentro del form, ManejadorSeguridad
+            // oculta la sección Venta o Caja según la patente (el Administrador ve todo por bypass).
+            if (_miMembresia != null)
+                _miMembresia.Visible = Permite("mnuContratacionVenta") || Permite("mnuContratacionCaja");
 
             // ── Visibilidad de los BLOQUES de negocio (según patentes de sus ítems) ──
             // Se usa .Available (no .Visible): dentro de un dropdown cerrado, .Visible siempre es false.
             SetGrupoVisible(_mnuComercializacion,
-                clientesToolStripMenuItem, planesToolStripMenuItem, _miSuscripciones, _miContrataciones);
+                clientesToolStripMenuItem, planesToolStripMenuItem, _miMembresia);
 
             SetGrupoVisible(_mnuReservas,
                 experienciasToolStripMenuItem, reservasToolStripMenuItem, reservasRealizadasToolStripMenuItem,
@@ -426,7 +425,7 @@ namespace GUI
         // Ítems de los módulos de catálogo/negocio (construidos por código). Se ubican luego en los
         // bloques de negocio del menú (Fidelización / Operación) en ReorganizarNavegacionPorBloques.
         private ToolStripMenuItem _miOrganizadores, _miCategorias, _miCiudades,
-                                  _miSuscripciones, _miListaEspera, _miContrataciones;
+                                  _miMembresia, _miListaEspera;
         // Grupos del menú principal (uno por proceso de negocio), creados por código.
         private ToolStripMenuItem _mnuComercializacion, _mnuReservas;
         // (compat) referencia usada por código legacy null-guardeado; ya no se crea el menú "Catálogos".
@@ -451,8 +450,7 @@ namespace GUI
             _miOrganizadores   = NuevoItemForm("Organizadores",   "mnu.cat.organizadores",   typeof(Organizadores),       () => new Organizadores());
             _miCategorias      = NuevoItemForm("Categorías",      "mnu.cat.categorias",      typeof(Categorias),          () => new Categorias());
             _miCiudades        = NuevoItemForm("Ciudades",        "mnu.cat.ciudades",        typeof(Ciudades),            () => new Ciudades());
-            _miSuscripciones   = NuevoItemForm("Suscripciones",   "mnu.cat.suscripciones",   typeof(SuscripcionesForm),   () => new SuscripcionesForm());
-            _miContrataciones  = NuevoItemForm("Contrataciones (Caja)", "mnu.cat.contrataciones", typeof(ContratacionesForm), () => new ContratacionesForm());
+            _miMembresia       = NuevoItemForm("Membresía del cliente", "mnu.cat.membresia",     typeof(MembresiaForm),       () => new MembresiaForm());
             _miListaEspera     = NuevoItemForm("Lista de espera", "mnu.cat.listaespera",     typeof(ListaEsperaForm),     () => new ListaEsperaForm());
         }
 
@@ -464,8 +462,7 @@ namespace GUI
             _mnuComercializacion = new ToolStripMenuItem(Tx("mnu.blq.comercializacion", "Comercialización")) { Tag = "mnu.blq.comercializacion" };
             _mnuComercializacion.DropDownItems.Add(clientesToolStripMenuItem);
             _mnuComercializacion.DropDownItems.Add(planesToolStripMenuItem);
-            _mnuComercializacion.DropDownItems.Add(_miSuscripciones);
-            _mnuComercializacion.DropDownItems.Add(_miContrataciones);
+            _mnuComercializacion.DropDownItems.Add(_miMembresia);
 
             // 2 · PN02 — RESERVAS DE EXPERIENCIAS (armado del pedido/reserva + catálogos de apoyo)
             _mnuReservas = new ToolStripMenuItem(Tx("mnu.blq.reservas", "Reservas")) { Tag = "mnu.blq.reservas" };

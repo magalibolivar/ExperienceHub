@@ -67,10 +67,7 @@
     <Compile Include="Ciudades.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SuscripcionesForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ContratacionesForm.cs">
+    <Compile Include="MembresiaForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ListaEsperaForm.cs">
