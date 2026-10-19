@@ -29,12 +29,11 @@ namespace Servicios.Multiidioma
     ///   btn.salir           → botón "Salir"
     ///   lnk.olvide          → link "¿Olvidaste tu contraseña?"
     ///   mnu.inventario      → menú "Inventario"
-    ///   mnu.prendas         → ítem "Prendas"
+    ///   mnu.experiencias    → ítem "Experiencias"
     ///   mnu.ventas          → menú "Ventas"
     ///   mnu.clientes        → ítem "Clientes"
     ///   mnu.planes          → ítem "Planes de Suscripción"
-    ///   mnu.pedidosventa    → ítem "Pedidos de Venta"
-    ///   mnu.pedidosreal     → ítem "Pedidos Realizados"
+    ///   mnu.reservas        → ítem "Reservas"
     ///   mnu.administrar     → menú "Administrar"
     ///   mnu.usuarios        → ítem "Usuarios"
     ///   mnu.bitacora        → ítem "Bitácora"
@@ -139,16 +138,11 @@ namespace Servicios.Multiidioma
                 var s = clave.Substring(4);
                 if (s.StartsWith("login"))          return "Login";
                 if (s.StartsWith("clientes"))       return "Clientes";
-                if (s.StartsWith("prendas"))        return "Prendas";
                 if (s.StartsWith("gestion"))        return "GestionUsuarios";
                 if (s.StartsWith("planes"))         return "Planes";
                 if (s.StartsWith("bitacora"))       return "Bitacora";
-                if (s.StartsWith("pedidosventa"))   return "PedidosVenta";
-                if (s.StartsWith("pedidosreal"))    return "PedidosRealizados";
                 if (s.StartsWith("historial"))      return "Historial";
                 if (s.StartsWith("nuevocliente") || s.StartsWith("editarcliente")) return "NuevoCliente";
-                if (s.StartsWith("nuevaprenda")  || s.StartsWith("editarprenda"))  return "NuevaPrenda";
-                if (s.StartsWith("nuevopedido"))    return "NuevoPedido";
                 if (s.StartsWith("mantenimiento")) return "MantenimientoHistorial";
                 if (s.StartsWith("resetclave"))     return "ResetClave";
                 if (s.StartsWith("cambioestado"))   return "CambioEstado";
@@ -161,10 +155,6 @@ namespace Servicios.Multiidioma
                 clave == "lbl.sinplan" || clave == "lbl.buscar")              return "Clientes";
             if (clave.StartsWith("lbl.cli.")  || clave.StartsWith("combo.cli.") ||
                 clave.StartsWith("err.cli."))                                  return "NuevoCliente";
-            if (clave.StartsWith("col.prenda.") || clave.StartsWith("msg.prenda.") ||
-                clave.StartsWith("prenda.")     || clave.StartsWith("combo.prenda.") ||
-                clave.StartsWith("opt.")        || clave.StartsWith("err.prenda."))  return "Prendas";
-            if (clave.StartsWith("lbl.prenda.") || clave == "btn.agregar.prenda")   return "NuevaPrenda";
             if (clave.StartsWith("lbl.cambioest.") || clave.StartsWith("msg.cambioest.") ||
                 clave.StartsWith("conf.baja.") || clave == "lbl.nuevoestado" ||
                 clave == "btn.confirmar.cambio")                               return "CambioEstado";
@@ -176,7 +166,7 @@ namespace Servicios.Multiidioma
                 clave == "lbl.confirmar.clave" || clave == "btn.confirmar.reset") return "ResetClave";
             if (clave.StartsWith("col.plan.")  || clave.StartsWith("plan.") ||
                 clave.StartsWith("msg.planes.") || clave.StartsWith("conf.planes.") ||
-                clave == "lbl.nuevopla" || clave == "lbl.nombreplan" || clave == "lbl.limiteprendas" ||
+                clave == "lbl.nuevopla" || clave == "lbl.nombreplan" || clave == "lbl.limitereservas" ||
                 clave == "lbl.preciomensual" || clave == "btn.guardarplan" || clave == "btn.limpiar" ||
                 clave == "lbl.acciones" || clave == "btn.desactivar" || clave == "btn.activar" ||
                 clave == "lbl.planesreg" || clave == "lbl.editplan")           return "Planes";
@@ -192,32 +182,11 @@ namespace Servicios.Multiidioma
                 clave == "lbl.ultimos" || clave == "lbl.dias" ||
                 clave == "lbl.usuarioid" || clave == "lbl.actividad" ||
                 clave == "lbl.criticidad" || clave == "lbl.tipoevento" ||
-                clave == "lbl.idpedido"  || clave == "lbl.idcliente")         return "Bitacora";
-            if (clave.StartsWith("msg.ped.")  || clave.StartsWith("conf.cancelped.") ||
-                clave.StartsWith("conf.descancelar.") || clave.StartsWith("conf.despachar.") ||
-                clave.StartsWith("conf.entrega.") || clave.StartsWith("conf.devolucion.") ||
-                clave.StartsWith("dlg.cancelped.") || clave == "msg.cancelped.req" ||
-                clave == "btn.nuevopedido" || clave == "btn.cancelarpedido" ||
-                clave == "btn.descancelar" || clave == "lbl.prendaspedido" ||
-                clave == "btn.historial"  || clave == "col.ped.motivo" ||
-                clave == "lbl.ped.seleccionado" || clave == "lbl.motivo")     return "PedidosVenta";
-            if (clave.StartsWith("paso") || clave == "lbl.ped.selcliente" ||
-                clave.StartsWith("combo.ped.") || clave == "lbl.ped.selprendas" ||
-                clave == "btn.siguiente" || clave == "btn.volver" ||
-                clave == "btn.confirmar.pedido" || clave == "btn.procesando" ||
-                clave == "lbl.ped.infoplan" || clave == "err.ped.sinplan" ||
-                clave == "err.ped.sinprendas" || clave == "err.ped.suscvencida" ||
-                clave.StartsWith("lbl.ped.res.") ||
-                clave == "conf.ped.titulo" || clave == "conf.ped.msg")         return "NuevoPedido";
+                clave == "lbl.idreserva" || clave == "lbl.idcliente")         return "Bitacora";
             if (clave == "frm.mantenimiento" || clave == "btn.mantenimiento" ||
                 clave == "btn.mant.cerrar"    ||
                 clave.StartsWith("col.mant.")  || clave.StartsWith("mant.")  ||
                 clave.StartsWith("msg.mant."))                                 return "MantenimientoHistorial";
-            if (clave.StartsWith("col.ped.") || clave.StartsWith("urg.") ||
-                clave.StartsWith("est.")     || clave.StartsWith("col.det.") ||
-                clave == "btn.despachar" || clave == "btn.entregado" ||
-                clave == "btn.vernotificacion" || clave == "btn.devolucion" ||
-                clave == "lbl.detallepedido" || clave == "lbl.ped.detalletitulo") return "PedidosRealizados";
             if (clave.StartsWith("lbl.hist.") || clave.StartsWith("combo.hist.") ||
                 clave.StartsWith("btn.hist.") || clave.StartsWith("col.hist.") ||
                 clave.StartsWith("msg.hist.") || clave.StartsWith("conf.hist.") ||

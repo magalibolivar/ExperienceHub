@@ -25,26 +25,31 @@ namespace GUI
         private CheckedListBox _clbIntereses;
 
         /// <summary>Constructor para ALTA (cliente nuevo).</summary>
-        public ClienteForm() : this(null) { }
+        public ClienteForm() : this(null, false) { }
+
+        /// <summary>Constructor para ALTA o EDICIÓN. Si cliente es null, modo alta; si trae datos, edición.</summary>
+        public ClienteForm(BE.Cliente cliente) : this(cliente, cliente != null) { }
 
         /// <summary>
-        /// Constructor para ALTA o EDICIÓN.
-        /// Si cliente es null, modo alta; si tiene datos, modo edición.
+        /// Constructor general. <paramref name="esEdicion"/> determina el modo (título, botón e Id al
+        /// guardar). Si <paramref name="datos"/> no es null, PRE-CARGA los campos: en edición con el
+        /// cliente existente, y en ALTA con datos previos (reintento tras un error de Alta, para no
+        /// perder lo ya cargado).
         /// </summary>
-        public ClienteForm(BE.Cliente cliente)
+        public ClienteForm(BE.Cliente datos, bool esEdicion)
         {
             InitializeComponent();
             try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico); } catch { }
 
-            _esEdicion       = cliente != null;
-            _clienteOriginal = cliente;
+            _esEdicion       = esEdicion;
+            _clienteOriginal = datos;
 
             CargarPlanes();
             RellenarComboCiudades();
             ConstruirSelectorIntereses();
             AplicarIdioma(GestorIdioma.IdiomaActual);
 
-            if (_esEdicion) CargarDatosExistentes();
+            if (_clienteOriginal != null) CargarDatosExistentes();   // prefill (edición o alta-reintento)
 
             ReorganizarLayout();
         }

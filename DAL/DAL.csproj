@@ -71,6 +71,14 @@
     <Compile Include="Reserva.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="ListaEspera.cs" />
+    <Compile Include="Parametro.cs" />
+    <Compile Include="Migracion.cs" />
+    <EmbeddedResource Include="..\BD\16_PN03_Cancelacion.sql">
+      <LogicalName>DAL.Migracion.PN03.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BD\17_Limpieza_Legacy.sql">
+      <LogicalName>DAL.Migracion.Legacy.sql</LogicalName>
+    </EmbeddedResource>
     <Compile Include="Calificacion.cs" />
     <Compile Include="Permiso.cs" />
     <Compile Include="PlanSuscripcion.cs" />

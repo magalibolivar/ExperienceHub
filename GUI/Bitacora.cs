@@ -244,7 +244,7 @@ namespace GUI
             Aplicar(lblDiasNegocio,       t);
             Aplicar(btnNegUltimosDias,    t);
             Aplicar(lblTipoEvento,        t);
-            Aplicar(lblIdPedido,          t);
+            Aplicar(lblIdReserva,          t);
             Aplicar(lblIdCliente,         t);
             Aplicar(btnNegBuscar,         t);
             Aplicar(btnNegLimpiar,        t);
@@ -394,7 +394,7 @@ namespace GUI
         private void BtnNegLimpiar_Click(object sender, EventArgs e)
         {
             cmbTipoEvento.SelectedIndex = 0;
-            txtNegPedido.Text           = "0";
+            txtNegReserva.Text           = "0";
             txtNegCliente.Text          = "0";
             nudNegDias.Value            = 7;
             CargarNegocio();
@@ -458,10 +458,10 @@ namespace GUI
                 string tipo     = (tipoIdx <= 0 || tipoIdx >= _tipoEventoDB.Count)
                                     ? null
                                     : _tipoEventoDB[tipoIdx];
-                int? idPedido   = int.TryParse(txtNegPedido.Text,  out int p) && p > 0 ? (int?)p : null;
+                int? idReserva  = int.TryParse(txtNegReserva.Text,  out int p) && p > 0 ? (int?)p : null;
                 int? idCliente  = int.TryParse(txtNegCliente.Text, out int c) && c > 0 ? (int?)c : null;
 
-                var dt = bllBitacora.BuscarPorFiltrosNegocio(desde, null, tipo, idCliente, idPedido);
+                var dt = bllBitacora.BuscarPorFiltrosNegocio(desde, null, tipo, idCliente, idReserva);
                 MostrarEnGrilla(dgvNegocio, lblResultadosNegocio, dt);
             }
             catch (Exception ex) { MostrarError(ex); }
@@ -580,8 +580,8 @@ namespace GUI
                 RH("Tipo",            "col.neg.tipo");
                 RH("UsernameUsuario", "col.neg.usuario");
                 RH("NombreCliente",   "col.neg.cliente");
-                RH("IdReserva",       "col.neg.idpedido");
-                RH("IdExperiencia",   "col.neg.idprenda");
+                RH("IdReserva",       "col.neg.idreserva");
+                RH("IdExperiencia",   "col.neg.idexperiencia");
                 RH("IdCliente",       "col.neg.idcliente");
                 RH("Descripcion",     "col.neg.desc");
             }

@@ -5,14 +5,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Tests
 {
     /// <summary>
-    /// PN01 — Armar Pedido (orientado a experiencias). Prueba la lógica PURA de los pasos
-    /// previos y reglas del proceso, sin BD ni sesión:
-    ///   • CU03-VEN → BE.SituacionCliente.Resolver (estado comercial del cliente)
+    /// PN02 — Armado de la reserva. Prueba la lógica PURA de los pasos previos y reglas del
+    /// proceso, sin BD ni sesión:
+    ///   • CU03-AGR → BE.SituacionCliente.Resolver (situación del cliente)
     ///   • CU01-DEP → BE.ResultadoDisponibilidad.Evaluar (disponibilidad real de cupo)
-    ///   • Regla "pedido activo" → BLL.Reserva.TienePedidoActivoBloqueante
+    ///   • Regla "reserva pendiente" → BLL.Reserva.TieneReservaPendienteBloqueante
     /// </summary>
     [TestClass]
-    public class ArmarPedidoPN01Tests
+    public class ReservaPN02Tests
     {
         // ── Helpers de armado ──────────────────────────────────────────────────
         private static BE.Cliente ClienteConSuscripcion(
@@ -29,13 +29,13 @@ namespace Tests
 
         private static BE.Reserva Res(BE.EstadoReserva estado) => new BE.Reserva { Estado = estado };
 
-        // ── CU03-VEN · Situación del cliente ────────────────────────────────────
+        // ── CU03-AGR · Situación del cliente ────────────────────────────────────
         [TestMethod]
         public void Situacion_ClienteNull_EsInexistente()
         {
             var s = BE.SituacionCliente.Resolver(null);
             Assert.AreEqual(BE.EstadoSituacionCliente.ClienteInexistente, s.Estado);
-            Assert.IsFalse(s.PuedeArmarPedido);
+            Assert.IsFalse(s.PuedeArmarReserva);
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@ namespace Tests
         {
             var s = BE.SituacionCliente.Resolver(new BE.Cliente { IdCliente = 1, Nombre = "Sin", Apellido = "Plan" });
             Assert.AreEqual(BE.EstadoSituacionCliente.SinPlan, s.Estado);
-            Assert.IsFalse(s.PuedeArmarPedido);
+            Assert.IsFalse(s.PuedeArmarReserva);
         }
 
         [TestMethod]
@@ -52,18 +52,18 @@ namespace Tests
             var cli = ClienteConSuscripcion(BE.EstadoSuscripcion.Activa, DateTime.Today.AddDays(-1), 4, 0);
             var s = BE.SituacionCliente.Resolver(cli);
             Assert.AreEqual(BE.EstadoSituacionCliente.SuscripcionVencida, s.Estado);
-            Assert.IsFalse(s.PuedeArmarPedido);
+            Assert.IsFalse(s.PuedeArmarReserva);
             Assert.AreEqual(DateTime.Today.AddDays(-1), s.FechaVencimiento);
         }
 
         [TestMethod]
-        public void Situacion_Vigente_EsOk_ConCupoRestante()
+        public void Situacion_Vigente_EsOk_ConReservasRestantes()
         {
             var cli = ClienteConSuscripcion(BE.EstadoSuscripcion.Activa, DateTime.Today.AddDays(10), 4, 1);
             var s = BE.SituacionCliente.Resolver(cli);
             Assert.AreEqual(BE.EstadoSituacionCliente.Ok, s.Estado);
-            Assert.IsTrue(s.PuedeArmarPedido);
-            Assert.AreEqual(3, s.CupoDisponible, "4 del plan - 1 consumida = 3 disponibles.");
+            Assert.IsTrue(s.PuedeArmarReserva);
+            Assert.AreEqual(3, s.ReservasRestantes, "4 del plan - 1 consumida = 3 disponibles.");
             Assert.AreEqual("Plus", s.NombrePlan);
         }
 
@@ -97,33 +97,33 @@ namespace Tests
             Assert.IsFalse(r.Disponible);
         }
 
-        // ── Regla "pedido activo" ────────────────────────────────────────────────
+        // ── Regla "reserva pendiente" ────────────────────────────────────────────
         [TestMethod]
-        public void PedidoActivo_ConPendiente_Bloquea()
+        public void ReservaPendiente_ConPendiente_Bloquea()
         {
             var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Confirmada), Res(BE.EstadoReserva.Pendiente) };
-            Assert.IsTrue(BLL.Reserva.TienePedidoActivoBloqueante(activas, bloquearSiPendiente: true));
+            Assert.IsTrue(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: true));
         }
 
         [TestMethod]
-        public void PedidoActivo_SoloConfirmadas_NoBloquea()
+        public void ReservaPendiente_SoloConfirmadas_NoBloquea()
         {
             var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Confirmada), Res(BE.EstadoReserva.Confirmada) };
-            Assert.IsFalse(BLL.Reserva.TienePedidoActivoBloqueante(activas, bloquearSiPendiente: true));
+            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: true));
         }
 
         [TestMethod]
-        public void PedidoActivo_FlagApagado_NoBloquea()
+        public void ReservaPendiente_FlagApagado_NoBloquea()
         {
             var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Pendiente) };
-            Assert.IsFalse(BLL.Reserva.TienePedidoActivoBloqueante(activas, bloquearSiPendiente: false));
+            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: false));
         }
 
         [TestMethod]
-        public void PedidoActivo_SinReservas_NoBloquea()
+        public void ReservaPendiente_SinReservas_NoBloquea()
         {
-            Assert.IsFalse(BLL.Reserva.TienePedidoActivoBloqueante(null, bloquearSiPendiente: true));
-            Assert.IsFalse(BLL.Reserva.TienePedidoActivoBloqueante(new List<BE.Reserva>(), bloquearSiPendiente: true));
+            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(null, bloquearSiPendiente: true));
+            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(new List<BE.Reserva>(), bloquearSiPendiente: true));
         }
     }
 }

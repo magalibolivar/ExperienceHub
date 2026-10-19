@@ -183,7 +183,7 @@ ES	lbl.listatitulo	Usuarios registrados en el sistema
 ES	frm.planes	Planes de Suscripción
 ES	lbl.nuevopla	Nuevo Plan
 ES	lbl.nombreplan	Nombre del plan *
-ES	lbl.limiteprendas	Reservas mensuales *
+ES	lbl.limitereservas	Reservas mensuales *
 ES	lbl.preciomensual	Precio mensual ($) *
 ES	btn.guardarplan	Guardar Plan
 ES	btn.limpiar	Limpiar / Nuevo
@@ -205,17 +205,8 @@ ES	btn.buscar	Buscar
 ES	btn.limpiarfiltro	Limpiar
 ES	btn.exportar	Exportar CSV
 ES	lbl.tipoevento	Tipo evento:
-ES	lbl.idpedido	ID Reserva:
+ES	lbl.idreserva	ID Reserva:
 ES	lbl.idcliente	ID Cliente:
-ES	btn.nuevopedido	+ Nuevo Pedido
-ES	btn.cancelarpedido	✕ Cancelar
-ES	btn.descancelar	↩ Des-cancelar
-ES	lbl.prendaspedido	Prendas del pedido seleccionado
-ES	btn.despachar	📦 Despachar
-ES	btn.entregado	✓ Marcar Entregado
-ES	btn.vernotificacion	✉ Ver Notificación
-ES	btn.devolucion	↩ Registrar Devolución
-ES	lbl.detallepedido	Detalle del pedido seleccionado
 ES	col.bit.id	Id
 ES	col.bit.fecha	Fecha
 ES	col.bit.usuario	Usuario
@@ -229,8 +220,8 @@ ES	col.neg.fecha	Fecha
 ES	col.neg.tipo	Tipo
 ES	col.neg.usuario	Usuario
 ES	col.neg.cliente	Cliente
-ES	col.neg.idpedido	Id Reserva
-ES	col.neg.idprenda	Id Experiencia
+ES	col.neg.idreserva	Id Reserva
+ES	col.neg.idexperiencia	Id Experiencia
 ES	col.neg.idcliente	Id Cliente
 ES	col.neg.desc	Descripción
 ES	stat.ninguno	Ninguno
@@ -263,7 +254,7 @@ ES	btn.si	Sí
 ES	btn.no	No
 ES	btn.refrescar	↻ Refrescar Lista
 ES	col.plan.nombre	Nombre
-ES	col.plan.prendas	Prendas
+ES	col.plan.reservasmes	Reservas / mes
 ES	col.plan.precio	Precio
 ES	col.plan.estado	Estado
 ES	plan.activo	Activo
@@ -286,7 +277,7 @@ ES	col.cli.apellido	Apellido
 ES	col.cli.dni	DNI
 ES	col.cli.email	Email
 ES	col.cli.plan	Plan
-ES	col.cli.prendas	Prendas
+ES	col.cli.reservas	Reservas
 ES	col.cli.metodopago	Método de Pago
 ES	col.cli.alta	Alta
 ES	lbl.sinplan	Sin plan
@@ -303,9 +294,6 @@ ES	lbl.recup.titulo	Recuperar Contraseña
 ES	lbl.recup.desc	Ingresá tu nombre de usuario. Un administrador\npodrá resetear tu contraseña desde el sistema.
 ES	lbl.recup.usuario	Nombre de usuario:
 ES	btn.enviar.solicitud	Enviar solicitud
-ES	btn.agregar.prenda	Agregar Prenda
-ES	lbl.ped.selcliente	Seleccioná el cliente para este pedido:
-ES	lbl.ped.selprendas	Seleccioná las prendas para incluir en el pedido (checkbox):
 ES	btn.siguiente	Siguiente →
 ES	btn.volver	← Volver
 ES	btn.confirmar.pedido	✓ Confirmar Pedido
@@ -328,8 +316,6 @@ ES	btn.exportar.pdf	📄 Exportar PDF
 ES	btn.historial	📋 Historial
 ES	btn.aceptar	Aceptar
 ES	msg.cancelped.req	La cancelación requiere un motivo.
-ES	col.ped.motivo	Motivo
-ES	lbl.ped.seleccionado	Pedido #{0} — {1} — {2}
 ES	lbl.motivo	Motivo:
 ES	lbl.cambioest.info	Prenda: {0}  —  Estado actual: {1}
 ES	msg.cambioest.selecciona	Seleccioná una opción.
@@ -344,13 +330,11 @@ ES	err.clave.nomatch	Las contraseñas no coinciden.
 ES	frm.cambioestado	Cambiar Estado de Prenda
 ES	lbl.nuevoestado	Nuevo estado:
 ES	btn.confirmar.cambio	Confirmar Cambio
-ES	err.ped.sinprendas	Seleccioná al menos una prenda.
 ES	err.hist.restaurar	Seleccioná una fila del historial para restaurar.
 ES	err.usr.sinperfil	Seleccioná un perfil/rol.
 ES	err.usr.nombre.req	El nombre de usuario es obligatorio.
 ES	err.usr.nombre.longitud	El nombre de usuario debe tener al menos 3 caracteres.
 ES	err.cli.dni.numeros	✗ El DNI solo puede contener números.
-ES	lbl.ped.detalletitulo	Pedido #{0}  ·  {1}  ·  {2}  ·  {3} {4}
 ES	tevt.todos	Todos
 ES	tevt.venta	Venta
 ES	tevt.cancelacion	Cancelación
@@ -399,8 +383,6 @@ ES	msg.modulo.categorias	El módulo de Categorías aún no está disponible.
 ES	lbl.proximamente	Próximamente
 ES	err.pdf.sinDatos	No hay datos para exportar.
 ES	lbl.exportarpdf	Exportar PDF
-ES	lbl.ped.infoplan	Cliente: {0}\nPlan: {1}\nPrendas en uso actualmente: {2}\nMétodo de pago: {3}\nAlta: {4}
-ES	err.ped.sinplan	⚠ {0} no tiene plan asignado.\nAsigná un plan en el módulo de Clientes antes de crear un pedido.
 ES	err.recup.nousername	Ingresá tu nombre de usuario.
 ES	err.recup.nousuario	No se encontró el usuario '{0}'.\nVerificá que escribiste tu nombre correctamente.
 ES	msg.recup.exito	Usuario '{0}' encontrado.\nContacta al administrador para que resetee\ntu contrasena desde Administrar -> Usuarios.
@@ -552,7 +534,7 @@ ES	rpt.exportartxt	Exportar TXT
 ES	rpt.exportarpdf	Exportar PDF
 ES	rpt.fecha	Jornada:
 ES	rpt.fecha2	Comparar con:
-ES	rpt.kpi.prendas	Experiencias disponibles
+ES	rpt.kpi.experiencias	Experiencias disponibles
 ES	rpt.kpi.clientes	Clientes registrados
 ES	rpt.kpi.eventos	Eventos del día
 ES	rpt.kpi.backup	días sin backup
@@ -674,9 +656,6 @@ ES	msg.cli.sinvenc	Sin vencimiento
 ES	msg.cli.vencido	Vencido
 ES	msg.cli.proxvencer	Vence pronto
 ES	msg.cli.vigente	Vigente
-ES	err.ped.suscvencida	⚠ La suscripción de {0} venció el {1}.\nRenovar en el módulo de Clientes.
-ES	conf.ped.titulo	Confirmar Pedido
-ES	conf.ped.msg	Confirmar pedido para {0}:\n\n  • {1}\n\nTotal: {2} prenda(s)\nMétodo de pago: {3}
 ES	frm.mantenimiento	Historial de Mantenimiento
 ES	btn.mantenimiento	🔧 Mantenimiento
 ES	btn.mant.cerrar	Cerrar
@@ -936,7 +915,7 @@ EN	lbl.listatitulo	Users registered in the system
 EN	frm.planes	Subscription Plans
 EN	lbl.nuevopla	New Plan
 EN	lbl.nombreplan	Plan name *
-EN	lbl.limiteprendas	Monthly bookings *
+EN	lbl.limitereservas	Monthly bookings *
 EN	lbl.preciomensual	Monthly price ($) *
 EN	btn.guardarplan	Save Plan
 EN	btn.limpiar	Clear / New
@@ -958,17 +937,8 @@ EN	btn.buscar	Search
 EN	btn.limpiarfiltro	Clear
 EN	btn.exportar	Export CSV
 EN	lbl.tipoevento	Event type:
-EN	lbl.idpedido	Booking ID:
+EN	lbl.idreserva	Booking ID:
 EN	lbl.idcliente	Client ID:
-EN	btn.nuevopedido	+ New Order
-EN	btn.cancelarpedido	✕ Cancel
-EN	btn.descancelar	↩ Restore
-EN	lbl.prendaspedido	Garments of the selected order
-EN	btn.despachar	📦 Dispatch
-EN	btn.entregado	✓ Mark Delivered
-EN	btn.vernotificacion	✉ View Notification
-EN	btn.devolucion	↩ Register Return
-EN	lbl.detallepedido	Selected order detail
 EN	col.bit.id	Id
 EN	col.bit.fecha	Date
 EN	col.bit.usuario	User
@@ -982,8 +952,8 @@ EN	col.neg.fecha	Date
 EN	col.neg.tipo	Type
 EN	col.neg.usuario	User
 EN	col.neg.cliente	Client
-EN	col.neg.idpedido	Booking Id
-EN	col.neg.idprenda	Experience Id
+EN	col.neg.idreserva	Booking Id
+EN	col.neg.idexperiencia	Experience Id
 EN	col.neg.idcliente	Client Id
 EN	col.neg.desc	Description
 EN	stat.ninguno	None
@@ -1016,7 +986,7 @@ EN	btn.si	Yes
 EN	btn.no	No
 EN	btn.refrescar	↻ Refresh List
 EN	col.plan.nombre	Name
-EN	col.plan.prendas	Garments
+EN	col.plan.reservasmes	Bookings / mo
 EN	col.plan.precio	Price
 EN	col.plan.estado	Status
 EN	plan.activo	Active
@@ -1039,7 +1009,7 @@ EN	col.cli.apellido	Last Name
 EN	col.cli.dni	DNI
 EN	col.cli.email	Email
 EN	col.cli.plan	Plan
-EN	col.cli.prendas	Garments
+EN	col.cli.reservas	Bookings
 EN	col.cli.metodopago	Payment Method
 EN	col.cli.alta	Registered
 EN	lbl.sinplan	No plan
@@ -1060,9 +1030,6 @@ EN	err.recup.nousername	Enter your username.
 EN	err.recup.nousuario	User '{0}' not found.\nCheck that you typed your username correctly.
 EN	msg.recup.exito	User '{0}' found.\nContact the administrator to reset\nyour password from Manage → Users.
 EN	err.recup.verificar	Error verifying user: {0}
-EN	btn.agregar.prenda	Add Garment
-EN	lbl.ped.selcliente	Select the client for this order:
-EN	lbl.ped.selprendas	Select the garments to include in the order (checkbox):
 EN	btn.siguiente	Next →
 EN	btn.volver	← Back
 EN	btn.confirmar.pedido	✓ Confirm Order
@@ -1085,8 +1052,6 @@ EN	btn.exportar.pdf	📄 Export PDF
 EN	btn.historial	📋 History
 EN	btn.aceptar	Accept
 EN	msg.cancelped.req	Cancellation requires a reason.
-EN	col.ped.motivo	Reason
-EN	lbl.ped.seleccionado	Order #{0} — {1} — {2}
 EN	lbl.motivo	Reason:
 EN	lbl.cambioest.info	Garment: {0}  —  Current status: {1}
 EN	msg.cambioest.selecciona	Select an option.
@@ -1101,13 +1066,11 @@ EN	err.clave.nomatch	Passwords do not match.
 EN	frm.cambioestado	Change Garment Status
 EN	lbl.nuevoestado	New status:
 EN	btn.confirmar.cambio	Confirm Change
-EN	err.ped.sinprendas	Select at least one garment.
 EN	err.hist.restaurar	Select a history row to restore.
 EN	err.usr.sinperfil	Select a profile/role.
 EN	err.usr.nombre.req	Username is required.
 EN	err.usr.nombre.longitud	Username must be at least 3 characters.
 EN	err.cli.dni.numeros	✗ DNI can only contain numbers.
-EN	lbl.ped.detalletitulo	Order #{0}  ·  {1}  ·  {2}  ·  {3} {4}
 EN	tevt.todos	All
 EN	tevt.venta	Sale
 EN	tevt.cancelacion	Cancellation
@@ -1156,8 +1119,6 @@ EN	msg.modulo.categorias	The Categories module is not yet available.
 EN	lbl.proximamente	Coming Soon
 EN	err.pdf.sinDatos	No data to export.
 EN	lbl.exportarpdf	Export PDF
-EN	lbl.ped.infoplan	Client: {0}\nPlan: {1}\nGarments currently in use: {2}\nPayment method: {3}\nSince: {4}
-EN	err.ped.sinplan	⚠ {0} has no plan assigned.\nAssign a plan in the Clients module before creating an order.
 EN	msg.usr.creado	User '{0}' [{1}] created successfully.
 EN	msg.usr.creado.exportado	User '{0}' [{1}] created.\nCredentials saved to:\n{2}
 EN	msg.usr.clave.exportada	Password for '{0}' auto-generated.\nCredentials saved to:\n{1}
@@ -1305,7 +1266,7 @@ EN	rpt.exportartxt	Export TXT
 EN	rpt.exportarpdf	Export PDF
 EN	rpt.fecha	Shift:
 EN	rpt.fecha2	Compare with:
-EN	rpt.kpi.prendas	Available experiences
+EN	rpt.kpi.experiencias	Available experiences
 EN	rpt.kpi.clientes	Registered clients
 EN	rpt.kpi.eventos	Events today
 EN	rpt.kpi.backup	days since backup
@@ -1427,9 +1388,6 @@ EN	msg.cli.sinvenc	No expiry
 EN	msg.cli.vencido	Expired
 EN	msg.cli.proxvencer	Expiring soon
 EN	msg.cli.vigente	Active
-EN	err.ped.suscvencida	⚠ {0}'s subscription expired on {1}.\nUpdate in the Clients module.
-EN	conf.ped.titulo	Confirm Order
-EN	conf.ped.msg	Confirm order for {0}:\n\n  • {1}\n\nTotal: {2} garment(s)\nPayment method: {3}
 EN	frm.mantenimiento	Maintenance History
 EN	btn.mantenimiento	🔧 Maintenance
 EN	btn.mant.cerrar	Close
@@ -1689,7 +1647,7 @@ RU	lbl.listatitulo	Зарегистрированные пользователи
 RU	frm.planes	Тарифные планы
 RU	lbl.nuevopla	Новый план
 RU	lbl.nombreplan	Название плана *
-RU	lbl.limiteprendas	Брони в месяц *
+RU	lbl.limitereservas	Брони в месяц *
 RU	lbl.preciomensual	Цена в месяц ($) *
 RU	btn.guardarplan	Сохранить план
 RU	btn.limpiar	Очистить / Новый
@@ -1711,19 +1669,8 @@ RU	btn.buscar	Поиск
 RU	btn.limpiarfiltro	Очистить
 RU	btn.exportar	Экспорт CSV
 RU	lbl.tipoevento	Тип события:
-RU	lbl.idpedido	ID брони:
+RU	lbl.idreserva	ID брони:
 RU	lbl.idcliente	ID клиента:
-RU	btn.nuevopedido	+ Новый заказ
-RU	btn.cancelarpedido	✕ Отменить
-RU	btn.descancelar	↩ Восстановить
-RU	lbl.prendaspedido	Одежда выбранного заказа
-RU	btn.despachar	📦 Отправить
-RU	btn.entregado	✓ Отметить доставленным
-RU	btn.vernotificacion	✉ Посмотреть уведомление
-RU	btn.devolucion	↩ Зарегистрировать возврат
-RU	lbl.detallepedido	Детали выбранного заказа
-RU	col.ped.motivo	Причина
-RU	lbl.ped.seleccionado	Заказ #{0} — {1} — {2}
 RU	col.bit.id	Id
 RU	col.bit.fecha	Дата
 RU	col.bit.usuario	Пользователь
@@ -1737,8 +1684,8 @@ RU	col.neg.fecha	Дата
 RU	col.neg.tipo	Тип
 RU	col.neg.usuario	Пользователь
 RU	col.neg.cliente	Клиент
-RU	col.neg.idpedido	Id брони
-RU	col.neg.idprenda	Id впечатления
+RU	col.neg.idreserva	Id брони
+RU	col.neg.idexperiencia	Id впечатления
 RU	col.neg.idcliente	Id клиента
 RU	col.neg.desc	Описание
 RU	stat.ninguno	Нет
@@ -1771,7 +1718,7 @@ RU	btn.si	Да
 RU	btn.no	Нет
 RU	btn.refrescar	↻ Обновить список
 RU	col.plan.nombre	Название
-RU	col.plan.prendas	Одежда
+RU	col.plan.reservasmes	Брони/мес
 RU	col.plan.precio	Цена
 RU	col.plan.estado	Статус
 RU	plan.activo	Активен
@@ -1794,7 +1741,7 @@ RU	col.cli.apellido	Фамилия
 RU	col.cli.dni	ИНН
 RU	col.cli.email	Email
 RU	col.cli.plan	План
-RU	col.cli.prendas	Одежда
+RU	col.cli.reservas	Брони
 RU	col.cli.metodopago	Способ оплаты
 RU	col.cli.alta	Добавлен
 RU	lbl.sinplan	Без плана
@@ -1815,9 +1762,6 @@ RU	err.recup.nousername	Введите имя пользователя.
 RU	err.recup.nousuario	Пользователь '{0}' не найден.\nПроверьте правильность написания имени.
 RU	msg.recup.exito	Пользователь '{0}' найден.\nОбратитесь к администратору для сброса\nпароля через Управление → Пользователи.
 RU	err.recup.verificar	Ошибка при проверке пользователя: {0}
-RU	btn.agregar.prenda	Добавить одежду
-RU	lbl.ped.selcliente	Выберите клиента для этого заказа:
-RU	lbl.ped.selprendas	Выберите одежду для включения в заказ (флажок):
 RU	btn.siguiente	Далее →
 RU	btn.volver	← Назад
 RU	btn.confirmar.pedido	✓ Подтвердить заказ
@@ -1854,13 +1798,11 @@ RU	err.clave.nomatch	Пароли не совпадают.
 RU	frm.cambioestado	Изменить статус вещи
 RU	lbl.nuevoestado	Новый статус:
 RU	btn.confirmar.cambio	Подтвердить изменение
-RU	err.ped.sinprendas	Выберите хотя бы одну вещь.
 RU	err.hist.restaurar	Выберите строку истории для восстановления.
 RU	err.usr.sinperfil	Выберите профиль/роль.
 RU	err.usr.nombre.req	Имя пользователя обязательно.
 RU	err.usr.nombre.longitud	Имя пользователя должно содержать минимум 3 символа.
 RU	err.cli.dni.numeros	✗ DNI может содержать только цифры.
-RU	lbl.ped.detalletitulo	Заказ #{0}  ·  {1}  ·  {2}  ·  {3} {4}
 RU	tevt.todos	Все
 RU	tevt.venta	Продажа
 RU	tevt.cancelacion	Отмена
@@ -1909,8 +1851,6 @@ RU	msg.modulo.categorias	Модуль Категории ещё недоступ
 RU	lbl.proximamente	Скоро
 RU	err.pdf.sinDatos	Нет данных для экспорта.
 RU	lbl.exportarpdf	Экспорт PDF
-RU	lbl.ped.infoplan	Клиент: {0}\nПлан: {1}\nВещей в использовании: {2}\nМетод оплаты: {3}\nС: {4}
-RU	err.ped.sinplan	⚠ У {0} не назначен план.\nНазначьте план в модуле Клиентов перед созданием заказа.
 RU	msg.usr.creado	Пользователь '{0}' [{1}] успешно создан.
 RU	msg.usr.creado.exportado	Пользователь '{0}' [{1}] создан.\nУчётные данные сохранены в:\n{2}
 RU	msg.usr.clave.exportada	Пароль '{0}' сгенерирован автоматически.\nУчётные данные сохранены в:\n{1}
@@ -2058,7 +1998,7 @@ RU	rpt.exportartxt	Экспорт TXT
 RU	rpt.exportarpdf	Экспорт PDF
 RU	rpt.fecha	День:
 RU	rpt.fecha2	Сравнить с:
-RU	rpt.kpi.prendas	Доступные впечатления
+RU	rpt.kpi.experiencias	Доступные впечатления
 RU	rpt.kpi.clientes	Клиентов
 RU	rpt.kpi.eventos	Событий за день
 RU	rpt.kpi.backup	дней без резервной копии
@@ -2180,9 +2120,6 @@ RU	msg.cli.sinvenc	Без ограничений
 RU	msg.cli.vencido	Истекло
 RU	msg.cli.proxvencer	Истекает скоро
 RU	msg.cli.vigente	Активно
-RU	err.ped.suscvencida	⚠ Подписка {0} истекла {1}.\nОбновите в модуле Клиентов.
-RU	conf.ped.titulo	Подтвердить заказ
-RU	conf.ped.msg	Подтвердить заказ для {0}:\n\n  • {1}\n\nВсего: {2} ед.\nМетод оплаты: {3}
 RU	frm.mantenimiento	История обслуживания
 RU	btn.mantenimiento	🔧 Обслуживание
 RU	btn.mant.cerrar	Закрыть
@@ -2489,7 +2426,7 @@ PT	lbl.listatitulo	Usuários registrados no sistema
 PT	frm.planes	Planos de Assinatura
 PT	lbl.nuevopla	Novo Plano
 PT	lbl.nombreplan	Nome do plano *
-PT	lbl.limiteprendas	Reservas mensais *
+PT	lbl.limitereservas	Reservas mensais *
 PT	lbl.preciomensual	Preço mensal (R$) *
 PT	btn.guardarplan	Salvar Plano
 PT	btn.limpiar	Limpar / Novo
@@ -2511,17 +2448,8 @@ PT	btn.buscar	Buscar
 PT	btn.limpiarfiltro	Limpar
 PT	btn.exportar	Exportar CSV
 PT	lbl.tipoevento	Tipo de evento:
-PT	lbl.idpedido	ID Reserva:
+PT	lbl.idreserva	ID Reserva:
 PT	lbl.idcliente	ID Cliente:
-PT	btn.nuevopedido	+ Novo Pedido
-PT	btn.cancelarpedido	✕ Cancelar
-PT	btn.descancelar	↩ Reativar
-PT	lbl.prendaspedido	Roupas do pedido selecionado
-PT	btn.despachar	📦 Despachar
-PT	btn.entregado	✓ Marcar Entregue
-PT	btn.vernotificacion	✉ Ver Notificação
-PT	btn.devolucion	↩ Registrar Devolução
-PT	lbl.detallepedido	Detalhe do pedido selecionado
 PT	col.bit.id	Id
 PT	col.bit.fecha	Data
 PT	col.bit.usuario	Usuário
@@ -2535,8 +2463,8 @@ PT	col.neg.fecha	Data
 PT	col.neg.tipo	Tipo
 PT	col.neg.usuario	Usuário
 PT	col.neg.cliente	Cliente
-PT	col.neg.idpedido	Id Reserva
-PT	col.neg.idprenda	Id Experiência
+PT	col.neg.idreserva	Id Reserva
+PT	col.neg.idexperiencia	Id Experiência
 PT	col.neg.idcliente	Id Cliente
 PT	col.neg.desc	Descrição
 PT	stat.ninguno	Nenhum
@@ -2569,7 +2497,7 @@ PT	btn.si	Sim
 PT	btn.no	Não
 PT	btn.refrescar	↻ Atualizar Lista
 PT	col.plan.nombre	Nome
-PT	col.plan.prendas	Roupas
+PT	col.plan.reservasmes	Reservas / mês
 PT	col.plan.precio	Preço
 PT	col.plan.estado	Estado
 PT	plan.activo	Ativo
@@ -2592,7 +2520,7 @@ PT	col.cli.apellido	Sobrenome
 PT	col.cli.dni	CPF
 PT	col.cli.email	E-mail
 PT	col.cli.plan	Plano
-PT	col.cli.prendas	Roupas
+PT	col.cli.reservas	Reservas
 PT	col.cli.metodopago	Forma de Pagamento
 PT	col.cli.alta	Cadastro
 PT	lbl.sinplan	Sem plano
@@ -2613,9 +2541,6 @@ PT	err.recup.nousername	Informe seu nome de usuário.
 PT	err.recup.nousuario	Usuário '{0}' não encontrado.\nVerifique se digitou corretamente.
 PT	msg.recup.exito	Usuário '{0}' encontrado.\nContate o administrador para redefinir\nsua senha em Administrar → Usuários.
 PT	err.recup.verificar	Erro ao verificar usuário: {0}
-PT	btn.agregar.prenda	Adicionar Roupa
-PT	lbl.ped.selcliente	Selecione o cliente para este pedido:
-PT	lbl.ped.selprendas	Selecione as roupas para incluir no pedido (checkbox):
 PT	btn.siguiente	Próximo →
 PT	btn.volver	← Voltar
 PT	btn.confirmar.pedido	✓ Confirmar Pedido
@@ -2638,8 +2563,6 @@ PT	btn.exportar.pdf	📄 Exportar PDF
 PT	btn.historial	📋 Histórico
 PT	btn.aceptar	Aceitar
 PT	msg.cancelped.req	O cancelamento requer um motivo.
-PT	col.ped.motivo	Motivo
-PT	lbl.ped.seleccionado	Pedido #{0} — {1} — {2}
 PT	lbl.motivo	Motivo:
 PT	lbl.cambioest.info	Roupa: {0}  —  Estado atual: {1}
 PT	msg.cambioest.selecciona	Selecione uma opção.
@@ -2654,13 +2577,11 @@ PT	err.clave.nomatch	As senhas não coincidem.
 PT	frm.cambioestado	Alterar Estado da Roupa
 PT	lbl.nuevoestado	Novo estado:
 PT	btn.confirmar.cambio	Confirmar Alteração
-PT	err.ped.sinprendas	Selecione pelo menos uma roupa.
 PT	err.hist.restaurar	Selecione uma linha do histórico para restaurar.
 PT	err.usr.sinperfil	Selecione um perfil/função.
 PT	err.usr.nombre.req	O nome de usuário é obrigatório.
 PT	err.usr.nombre.longitud	O nome de usuário deve ter pelo menos 3 caracteres.
 PT	err.cli.dni.numeros	✗ O CPF só pode conter números.
-PT	lbl.ped.detalletitulo	Pedido #{0}  ·  {1}  ·  {2}  ·  {3} {4}
 PT	tevt.todos	Todos
 PT	tevt.venta	Venda
 PT	tevt.cancelacion	Cancelamento
@@ -2709,8 +2630,6 @@ PT	msg.modulo.categorias	O módulo Categorias ainda não está disponível.
 PT	lbl.proximamente	Em breve
 PT	err.pdf.sinDatos	Sem dados para exportar.
 PT	lbl.exportarpdf	Exportar PDF
-PT	lbl.ped.infoplan	Cliente: {0}\nPlano: {1}\nRoupas em uso: {2}\nForma de pagamento: {3}\nCadastro: {4}
-PT	err.ped.sinplan	⚠ {0} não tem plano atribuído.\nAtribua um plano no módulo de Clientes antes de criar um pedido.
 PT	msg.usr.creado	Usuário '{0}' [{1}] criado com sucesso.
 PT	msg.usr.creado.exportado	Usuário '{0}' [{1}] criado.\nCredenciais salvas em:\n{2}
 PT	msg.usr.clave.exportada	Senha de '{0}' regenerada automaticamente.\nCredenciais salvas em:\n{1}
@@ -2853,7 +2772,7 @@ PT	rpt.exportartxt	Exportar TXT
 PT	rpt.exportarpdf	Exportar PDF
 PT	rpt.fecha	Jornada:
 PT	rpt.fecha2	Comparar com:
-PT	rpt.kpi.prendas	Experiências disponíveis
+PT	rpt.kpi.experiencias	Experiências disponíveis
 PT	rpt.kpi.clientes	Clientes cadastrados
 PT	rpt.kpi.eventos	Eventos do dia
 PT	rpt.kpi.backup	dias sem backup
@@ -2974,9 +2893,6 @@ PT	msg.cli.sinvenc	Sem vencimento
 PT	msg.cli.vencido	Vencido
 PT	msg.cli.proxvencer	Vence em breve
 PT	msg.cli.vigente	Vigente
-PT	err.ped.suscvencida	⚠ A assinatura de {0} venceu em {1}.\nRenovar no módulo de Clientes.
-PT	conf.ped.titulo	Confirmar Pedido
-PT	conf.ped.msg	Confirmar pedido para {0}:\n\n  • {1}\n\nTotal: {2} roupa(s)\nForma de pagamento: {3}
 PT	frm.mantenimiento	Histórico de Manutenção
 PT	btn.mantenimiento	🔧 Manutenção
 PT	btn.mant.cerrar	Fechar
@@ -4432,3 +4348,43 @@ ES	lbl.brand.slogan	Descubrí experiencias. Viví momentos.
 EN	lbl.brand.slogan	Discover experiences. Live moments.
 PT	lbl.brand.slogan	Descubra experiências. Viva momentos.
 RU	lbl.brand.slogan	Открывайте впечатления. Живите моментами.
+ES	eh.btn.cancelarexperiencia	Cancelar experiencia
+EN	eh.btn.cancelarexperiencia	Cancel experience
+RU	eh.btn.cancelarexperiencia	Отменить впечатление
+PT	eh.btn.cancelarexperiencia	Cancelar experiência
+ES	eh.lbl.filtroestado	Estado
+EN	eh.lbl.filtroestado	Status
+RU	eh.lbl.filtroestado	Статус
+PT	eh.lbl.filtroestado	Estado
+ES	eh.lbl.mostrando	Mostrando {0} de {1}
+EN	eh.lbl.mostrando	Showing {0} of {1}
+RU	eh.lbl.mostrando	Показано {0} из {1}
+PT	eh.lbl.mostrando	Mostrando {0} de {1}
+ES	eh.lbl.buscardni	Buscar (nombre o DNI)
+EN	eh.lbl.buscardni	Search (name or ID)
+RU	eh.lbl.buscardni	Поиск (имя или DNI)
+PT	eh.lbl.buscardni	Buscar (nome ou DNI)
+ES	eh.btn.nuevocliente	Nuevo cliente
+EN	eh.btn.nuevocliente	New customer
+RU	eh.btn.nuevocliente	Новый клиент
+PT	eh.btn.nuevocliente	Novo cliente
+ES	eh.msg.reservaregistrada.titulo	Reserva registrada (pendiente de confirmación)
+EN	eh.msg.reservaregistrada.titulo	Booking registered (pending confirmation)
+RU	eh.msg.reservaregistrada.titulo	Бронь зарегистрирована (ожидает подтверждения)
+PT	eh.msg.reservaregistrada.titulo	Reserva registrada (pendente de confirmação)
+ES	eh.msg.reservaregistrada.cuerpo	Quedó registrada en estado Pendiente. Confirmala desde la grilla cuando corresponda.
+EN	eh.msg.reservaregistrada.cuerpo	Saved as Pending. Confirm it from the grid when appropriate.
+RU	eh.msg.reservaregistrada.cuerpo	Сохранено как «Ожидает». Подтвердите из таблицы при необходимости.
+PT	eh.msg.reservaregistrada.cuerpo	Registrada como Pendente. Confirme pela grade quando corresponder.
+ES	eh.res.aviso.pendiente	⚠ Reserva pendiente #{0} sin resolver — confirmala o cancelala
+EN	eh.res.aviso.pendiente	⚠ Pending booking #{0} unresolved — confirm or cancel it
+RU	eh.res.aviso.pendiente	⚠ Ожидающая бронь #{0} не решена — подтвердите или отмените
+PT	eh.res.aviso.pendiente	⚠ Reserva pendente #{0} sem resolver — confirme ou cancele
+ES	eh.res.aviso.sincupo	⚠ Sin reservas disponibles este mes
+EN	eh.res.aviso.sincupo	⚠ No bookings available this month
+RU	eh.res.aviso.sincupo	⚠ Нет доступных броней в этом месяце
+PT	eh.res.aviso.sincupo	⚠ Sem reservas disponíveis este mês
+ES	eh.mem.plandetalle	${0:N2} · {1} reservas/mes · premium {2} · hasta {3} invitado(s) · anticip. {4} días
+EN	eh.mem.plandetalle	${0:N2} · {1} bookings/mo · premium {2} · up to {3} guest(s) · {4} days ahead
+RU	eh.mem.plandetalle	${0:N2} · {1} брон./мес · премиум {2} · до {3} гостей · за {4} дн.
+PT	eh.mem.plandetalle	${0:N2} · {1} reservas/mês · premium {2} · até {3} convidado(s) · antecip. {4} dias

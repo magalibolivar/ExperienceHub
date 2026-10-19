@@ -30,8 +30,9 @@ namespace BE
         public string  NombreCompleto { get; set; }
 
         public string  NombrePlan        { get; set; }
-        /// <summary>Cupo disponible del plan en el período (reservas que le restan este mes).</summary>
-        public int     CupoDisponible    { get; set; }
+        /// <summary>Reservas que le restan al cliente este mes según su plan (NO es el cupo de la
+        /// experiencia; ese es BE.Experiencia.CupoDisponible). Renombrado para evitar la confusión.</summary>
+        public int     ReservasRestantes { get; set; }
         public System.DateTime? FechaVencimiento { get; set; }
 
         /// <summary>True si el cliente tiene un "pedido activo" (reserva pendiente sin resolver).</summary>
@@ -39,8 +40,8 @@ namespace BE
         public int?    IdReservaActiva         { get; set; }
         public string  NombreExperienciaActiva { get; set; }
 
-        /// <summary>True si la situación habilita a avanzar con el armado del pedido.</summary>
-        public bool PuedeArmarPedido => Estado == EstadoSituacionCliente.Ok;
+        /// <summary>True si la situación habilita a avanzar con el armado de la reserva.</summary>
+        public bool PuedeArmarReserva => Estado == EstadoSituacionCliente.Ok;
 
         /// <summary>
         /// Resolución PURA (sin BD ni sesión) del estado comercial a partir del cliente.
@@ -73,8 +74,8 @@ namespace BE
                 return s;
             }
 
-            s.Estado         = EstadoSituacionCliente.Ok;
-            s.CupoDisponible = cliente.ReservasRestantes();
+            s.Estado            = EstadoSituacionCliente.Ok;
+            s.ReservasRestantes = cliente.ReservasRestantes();
             return s;
         }
     }

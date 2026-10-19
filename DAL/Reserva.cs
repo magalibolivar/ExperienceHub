@@ -15,7 +15,9 @@ namespace DAL
         // T07 — Dígito Verificador de esta tabla (fuente única).
         public const  string   DV_Tabla    = "Reserva";
         public const  string   DV_Pk       = "IdReserva";
-        public static readonly string[] DV_Columnas = { "IdCliente", "IdExperiencia", "Estado", "CantidadInvitados" };
+        // IdSuscripcion entra al DVH: define a qué suscripción se devuelve el beneficio al cancelar,
+        // así que manipularla en BD debe detectarse como corrupción (PN03, punto 3).
+        public static readonly string[] DV_Columnas = { "IdCliente", "IdExperiencia", "Estado", "CantidadInvitados", "IdSuscripcion" };
 
         public void RecalcularDV()
         {
@@ -24,7 +26,7 @@ namespace DAL
         }
 
         private const string SELECT_BASE =
-            "SELECT r.IdReserva, r.IdCliente, r.IdExperiencia, r.IdEmpleado, r.Estado, r.FechaReserva, " +
+            "SELECT r.IdReserva, r.IdCliente, r.IdExperiencia, r.IdEmpleado, r.IdSuscripcion, r.Estado, r.FechaReserva, " +
             "       r.CantidadInvitados, r.FechaCancelacion, r.MotivoCancelacion, " +
             "       c.Nombre + ' ' + c.Apellido AS NombreCliente, e.Nombre AS NombreExperiencia, " +
             "       (CAST(e.Fecha AS DATETIME) + CAST(e.HoraInicio AS DATETIME)) AS FechaHoraExperiencia, " +
@@ -78,6 +80,26 @@ namespace DAL
                 new[]
                 {
                     new SqlParameter("@IdCliente", idCliente),
+                    new SqlParameter("@Pend", (object)(int)BE.EstadoReserva.Pendiente),
+                    new SqlParameter("@Conf", (object)(int)BE.EstadoReserva.Confirmada)
+                });
+            foreach (DataRow row in tabla.Rows) lista.Add(Mapear(row));
+            return lista;
+        }
+
+        /// <summary>
+        /// Reservas activas (Pendiente/Confirmada) de una experiencia. Insumo de la cancelación de
+        /// experiencia en cascada (CU01-COO): son las que hay que cancelar y devolver al plan.
+        /// </summary>
+        public List<BE.Reserva> ObtenerActivasDeExperiencia(int idExperiencia)
+        {
+            var lista = new List<BE.Reserva>();
+            DataTable tabla = acceso.Leer(
+                SELECT_BASE +
+                "WHERE r.IdExperiencia = @IdExp AND r.Estado IN (@Pend, @Conf) ORDER BY r.FechaReserva",
+                new[]
+                {
+                    new SqlParameter("@IdExp", idExperiencia),
                     new SqlParameter("@Pend", (object)(int)BE.EstadoReserva.Pendiente),
                     new SqlParameter("@Conf", (object)(int)BE.EstadoReserva.Confirmada)
                 });
@@ -170,7 +192,8 @@ namespace DAL
         /// </summary>
         public int CrearConCupo(BE.Reserva reserva, int lugares,
                                 int idSuscripcionAConsumir = 0,
-                                List<BE.ReservaHistorial> historial = null)
+                                List<BE.ReservaHistorial> historial = null,
+                                int idListaEsperaAConfirmar = 0)
         {
             int idNuevo = 0;
             acceso.EjecutarTransaccion((conn, tx) =>
@@ -198,14 +221,16 @@ namespace DAL
                 }
 
                 using (var ins = new SqlCommand(
-                    "INSERT INTO Reserva (IdCliente, IdExperiencia, IdEmpleado, Estado, FechaReserva, CantidadInvitados) " +
-                    "VALUES (@IdCliente, @IdExp, @IdEmpleado, @Estado, @Fecha, @Invitados); " +
+                    "INSERT INTO Reserva (IdCliente, IdExperiencia, IdEmpleado, IdSuscripcion, Estado, FechaReserva, CantidadInvitados) " +
+                    "VALUES (@IdCliente, @IdExp, @IdEmpleado, @IdSus, @Estado, @Fecha, @Invitados); " +
                     "SELECT CAST(SCOPE_IDENTITY() AS INT)", conn, tx))
                 {
                     ins.Parameters.AddWithValue("@IdCliente", reserva.IdCliente);
                     ins.Parameters.AddWithValue("@IdExp", reserva.IdExperiencia);
                     // IdEmpleado es FK nullable: 0 = "sin empleado" → NULL (evita violar la FK).
                     ins.Parameters.AddWithValue("@IdEmpleado", reserva.IdEmpleado > 0 ? (object)reserva.IdEmpleado : DBNull.Value);
+                    // IdSuscripcion = la que consume el beneficio (para devolverlo al cancelar). 0/null → NULL.
+                    ins.Parameters.AddWithValue("@IdSus", idSuscripcionAConsumir > 0 ? (object)idSuscripcionAConsumir : DBNull.Value);
                     ins.Parameters.AddWithValue("@Estado", (int)reserva.Estado);
                     ins.Parameters.AddWithValue("@Fecha", reserva.FechaReserva);
                     ins.Parameters.AddWithValue("@Invitados", reserva.CantidadInvitados);
@@ -230,6 +255,21 @@ namespace DAL
                     foreach (var h in historial) h.IdReserva = idNuevo;
                     ReservaHistorial.InsertarEnTransaccion(conn, tx, historial);
                 }
+
+                // PN03 (punto 1) — confirmar la entrada de lista de espera que originó esta reserva,
+                // en la MISMA transacción: la reserva y el paso de la entrada a Confirmado son atómicos
+                // (antes el CambiarEstado iba en una llamada aparte: si fallaba, la entrada quedaba en
+                // Ofrecido con la reserva ya creada y se podía confirmar dos veces).
+                if (idListaEsperaAConfirmar > 0)
+                {
+                    using (var le = new SqlCommand(
+                        "UPDATE ListaEspera SET Estado=@Confirmado WHERE IdListaEspera=@Id", conn, tx))
+                    {
+                        le.Parameters.AddWithValue("@Confirmado", (int)BE.EstadoListaEspera.Confirmado);
+                        le.Parameters.AddWithValue("@Id", idListaEsperaAConfirmar);
+                        le.ExecuteNonQuery();
+                    }
+                }
             });
             RecalcularDV();
             return idNuevo;
@@ -251,10 +291,20 @@ namespace DAL
         }
 
         /// <summary>
-        /// Cancela la reserva. Si <paramref name="liberarCupo"/> es true (cancelación
-        /// anticipada), devuelve los lugares al cupo de la experiencia en la misma transacción.
+        /// Cancela la reserva de forma ATÓMICA (PN03, regla 7): en una única transacción
+        ///   1. marca la reserva Cancelada (fecha + motivo);
+        ///   2. si <paramref name="liberarCupo"/> es true, devuelve los lugares al cupo de la
+        ///      experiencia (y si estaba Completa, la vuelve a Programada);
+        ///   3. si <paramref name="idSuscripcionADevolver"/> &gt; 0, devuelve el beneficio mensual
+        ///      del plan (ReservasConsumidasMes − 1, nunca por debajo de 0);
+        ///   4. graba el <paramref name="historial"/> de la operación (ReservaHistorial).
+        /// Antes el consumo del plan y el historial se escribían en llamadas separadas, fuera de
+        /// esta transacción: si alguna fallaba, la reserva quedaba cancelada sin devolver el plan o
+        /// sin su registro de cambios. Ahora, o se graba todo o nada (rollback total).
         /// </summary>
-        public void Cancelar(int idReserva, int idExperiencia, int lugares, string motivo, bool liberarCupo)
+        public void Cancelar(int idReserva, int idExperiencia, int lugares, string motivo,
+                             bool liberarCupo, int idSuscripcionADevolver = 0,
+                             List<BE.ReservaHistorial> historial = null)
         {
             acceso.EjecutarTransaccion((conn, tx) =>
             {
@@ -290,6 +340,24 @@ namespace DAL
                         est.ExecuteNonQuery();
                     }
                 }
+
+                // Devolución del beneficio mensual del plan — en la MISMA transacción. Solo para la
+                // cancelación "a tiempo" (la BLL pasa 0 en la tardía, que no devuelve el plan).
+                if (idSuscripcionADevolver > 0)
+                {
+                    using (var cons = new SqlCommand(
+                        "UPDATE Suscripcion SET ReservasConsumidasMes = " +
+                        "CASE WHEN ReservasConsumidasMes > 0 THEN ReservasConsumidasMes - 1 ELSE 0 END " +
+                        "WHERE IdSuscripcion = @IdSus", conn, tx))
+                    {
+                        cons.Parameters.AddWithValue("@IdSus", idSuscripcionADevolver);
+                        cons.ExecuteNonQuery();
+                    }
+                }
+
+                // Historial de la operación CANCELAR — en la MISMA transacción.
+                if (historial != null && historial.Count > 0)
+                    ReservaHistorial.InsertarEnTransaccion(conn, tx, historial);
             });
             RecalcularDV();
         }
@@ -300,6 +368,8 @@ namespace DAL
             IdCliente            = Convert.ToInt32(row["IdCliente"]),
             IdExperiencia        = Convert.ToInt32(row["IdExperiencia"]),
             IdEmpleado           = row["IdEmpleado"] != DBNull.Value ? Convert.ToInt32(row["IdEmpleado"]) : 0,
+            IdSuscripcion        = row.Table.Columns.Contains("IdSuscripcion") && row["IdSuscripcion"] != DBNull.Value
+                                      ? (int?)Convert.ToInt32(row["IdSuscripcion"]) : null,
             Estado               = (BE.EstadoReserva)Convert.ToInt32(row["Estado"]),
             FechaReserva         = Convert.ToDateTime(row["FechaReserva"]),
             CantidadInvitados    = Convert.ToInt32(row["CantidadInvitados"]),

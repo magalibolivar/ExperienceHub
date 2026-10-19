@@ -106,7 +106,7 @@ namespace GUI
             RH("DNI",        "col.cli.dni",        "DNI");
             RH("Email",      "col.cli.email",      "Email");
             RH("Plan",       "col.cli.plan",       "Plan");
-            RH("Prendas",    "col.cli.prendas",    "Uso / Plan");
+            RH("Reservas",   "col.cli.reservas",   "Reservas");
             RH("MetodoPago", "col.cli.metodopago", "Método de Pago");
             RH("Alta",        "col.cli.alta",        "Alta");
             RH("Vencimiento", "col.cli.vencimiento", "Vencimiento");

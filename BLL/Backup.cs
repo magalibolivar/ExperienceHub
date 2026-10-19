@@ -178,6 +178,34 @@ namespace BLL
             _bitacora.Registrar(modulo,
                 $"Base de datos restaurada desde '{Path.GetFileName(rutaArchivo)}'",
                 BE.Criticidad.Alta);
+
+            // Si el backup es anterior a una migración, su esquema puede estar atrasado respecto del
+            // binario actual (p. ej. falta Reserva.IdSuscripcion y la app rompería al leer reservas).
+            // Se aplican las migraciones pendientes de forma IDEMPOTENTE antes de reiniciar, y queda
+            // constancia. Un fallo acá no debe tapar que la restauración en sí fue exitosa.
+            AplicarMigracionesPostRestore(modulo);
+        }
+
+        // Lleva la base recién restaurada al esquema que el binario actual necesita (PN03), de forma
+        // idempotente. Se expone también para poder invocarla/testearla por separado.
+        public void AplicarMigracionesPostRestore(string modulo)
+        {
+            try
+            {
+                int pasos = new DAL.Migracion().AsegurarEsquemaActual();
+                _bitacora.Registrar(modulo,
+                    $"Migraciones pendientes aplicadas tras la restauración ({pasos} paso(s) idempotentes). " +
+                    "Reiniciá la app para tomar el esquema actualizado.",
+                    BE.Criticidad.Alta);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("[BLL.Backup.AplicarMigracionesPostRestore] " + ex.Message);
+                _bitacora.Registrar(modulo,
+                    "ADVERTENCIA: no se pudieron aplicar las migraciones pendientes tras la restauración. " +
+                    "Ejecutá BD/00_Instalacion_Completa.sql (idempotente) antes de usar la app. Detalle: " + ex.Message,
+                    BE.Criticidad.Alta);
+            }
         }
 
         public void EliminarBackup(string modulo, string rutaArchivo)

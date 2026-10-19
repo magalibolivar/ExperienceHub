@@ -62,6 +62,9 @@ namespace BLL
         public static void InvalidarCache() { _catalogoLazy = null; }
 
         // ── Guard de negocio (fail-closed) ──────────────────────────────────────────────
+        /// <summary>Exige una única patente (no hay distinción ver/editar para esta acción).</summary>
+        public static void Exigir(string patente) => Exigir(patente, patente);
+
         // Exige permiso para CONFIGURAR el módulo. 'patenteVer' es el fallback retrocompatible.
         public static void Exigir(string patenteEditar, string patenteVer)
         {

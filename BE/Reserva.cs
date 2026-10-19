@@ -17,6 +17,13 @@ namespace BE
         /// <summary>Empleado (agente) que registró la reserva.</summary>
         public int IdEmpleado { get; set; }
 
+        /// <summary>
+        /// Suscripción con la que se hizo la reserva (la que consumió el beneficio del plan).
+        /// Se persiste al crear para poder devolver el beneficio a la suscripción CORRECTA al
+        /// cancelar, solo si sigue vigente (PN03, regla 2). Null en reservas previas a PN03.
+        /// </summary>
+        public int? IdSuscripcion { get; set; }
+
         public EstadoReserva Estado { get; set; } = EstadoReserva.Pendiente;
 
         public DateTime FechaReserva { get; set; }

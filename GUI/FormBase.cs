@@ -16,11 +16,11 @@ namespace GUI
     ///   Jerarquía:
     ///     FormBase : Form          ← como Vehiculo
     ///       ├── Clientes           ← como Auto
-    ///       ├── Prendas            ← como Auto
+    ///       ├── Experiencias       ← como Auto
     ///       ├── Planes             ← como Auto
-    ///       ├── PedidosVenta       ← como Moto
-    ///       ├── PedidosRealizados  ← como Moto
-    ///       ├── NuevoPedidoForm    ← como Moto
+    ///       ├── Reservas           ← como Moto
+    ///       ├── ReservasRealizadas ← como Moto
+    ///       ├── ListaEsperaForm    ← como Moto
     ///       └── Bitacora           ← como Moto
     ///
     /// MÉTODOS HEREDADOS (equivalentes a "acelerar()" en Vehículo):

@@ -257,80 +257,9 @@ ELSE
     PRINT 'Tabla Cliente ya existe — sin cambios.';
 GO
 
--- Prenda (refs Cliente — FK nullable: prenda disponible no tiene cliente)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Prenda')
-BEGIN
-    CREATE TABLE Prenda (
-        IdPrenda        INT           IDENTITY(1,1) PRIMARY KEY,
-        Nombre          NVARCHAR(100) NOT NULL,
-        Descripcion     NVARCHAR(500) NULL,
-        Talle           NVARCHAR(20)  NULL,
-        Color           NVARCHAR(50)  NULL,
-        Categoria       NVARCHAR(100) NULL,
-        Estado          INT           NOT NULL DEFAULT 0,
-        IdClienteActual INT           NULL REFERENCES Cliente(IdCliente),
-        FechaAlta       DATETIME      NOT NULL DEFAULT GETDATE()
-    );
-    PRINT 'Tabla Prenda creada.';
-END
-ELSE
-    PRINT 'Tabla Prenda ya existe — sin cambios.';
-GO
 
--- Pedido (refs Cliente + Empleado)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Pedido')
-BEGIN
-    CREATE TABLE Pedido (
-        IdPedido          INT           IDENTITY(1,1) PRIMARY KEY,
-        IdCliente         INT           NOT NULL REFERENCES Cliente(IdCliente),
-        IdEmpleado        INT           NOT NULL REFERENCES Empleado(IdEmpleado),
-        Estado            INT           NOT NULL DEFAULT 0,
-        FechaPedido       DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaDespacho     DATETIME      NULL,
-        FechaEntrega      DATETIME      NULL,
-        MotivoCancelacion NVARCHAR(500) NULL,
-        DVH               INT           NULL              -- T07: DV horizontal (incluye sus líneas)
-    );
-    PRINT 'Tabla Pedido creada.';
-END
-ELSE
-    PRINT 'Tabla Pedido ya existe — sin cambios.';
-GO
 
--- PedidoPrenda (junction Pedido-Prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoPrenda')
-BEGIN
-    CREATE TABLE PedidoPrenda (
-        IdPedido INT NOT NULL REFERENCES Pedido(IdPedido),
-        IdPrenda INT NOT NULL REFERENCES Prenda(IdPrenda),
-        CONSTRAINT PK_PedidoPrenda PRIMARY KEY (IdPedido, IdPrenda)
-    );
-    PRINT 'Tabla PedidoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoPrenda ya existe — sin cambios.';
-GO
 
--- PedidoHistorial (auditoría de cambios de pedidos — refs Pedido + Usuario)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoHistorial')
-BEGIN
-    CREATE TABLE PedidoHistorial (
-        IdHistorial   INT            IDENTITY(1,1) PRIMARY KEY,
-        IdPedido      INT            NOT NULL REFERENCES Pedido(IdPedido),
-        IdOperacion   INT            NOT NULL,
-        Fecha         DATETIME       NOT NULL DEFAULT GETDATE(),
-        IdUsuario     INT            NULL REFERENCES Usuario(IdUsuario),
-        NombreUsuario NVARCHAR(200)  NULL,
-        Accion        NVARCHAR(200)  NOT NULL,
-        Campo         NVARCHAR(100)  NOT NULL,
-        ValorAnterior NVARCHAR(1000) NULL,
-        ValorNuevo    NVARCHAR(1000) NULL
-    );
-    PRINT 'Tabla PedidoHistorial creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoHistorial ya existe — sin cambios.';
-GO
 
 -- BitacoraNegocio (eventos de negocio — refs Usuario, Pedido, Prenda, Cliente)
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BitacoraNegocio')
@@ -340,8 +269,8 @@ BEGIN
         Fecha       DATETIME      NOT NULL DEFAULT GETDATE(),
         Tipo        NVARCHAR(100) NOT NULL,
         IdUsuario   INT           NULL REFERENCES Usuario(IdUsuario),
-        IdPedido    INT           NULL REFERENCES Pedido(IdPedido),
-        IdPrenda    INT           NULL REFERENCES Prenda(IdPrenda),
+        IdReserva     INT           NULL,
+        IdExperiencia INT           NULL,
         IdCliente   INT           NULL REFERENCES Cliente(IdCliente),
         Descripcion NVARCHAR(500) NOT NULL
     );
@@ -945,21 +874,6 @@ ELSE
     PRINT 'Cliente.FechaNacimiento ya es NOT NULL — sin cambios.';
 GO
 
--- MantenimientoPrenda (historial de limpieza/mantenimiento por prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MantenimientoPrenda')
-BEGIN
-    CREATE TABLE MantenimientoPrenda (
-        IdMantenimiento INT           IDENTITY(1,1) PRIMARY KEY,
-        IdPrenda        INT           NOT NULL REFERENCES Prenda(IdPrenda),
-        FechaEntrada    DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaSalida     DATETIME      NULL,
-        Actor           NVARCHAR(100) NULL
-    );
-    PRINT 'Tabla MantenimientoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla MantenimientoPrenda ya existe — sin cambios.';
-GO
 
 -- ============================================================
 -- DATOS DEMO (presentación / pruebas)
@@ -1012,71 +926,7 @@ WHERE NOT EXISTS (SELECT 1 FROM Cliente c WHERE c.Nombre = v.Nombre AND c.Apelli
 PRINT 'Demo: clientes.';
 GO
 
--- Prendas (catálogo de stock; todas Disponible inicialmente)
-INSERT INTO Prenda (Nombre, Descripcion, Talle, Color, Categoria, Estado, IdClienteActual, FechaAlta)
-SELECT v.Nombre, v.Descripcion, v.Talle, v.Color, v.Categoria, 0, NULL, GETDATE()
-FROM (VALUES
-    (N'Vestido Largo Negro',    N'Vestido de fiesta largo',  'M',  N'Negro',      N'Vestido'),
-    (N'Blazer Beige',           N'Blazer entallado',         'L',  N'Beige',      N'Saco'),
-    (N'Camisa Blanca Clásica',  N'Camisa de algodón',        'M',  N'Blanco',     N'Camisa'),
-    (N'Pantalón Sastre Gris',   N'Pantalón de vestir',       '42', N'Gris',       N'Pantalón'),
-    (N'Abrigo Largo Camel',     N'Tapado de paño',           'L',  N'Camel',      N'Abrigo'),
-    (N'Vestido Floral',         N'Vestido estampado verano', 'S',  N'Estampado',  N'Vestido'),
-    (N'Camisa Celeste',         N'Camisa de lino',           'L',  N'Celeste',    N'Camisa'),
-    (N'Jean Recto Azul',        N'Jean clásico',             '40', N'Azul',       N'Pantalón'),
-    (N'Saco a Cuadros',         N'Saco príncipe de Gales',   'M',  N'Multicolor', N'Saco'),
-    (N'Falda Plisada Negra',    N'Falda midi plisada',       'S',  N'Negro',      N'Falda'),
-    (N'Sweater Oversize Crema', N'Sweater de lana',          'L',  N'Crema',      N'Sweater'),
-    (N'Gabardina Verde',        N'Gabardina impermeable',    'M',  N'Verde',      N'Abrigo')
-) AS v(Nombre, Descripcion, Talle, Color, Categoria)
-WHERE NOT EXISTS (SELECT 1 FROM Prenda pr WHERE pr.Nombre = v.Nombre);
-PRINT 'Demo: prendas (stock).';
-GO
 
--- Pedidos demo (sólo si aún no hay pedidos) + prendas EnUso asignadas a su cliente,
--- replicando lo que hace la app al crear/despachar (Prenda.Estado=EnUso, IdClienteActual).
-IF NOT EXISTS (SELECT 1 FROM Pedido)
-   AND EXISTS (SELECT 1 FROM Empleado WHERE Legajo = 'L-001')
-   AND EXISTS (SELECT 1 FROM Cliente WHERE Nombre = N'Lucía' AND Apellido = N'Fernández')
-BEGIN
-    DECLARE @emp     INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo = 'L-001');
-    DECLARE @cLucia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Lucía'  AND Apellido=N'Fernández');
-    DECLARE @cMartin INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Martín' AND Apellido=N'Gómez');
-    DECLARE @cSofia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Sofía'  AND Apellido=N'Rossi');
-
-    DECLARE @pr1 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Vestido Largo Negro');
-    DECLARE @pr2 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Blazer Beige');
-    DECLARE @pr3 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Camisa Blanca Clásica');
-    DECLARE @pr4 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Pantalón Sastre Gris');
-
-    -- Pedido 1: Lucía — Entregado (2 prendas)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, FechaEntrega, DVH)
-    VALUES (@cLucia, @emp, 2, DATEADD(day,-20,GETDATE()), DATEADD(day,-18,GETDATE()), DATEADD(day,-15,GETDATE()), 0);
-    DECLARE @ped1 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped1, @pr1), (@ped1, @pr2);
-
-    -- Pedido 2: Martín — Despachado (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, DVH)
-    VALUES (@cMartin, @emp, 1, DATEADD(day,-5,GETDATE()), DATEADD(day,-3,GETDATE()), 0);
-    DECLARE @ped2 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped2, @pr3);
-
-    -- Pedido 3: Sofía — Pendiente (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, DVH)
-    VALUES (@cSofia, @emp, 0, DATEADD(day,-1,GETDATE()), 0);
-    DECLARE @ped3 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped3, @pr4);
-
-    -- Marcar prendas EnUso (Estado=1) con su cliente
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cLucia  WHERE IdPrenda IN (@pr1,@pr2);
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cMartin WHERE IdPrenda=@pr3;
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cSofia  WHERE IdPrenda=@pr4;
-
-    PRINT 'Demo: 3 pedidos (Entregado/Despachado/Pendiente) + prendas asignadas.';
-END
-ELSE
-    PRINT 'Demo: pedidos ya existen o faltan datos base — sin cambios.';
-GO
 
 -- ============================================================
 -- ÍNDICES NO-CLUSTERED Y RESTRICCIONES DE INTEGRIDAD
@@ -1098,18 +948,6 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_RolPermiso_IdPermiso' 
     CREATE NONCLUSTERED INDEX IX_RolPermiso_IdPermiso ON RolPermiso(IdPermiso);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Traduccion_IdIdioma' AND object_id = OBJECT_ID('Traduccion'))
     CREATE NONCLUSTERED INDEX IX_Traduccion_IdIdioma ON Traduccion(IdIdioma);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdCliente' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdCliente ON Pedido(IdCliente);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdEmpleado' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdEmpleado ON Pedido(IdEmpleado);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_FechaPedido' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_FechaPedido ON Pedido(FechaPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoPrenda_IdPrenda' AND object_id = OBJECT_ID('PedidoPrenda'))
-    CREATE NONCLUSTERED INDEX IX_PedidoPrenda_IdPrenda ON PedidoPrenda(IdPrenda);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoHistorial_IdPedido' AND object_id = OBJECT_ID('PedidoHistorial'))
-    CREATE NONCLUSTERED INDEX IX_PedidoHistorial_IdPedido ON PedidoHistorial(IdPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Prenda_IdClienteActual' AND object_id = OBJECT_ID('Prenda'))
-    CREATE NONCLUSTERED INDEX IX_Prenda_IdClienteActual ON Prenda(IdClienteActual);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_HistorialUsuario_IdUsuario' AND object_id = OBJECT_ID('HistorialUsuario'))
     CREATE NONCLUSTERED INDEX IX_HistorialUsuario_IdUsuario ON HistorialUsuario(IdUsuario);
 PRINT 'Índices no-clustered verificados/creados.';
@@ -1376,80 +1214,9 @@ ELSE
     PRINT 'Tabla Cliente ya existe — sin cambios.';
 GO
 
--- Prenda (refs Cliente — FK nullable: prenda disponible no tiene cliente)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Prenda')
-BEGIN
-    CREATE TABLE Prenda (
-        IdPrenda        INT           IDENTITY(1,1) PRIMARY KEY,
-        Nombre          NVARCHAR(100) NOT NULL,
-        Descripcion     NVARCHAR(500) NULL,
-        Talle           NVARCHAR(20)  NULL,
-        Color           NVARCHAR(50)  NULL,
-        Categoria       NVARCHAR(100) NULL,
-        Estado          INT           NOT NULL DEFAULT 0,
-        IdClienteActual INT           NULL REFERENCES Cliente(IdCliente),
-        FechaAlta       DATETIME      NOT NULL DEFAULT GETDATE()
-    );
-    PRINT 'Tabla Prenda creada.';
-END
-ELSE
-    PRINT 'Tabla Prenda ya existe — sin cambios.';
-GO
 
--- Pedido (refs Cliente + Empleado)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Pedido')
-BEGIN
-    CREATE TABLE Pedido (
-        IdPedido          INT           IDENTITY(1,1) PRIMARY KEY,
-        IdCliente         INT           NOT NULL REFERENCES Cliente(IdCliente),
-        IdEmpleado        INT           NOT NULL REFERENCES Empleado(IdEmpleado),
-        Estado            INT           NOT NULL DEFAULT 0,
-        FechaPedido       DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaDespacho     DATETIME      NULL,
-        FechaEntrega      DATETIME      NULL,
-        MotivoCancelacion NVARCHAR(500) NULL,
-        DVH               INT           NULL              -- T07: DV horizontal (incluye sus líneas)
-    );
-    PRINT 'Tabla Pedido creada.';
-END
-ELSE
-    PRINT 'Tabla Pedido ya existe — sin cambios.';
-GO
 
--- PedidoPrenda (junction Pedido-Prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoPrenda')
-BEGIN
-    CREATE TABLE PedidoPrenda (
-        IdPedido INT NOT NULL REFERENCES Pedido(IdPedido),
-        IdPrenda INT NOT NULL REFERENCES Prenda(IdPrenda),
-        CONSTRAINT PK_PedidoPrenda PRIMARY KEY (IdPedido, IdPrenda)
-    );
-    PRINT 'Tabla PedidoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoPrenda ya existe — sin cambios.';
-GO
 
--- PedidoHistorial (auditoría de cambios de pedidos — refs Pedido + Usuario)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoHistorial')
-BEGIN
-    CREATE TABLE PedidoHistorial (
-        IdHistorial   INT            IDENTITY(1,1) PRIMARY KEY,
-        IdPedido      INT            NOT NULL REFERENCES Pedido(IdPedido),
-        IdOperacion   INT            NOT NULL,
-        Fecha         DATETIME       NOT NULL DEFAULT GETDATE(),
-        IdUsuario     INT            NULL REFERENCES Usuario(IdUsuario),
-        NombreUsuario NVARCHAR(200)  NULL,
-        Accion        NVARCHAR(200)  NOT NULL,
-        Campo         NVARCHAR(100)  NOT NULL,
-        ValorAnterior NVARCHAR(1000) NULL,
-        ValorNuevo    NVARCHAR(1000) NULL
-    );
-    PRINT 'Tabla PedidoHistorial creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoHistorial ya existe — sin cambios.';
-GO
 
 -- BitacoraNegocio (eventos de negocio — refs Usuario, Pedido, Prenda, Cliente)
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BitacoraNegocio')
@@ -1459,8 +1226,8 @@ BEGIN
         Fecha       DATETIME      NOT NULL DEFAULT GETDATE(),
         Tipo        NVARCHAR(100) NOT NULL,
         IdUsuario   INT           NULL REFERENCES Usuario(IdUsuario),
-        IdPedido    INT           NULL REFERENCES Pedido(IdPedido),
-        IdPrenda    INT           NULL REFERENCES Prenda(IdPrenda),
+        IdReserva     INT           NULL,
+        IdExperiencia INT           NULL,
         IdCliente   INT           NULL REFERENCES Cliente(IdCliente),
         Descripcion NVARCHAR(500) NOT NULL
     );
@@ -2029,12 +1796,6 @@ BEGIN
     PRINT 'Columna DVH agregada a Empleado (T07).';
 END
 GO
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='Pedido' AND COLUMN_NAME='DVH')
-BEGIN
-    ALTER TABLE Pedido ADD DVH INT NULL;
-    PRINT 'Columna DVH agregada a Pedido (T07 multi-tabla).';
-END
-GO
 
 -- FechaVencimiento en Cliente (suscripción con fecha de vencimiento)
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
@@ -2169,21 +1930,6 @@ END
 PRINT 'Consolidación de roles (v8) aplicada.';
 GO
 
--- MantenimientoPrenda (historial de limpieza/mantenimiento por prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MantenimientoPrenda')
-BEGIN
-    CREATE TABLE MantenimientoPrenda (
-        IdMantenimiento INT           IDENTITY(1,1) PRIMARY KEY,
-        IdPrenda        INT           NOT NULL REFERENCES Prenda(IdPrenda),
-        FechaEntrada    DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaSalida     DATETIME      NULL,
-        Actor           NVARCHAR(100) NULL
-    );
-    PRINT 'Tabla MantenimientoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla MantenimientoPrenda ya existe — sin cambios.';
-GO
 
 -- ============================================================
 -- DATOS DEMO (presentación / pruebas)
@@ -2236,71 +1982,7 @@ WHERE NOT EXISTS (SELECT 1 FROM Cliente c WHERE c.Nombre = v.Nombre AND c.Apelli
 PRINT 'Demo: clientes.';
 GO
 
--- Prendas (catálogo de stock; todas Disponible inicialmente)
-INSERT INTO Prenda (Nombre, Descripcion, Talle, Color, Categoria, Estado, IdClienteActual, FechaAlta)
-SELECT v.Nombre, v.Descripcion, v.Talle, v.Color, v.Categoria, 0, NULL, GETDATE()
-FROM (VALUES
-    (N'Vestido Largo Negro',    N'Vestido de fiesta largo',  'M',  N'Negro',      N'Vestido'),
-    (N'Blazer Beige',           N'Blazer entallado',         'L',  N'Beige',      N'Saco'),
-    (N'Camisa Blanca Clásica',  N'Camisa de algodón',        'M',  N'Blanco',     N'Camisa'),
-    (N'Pantalón Sastre Gris',   N'Pantalón de vestir',       '42', N'Gris',       N'Pantalón'),
-    (N'Abrigo Largo Camel',     N'Tapado de paño',           'L',  N'Camel',      N'Abrigo'),
-    (N'Vestido Floral',         N'Vestido estampado verano', 'S',  N'Estampado',  N'Vestido'),
-    (N'Camisa Celeste',         N'Camisa de lino',           'L',  N'Celeste',    N'Camisa'),
-    (N'Jean Recto Azul',        N'Jean clásico',             '40', N'Azul',       N'Pantalón'),
-    (N'Saco a Cuadros',         N'Saco príncipe de Gales',   'M',  N'Multicolor', N'Saco'),
-    (N'Falda Plisada Negra',    N'Falda midi plisada',       'S',  N'Negro',      N'Falda'),
-    (N'Sweater Oversize Crema', N'Sweater de lana',          'L',  N'Crema',      N'Sweater'),
-    (N'Gabardina Verde',        N'Gabardina impermeable',    'M',  N'Verde',      N'Abrigo')
-) AS v(Nombre, Descripcion, Talle, Color, Categoria)
-WHERE NOT EXISTS (SELECT 1 FROM Prenda pr WHERE pr.Nombre = v.Nombre);
-PRINT 'Demo: prendas (stock).';
-GO
 
--- Pedidos demo (sólo si aún no hay pedidos) + prendas EnUso asignadas a su cliente,
--- replicando lo que hace la app al crear/despachar (Prenda.Estado=EnUso, IdClienteActual).
-IF NOT EXISTS (SELECT 1 FROM Pedido)
-   AND EXISTS (SELECT 1 FROM Empleado WHERE Legajo = 'L-001')
-   AND EXISTS (SELECT 1 FROM Cliente WHERE Nombre = N'Lucía' AND Apellido = N'Fernández')
-BEGIN
-    DECLARE @emp     INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo = 'L-001');
-    DECLARE @cLucia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Lucía'  AND Apellido=N'Fernández');
-    DECLARE @cMartin INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Martín' AND Apellido=N'Gómez');
-    DECLARE @cSofia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Sofía'  AND Apellido=N'Rossi');
-
-    DECLARE @pr1 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Vestido Largo Negro');
-    DECLARE @pr2 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Blazer Beige');
-    DECLARE @pr3 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Camisa Blanca Clásica');
-    DECLARE @pr4 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Pantalón Sastre Gris');
-
-    -- Pedido 1: Lucía — Entregado (2 prendas)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, FechaEntrega, DVH)
-    VALUES (@cLucia, @emp, 2, DATEADD(day,-20,GETDATE()), DATEADD(day,-18,GETDATE()), DATEADD(day,-15,GETDATE()), 0);
-    DECLARE @ped1 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped1, @pr1), (@ped1, @pr2);
-
-    -- Pedido 2: Martín — Despachado (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, DVH)
-    VALUES (@cMartin, @emp, 1, DATEADD(day,-5,GETDATE()), DATEADD(day,-3,GETDATE()), 0);
-    DECLARE @ped2 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped2, @pr3);
-
-    -- Pedido 3: Sofía — Pendiente (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, DVH)
-    VALUES (@cSofia, @emp, 0, DATEADD(day,-1,GETDATE()), 0);
-    DECLARE @ped3 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped3, @pr4);
-
-    -- Marcar prendas EnUso (Estado=1) con su cliente
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cLucia  WHERE IdPrenda IN (@pr1,@pr2);
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cMartin WHERE IdPrenda=@pr3;
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cSofia  WHERE IdPrenda=@pr4;
-
-    PRINT 'Demo: 3 pedidos (Entregado/Despachado/Pendiente) + prendas asignadas.';
-END
-ELSE
-    PRINT 'Demo: pedidos ya existen o faltan datos base — sin cambios.';
-GO
 
 -- ============================================================
 -- ÍNDICES NO-CLUSTERED Y RESTRICCIONES DE INTEGRIDAD
@@ -2322,18 +2004,6 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_RolPermiso_IdPermiso' 
     CREATE NONCLUSTERED INDEX IX_RolPermiso_IdPermiso ON RolPermiso(IdPermiso);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Traduccion_IdIdioma' AND object_id = OBJECT_ID('Traduccion'))
     CREATE NONCLUSTERED INDEX IX_Traduccion_IdIdioma ON Traduccion(IdIdioma);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdCliente' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdCliente ON Pedido(IdCliente);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdEmpleado' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdEmpleado ON Pedido(IdEmpleado);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_FechaPedido' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_FechaPedido ON Pedido(FechaPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoPrenda_IdPrenda' AND object_id = OBJECT_ID('PedidoPrenda'))
-    CREATE NONCLUSTERED INDEX IX_PedidoPrenda_IdPrenda ON PedidoPrenda(IdPrenda);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoHistorial_IdPedido' AND object_id = OBJECT_ID('PedidoHistorial'))
-    CREATE NONCLUSTERED INDEX IX_PedidoHistorial_IdPedido ON PedidoHistorial(IdPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Prenda_IdClienteActual' AND object_id = OBJECT_ID('Prenda'))
-    CREATE NONCLUSTERED INDEX IX_Prenda_IdClienteActual ON Prenda(IdClienteActual);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_HistorialUsuario_IdUsuario' AND object_id = OBJECT_ID('HistorialUsuario'))
     CREATE NONCLUSTERED INDEX IX_HistorialUsuario_IdUsuario ON HistorialUsuario(IdUsuario);
 PRINT 'Índices no-clustered verificados/creados.';
@@ -3204,9 +2874,13 @@ GO
       Inicio: 1ro del mes actual. Vencimiento: fin del mes +2 (futuro).
    ---------------------------------------------------------------------------- */
 DECLARE @hoy2 date = CAST(GETDATE() AS date);
+-- Inicio: 1ro del mes, DOS meses atras (cubre las reservas demo, que van hasta -25 dias respecto de
+-- hoy); asi el backfill de IdSuscripcion (PN03) las asocia a esta suscripcion y no quedan en NULL.
+-- Vencimiento: fin del mes +2 (futuro) → la suscripcion sigue Activa y vigente.
+DECLARE @ini2 date = DATEFROMPARTS(YEAR(DATEADD(month, -2, @hoy2)), MONTH(DATEADD(month, -2, @hoy2)), 1);
 INSERT INTO Suscripcion (IdCliente, IdPlan, FechaInicio, FechaVencimiento, Estado, ReservasConsumidasMes)
 SELECT c.IdCliente, c.IdPlan,
-       DATEFROMPARTS(YEAR(@hoy2), MONTH(@hoy2), 1),
+       @ini2,
        EOMONTH(@hoy2, 2),
        0 /*Activa*/, 0
 FROM Cliente c
@@ -3524,4 +3198,242 @@ INNER JOIN Permiso p ON p.NombreMenu = v.NombreMenu
 WHERE NOT EXISTS (SELECT 1 FROM ControlMapeado x
                   WHERE x.Formulario = v.Formulario AND x.NombreControl = v.NombreControl);
 PRINT 'Mapeo de MembresiaForm (panelVenta/panelCaja) aplicado.';
+GO
+
+-- ===================================================================
+-- MODULO: 16_PN03_Cancelacion.sql
+-- ===================================================================
+/* ============================================================================
+   16 - PN03 : Cancelacion de reserva y reasignacion de cupo por lista de espera
+   ----------------------------------------------------------------------------
+   Agrega lo que PN03 necesita en BD, todo idempotente:
+
+   1) Tabla [Parametro] (clave/valor) con los parametros de negocio configurables
+      de la oferta de cupo (regla 5), leidos por BLL.Configuracion:
+        - OfertaVencimientoHoras = 24  -> plazo de respuesta de una oferta.
+        - OfertaMargenInicioHoras = 24 -> margen minimo antes del inicio: pasado
+          ese punto la oferta vence y el cupo queda libre para reserva directa.
+
+   2) Patentes de accion separadas (regla 9), ADITIVAS (no se quita ninguna
+      patente existente, nadie pierde acceso):
+        - mnuReservasCancelar     -> Cancelar Reservas      (Agente de Reservas + Admin)
+        - mnuExperienciasCancelar -> Cancelar Experiencias  (Coordinador + Admin)
+      ("Gestionar Lista de Espera" ya existe como mnuListaEspera).
+
+   No se agregan columnas a tablas con DVH, por lo que no hace falta recalcular
+   DVH/DVV en este script. Pensado para ejecutarse sobre bases ya instaladas; en
+   instalaciones limpias el mismo contenido va al final de 00_Instalacion_Completa.sql.
+   ============================================================================ */
+
+-- 1) Parametros de negocio -------------------------------------------------
+IF OBJECT_ID('Parametro','U') IS NULL
+BEGIN
+    CREATE TABLE Parametro (
+        Clave       NVARCHAR(100) NOT NULL PRIMARY KEY,
+        Valor       NVARCHAR(400) NOT NULL,
+        Descripcion NVARCHAR(400) NULL
+    );
+    PRINT 'Tabla Parametro creada.';
+END
+GO
+IF NOT EXISTS (SELECT 1 FROM Parametro WHERE Clave = 'OfertaVencimientoHoras')
+    INSERT INTO Parametro (Clave, Valor, Descripcion) VALUES
+        ('OfertaVencimientoHoras', '24',
+         N'PN03 (regla 5) - Horas de vigencia de una oferta de cupo de lista de espera antes de vencer y pasar al siguiente.');
+IF NOT EXISTS (SELECT 1 FROM Parametro WHERE Clave = 'OfertaMargenInicioHoras')
+    INSERT INTO Parametro (Clave, Valor, Descripcion) VALUES
+        ('OfertaMargenInicioHoras', '24',
+         N'PN03 (regla 5) - Margen minimo antes del inicio: si falta menos, la oferta vence y el cupo queda libre para reserva directa.');
+GO
+PRINT 'PN03: parametros de la oferta de cupo verificados.';
+GO
+
+-- 2) Patentes de accion separadas (regla 9) --------------------------------
+DECLARE @nuevasPat TABLE (NombreMenu NVARCHAR(100), Nombre NVARCHAR(150));
+INSERT INTO @nuevasPat VALUES
+    (N'mnuReservasCancelar',     N'Cancelar Reservas'),
+    (N'mnuExperienciasCancelar', N'Cancelar Experiencias');
+
+INSERT INTO Permiso (Nombre, NombreMenu, EsFamilia, EsRol, Estado)
+SELECT n.Nombre, n.NombreMenu, 0, 0, 1
+FROM @nuevasPat n
+WHERE NOT EXISTS (SELECT 1 FROM Permiso p WHERE p.NombreMenu = n.NombreMenu);
+GO
+
+-- 3) Conceder las patentes a los roles correctos (ADITIVO) -----------------
+DECLARE @admin  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE EsRol=1 AND Nombre LIKE '%Administrador%' ORDER BY IdPermiso);
+DECLARE @agente INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE EsRol=1 AND Nombre = N'Agente de Reservas'          ORDER BY IdPermiso);
+DECLARE @coord  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE EsRol=1 AND Nombre = N'Coordinador de Experiencias' ORDER BY IdPermiso);
+
+-- Cancelar Reservas -> Agente de Reservas + Administrador
+INSERT INTO PermisoRelacion (IdPadre, IdHijo)
+SELECT r.IdRol, p.IdPermiso
+FROM (SELECT @agente AS IdRol UNION ALL SELECT @admin) r
+JOIN Permiso p ON p.NombreMenu = 'mnuReservasCancelar' AND p.EsRol = 0
+WHERE r.IdRol IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM PermisoRelacion x WHERE x.IdPadre = r.IdRol AND x.IdHijo = p.IdPermiso);
+
+-- Cancelar Experiencias -> Coordinador de Experiencias + Administrador
+INSERT INTO PermisoRelacion (IdPadre, IdHijo)
+SELECT r.IdRol, p.IdPermiso
+FROM (SELECT @coord AS IdRol UNION ALL SELECT @admin) r
+JOIN Permiso p ON p.NombreMenu = 'mnuExperienciasCancelar' AND p.EsRol = 0
+WHERE r.IdRol IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM PermisoRelacion x WHERE x.IdPadre = r.IdRol AND x.IdHijo = p.IdPermiso);
+GO
+PRINT 'PN03: patentes de cancelacion (Reservas/Experiencias) creadas y asignadas a los roles.';
+GO
+
+-- 4) Reserva.IdSuscripcion: con que suscripcion se hizo la reserva -----------
+-- Necesario para devolver el beneficio del plan a la suscripcion CORRECTA (regla 2):
+-- la que consumio la reserva, y solo si sigue vigente. NO entra al DVH de Reserva
+-- (DV_Columnas no cambia), por lo que no hace falta recalcular DVH/DVV por esta columna.
+IF COL_LENGTH('Reserva','IdSuscripcion') IS NULL
+    ALTER TABLE Reserva ADD IdSuscripcion INT NULL REFERENCES Suscripcion(IdSuscripcion);
+GO
+-- Backfill para filas previas a PN03 (solo las que no tienen suscripcion asignada): la suscripcion
+-- del cliente cuyo PERIODO [FechaInicio <= FechaReserva < FechaVencimiento] contiene la fecha de la
+-- reserva. Si hay 0 o mas de 1 coincidencia, queda NULL (ambiguo / indeterminable). Idempotente:
+-- nunca pisa un valor ya asignado por la app.
+UPDATE r
+SET r.IdSuscripcion = x.IdSub
+FROM Reserva r
+CROSS APPLY (
+    SELECT CASE WHEN COUNT(*) = 1 THEN MIN(s.IdSuscripcion) ELSE NULL END AS IdSub
+    FROM Suscripcion s
+    WHERE s.IdCliente   = r.IdCliente
+      AND s.FechaInicio <= r.FechaReserva
+      AND (s.FechaVencimiento IS NULL OR r.FechaReserva < s.FechaVencimiento)
+) x
+WHERE r.IdSuscripcion IS NULL;
+GO
+PRINT 'PN03: columna Reserva.IdSuscripcion verificada y backfilleada.';
+GO
+-- IdSuscripcion ahora entra al DVH de Reserva (DAL.Reserva.DV_Columnas). El DVH/DVV lo calcula
+-- el algoritmo de la app (C#), NO se puede recalcular en T-SQL. Para re-sellar con el formato nuevo
+-- SIN que la verificacion lo trate como corrupcion, se resetea el DVH de Reserva, se borra su DVV y
+-- se deja un MARCADOR de re-sellado (__Reseal:Reserva): en el primer arranque la verificacion ve el
+-- marcador, re-sella el DVH/DVV (ahora con IdSuscripcion) y consume el marcador (queda ÍNTEGRO).
+-- Sin ese marcador, un DVH en NULL se trataria como manipulacion. Idempotente.
+UPDATE Reserva SET DVH = NULL WHERE DVH IS NOT NULL;
+GO
+DELETE FROM DVVertical WHERE NombreTabla = 'Reserva';
+GO
+IF NOT EXISTS (SELECT 1 FROM DVVertical WHERE NombreTabla = '__Reseal:Reserva')
+    INSERT INTO DVVertical (NombreTabla, DVV, FechaCalculo) VALUES ('__Reseal:Reserva', 1, GETDATE());
+GO
+PRINT 'PN03: DVH/DVV de Reserva reseteado + marcador de re-sellado (IdSuscripcion en el DVH).';
+GO
+
+-- Instalacion limpia: las tablas de negocio protegidas nacen con DVH sin calcular (el algoritmo es
+-- de la app). Se deja un marcador de re-sellado por tabla AUN NO SELLADA (sin fila DVV propia) para
+-- que el primer arranque las selle de forma AUTORIZADA. En bases ya selladas no se toca nada (el
+-- criterio de integridad trata un DVH en NULL sin marcador como corrupcion). Idempotente.
+DECLARE @prot TABLE (T NVARCHAR(100));
+INSERT INTO @prot VALUES (N'Cliente'), (N'Empleado'), (N'Experiencia'), (N'Organizador');
+INSERT INTO DVVertical (NombreTabla, DVV, FechaCalculo)
+SELECT N'__Reseal:' + p.T, 1, GETDATE()
+FROM @prot p
+-- "aun no sellada" = sin fila DVV propia O con DVV = 0 (placeholder sin sellar). Un DVV<>0 significa
+-- que la app ya sello la tabla: en ese caso NO se pone marcador (un DVH en NULL sin marcador = corrupcion).
+WHERE NOT EXISTS (SELECT 1 FROM DVVertical d WHERE d.NombreTabla = p.T AND d.DVV <> 0)
+  AND NOT EXISTS (SELECT 1 FROM DVVertical d WHERE d.NombreTabla = N'__Reseal:' + p.T);
+GO
+PRINT 'PN03: marcadores de re-sellado de tablas de negocio verificados (instalacion limpia).';
+GO
+
+-- 5) Mapeo de los botones de cancelacion a su patente (regla 9) --------------
+-- FormBase aplica ManejadorSeguridad por form.Name + NombreControl: cada boton de cancelar
+-- queda visible solo para los roles con la patente correspondiente (el Admin ve todo por bypass).
+INSERT INTO ControlMapeado (IdPermiso, Formulario, NombreControl)
+SELECT p.IdPermiso, v.Formulario, v.NombreControl
+FROM (VALUES
+    ('mnuReservasCancelar',     'Reservas',     'btnCancelarReserva'),
+    ('mnuExperienciasCancelar', 'Experiencias', 'btnCancelarExperiencia')
+) AS v(NombreMenu, Formulario, NombreControl)
+INNER JOIN Permiso p ON p.NombreMenu = v.NombreMenu
+                    AND ISNULL(p.EsFamilia,0) = 0 AND ISNULL(p.EsRol,0) = 0
+WHERE NOT EXISTS (SELECT 1 FROM ControlMapeado x
+                  WHERE x.Formulario = v.Formulario AND x.NombreControl = v.NombreControl);
+GO
+PRINT 'PN03: mapeo de botones Cancelar (Reservas/Experiencias) aplicado.';
+GO
+
+-- ===================================================================
+-- MODULO: 17_Limpieza_Legacy.sql
+-- ===================================================================
+/* ============================================================================
+   17 - Limpieza de objetos LEGACY (WardrobeFlow) que ExperienceHub no usa
+   ----------------------------------------------------------------------------
+   Idempotente (IF EXISTS / COL_LENGTH). Elimina las tablas, patentes y marcas de
+   dígito verificador heredadas del base WardrobeFlow y que el runtime de
+   ExperienceHub no referencia (usa Reserva/ReservaHistorial/Experiencia/ListaEspera).
+
+   Se aplica tanto en instalaciones nuevas (al final de 00_Instalacion_Completa.sql)
+   como en la migración post-restore (DAL.Migracion), para que un backup viejo quede
+   limpio al restaurarlo. Con el criterio de integridad nuevo, dejar una tabla
+   "registrada" (en DVVertical) que no existe NO debe ocurrir: por eso también se
+   quitan sus filas/marcadores de DVVertical.
+   ============================================================================ */
+
+-- 1) Desarmar FKs de BitacoraNegocio -> Pedido/Prenda si un backup viejo las trajo.
+IF OBJECT_ID('BitacoraNegocio','U') IS NOT NULL
+BEGIN
+    DECLARE @dropFk NVARCHAR(MAX) = N'';
+    SELECT @dropFk = @dropFk + 'ALTER TABLE BitacoraNegocio DROP CONSTRAINT ' + QUOTENAME(fk.name) + ';'
+    FROM sys.foreign_keys fk
+    WHERE fk.parent_object_id = OBJECT_ID('BitacoraNegocio')
+      AND OBJECT_NAME(fk.referenced_object_id) IN ('Pedido','Prenda');
+    IF @dropFk <> N'' EXEC sp_executesql @dropFk;
+END
+GO
+-- 1b) Si el backup viejo trae las columnas con el nombre legacy, renombrarlas a las vivas.
+IF COL_LENGTH('BitacoraNegocio','IdReserva') IS NULL AND COL_LENGTH('BitacoraNegocio','IdPedido') IS NOT NULL
+    EXEC sp_rename 'BitacoraNegocio.IdPedido', 'IdReserva', 'COLUMN';
+GO
+IF COL_LENGTH('BitacoraNegocio','IdExperiencia') IS NULL AND COL_LENGTH('BitacoraNegocio','IdPrenda') IS NOT NULL
+    EXEC sp_rename 'BitacoraNegocio.IdPrenda', 'IdExperiencia', 'COLUMN';
+GO
+
+-- 2) Tablas legacy (hijas primero por las FKs).
+IF OBJECT_ID('PedidoPrenda','U')        IS NOT NULL DROP TABLE PedidoPrenda;
+IF OBJECT_ID('PedidoHistorial','U')     IS NOT NULL DROP TABLE PedidoHistorial;
+IF OBJECT_ID('MantenimientoPrenda','U') IS NOT NULL DROP TABLE MantenimientoPrenda;
+IF OBJECT_ID('Pedido','U')              IS NOT NULL DROP TABLE Pedido;
+IF OBJECT_ID('Prenda','U')              IS NOT NULL DROP TABLE Prenda;
+GO
+
+-- 3) Filas de DVVertical de tablas legacy + sus marcadores de re-sellado.
+IF OBJECT_ID('DVVertical','U') IS NOT NULL
+    DELETE FROM DVVertical WHERE NombreTabla IN
+        ('Pedido','Prenda','PedidoPrenda','PedidoHistorial','MantenimientoPrenda',
+         '__Reseal:Pedido','__Reseal:Prenda','__Reseal:PedidoPrenda','__Reseal:PedidoHistorial','__Reseal:MantenimientoPrenda');
+GO
+
+-- 4) Patentes muertas que el módulo 05 NO renombra a dominio: mnuOutfits (y mnuStock,
+--    que 05 ya elimina; acá de forma defensiva). NO se tocan mnuPrendas/mnuStockEditar/
+--    mnuPedidos*, que 05 RENOMBRA a las patentes vivas (mnuExperiencias*/mnuReservas*).
+--    Se limpian primero las referencias (PermisoRelacion / RolPermiso / ControlMapeado)
+--    para no violar FKs, y recién después la fila de Permiso. Patrón idéntico al del 05.
+DECLARE @muerta NVARCHAR(100);
+DECLARE curMuertas CURSOR LOCAL FAST_FORWARD FOR
+    SELECT NombreMenu FROM (VALUES (N'mnuOutfits'), (N'mnuStock')) AS v(NombreMenu);
+OPEN curMuertas;
+FETCH NEXT FROM curMuertas INTO @muerta;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    DECLARE @idPat INT = (SELECT IdPermiso FROM Permiso WHERE NombreMenu = @muerta);
+    IF @idPat IS NOT NULL
+    BEGIN
+        DELETE FROM PermisoRelacion WHERE IdPadre = @idPat OR IdHijo = @idPat;
+        IF COL_LENGTH('RolPermiso','IdPermiso')     IS NOT NULL DELETE FROM RolPermiso     WHERE IdPermiso = @idPat;
+        IF COL_LENGTH('ControlMapeado','IdPermiso') IS NOT NULL DELETE FROM ControlMapeado WHERE IdPermiso = @idPat;
+        DELETE FROM Permiso WHERE IdPermiso = @idPat;
+    END
+    FETCH NEXT FROM curMuertas INTO @muerta;
+END
+CLOSE curMuertas;
+DEALLOCATE curMuertas;
+GO
+PRINT 'Limpieza legacy (tablas/patentes/DV de WardrobeFlow) aplicada.';
 GO

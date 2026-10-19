@@ -151,6 +151,77 @@ namespace DAL
         public void RecalcularDVPublico() => RecalcularDV();
 
         /// <summary>
+        /// CU01-COO — Cancela una experiencia EN CASCADA, todo en UNA transacción atómica:
+        ///   1. cancela cada reserva activa (Estado=Cancelada, fecha + motivo);
+        ///   2. devuelve el beneficio mensual del plan de cada reserva (no es culpa del cliente);
+        ///   3. graba el historial (ReservaHistorial) de cada cancelación;
+        ///   4. cierra la lista de espera (Esperando/Ofrecido → Retirado);
+        ///   5. marca la experiencia como Cancelada;
+        ///   6. recalcula DVH/DVV de Reserva y Experiencia DENTRO de la misma transacción.
+        /// Si algo falla, rollback total: la experiencia no queda a medio cancelar.
+        /// </summary>
+        public void CancelarEnCascada(int idExperiencia, string motivo,
+            List<(int IdReserva, int IdSuscripcion, List<BE.ReservaHistorial> Historial)> reservas)
+        {
+            acceso.EjecutarTransaccion((conn, tx) =>
+            {
+                foreach (var r in reservas)
+                {
+                    using (var upd = new SqlCommand(
+                        "UPDATE Reserva SET Estado=@Cancel, FechaCancelacion=@Fecha, MotivoCancelacion=@Motivo " +
+                        "WHERE IdReserva=@Id", conn, tx))
+                    {
+                        upd.Parameters.AddWithValue("@Cancel", (int)BE.EstadoReserva.Cancelada);
+                        upd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                        upd.Parameters.AddWithValue("@Motivo", (object)motivo ?? DBNull.Value);
+                        upd.Parameters.AddWithValue("@Id", r.IdReserva);
+                        upd.ExecuteNonQuery();
+                    }
+
+                    // Devolución del beneficio del plan (no por debajo de 0).
+                    if (r.IdSuscripcion > 0)
+                    {
+                        using (var cons = new SqlCommand(
+                            "UPDATE Suscripcion SET ReservasConsumidasMes = " +
+                            "CASE WHEN ReservasConsumidasMes > 0 THEN ReservasConsumidasMes - 1 ELSE 0 END " +
+                            "WHERE IdSuscripcion=@IdSus", conn, tx))
+                        {
+                            cons.Parameters.AddWithValue("@IdSus", r.IdSuscripcion);
+                            cons.ExecuteNonQuery();
+                        }
+                    }
+
+                    if (r.Historial != null && r.Historial.Count > 0)
+                        ReservaHistorial.InsertarEnTransaccion(conn, tx, r.Historial);
+                }
+
+                // Cerrar la lista de espera: las entradas activas (Esperando/Ofrecido) pasan a Retirado.
+                using (var le = new SqlCommand(
+                    "UPDATE ListaEspera SET Estado=@Retirado WHERE IdExperiencia=@IdExp AND Estado IN (@Esp,@Ofr)", conn, tx))
+                {
+                    le.Parameters.AddWithValue("@Retirado", (int)BE.EstadoListaEspera.Retirado);
+                    le.Parameters.AddWithValue("@Esp", (int)BE.EstadoListaEspera.Esperando);
+                    le.Parameters.AddWithValue("@Ofr", (int)BE.EstadoListaEspera.Ofrecido);
+                    le.Parameters.AddWithValue("@IdExp", idExperiencia);
+                    le.ExecuteNonQuery();
+                }
+
+                // Marcar la experiencia como Cancelada (estado final).
+                using (var ex = new SqlCommand(
+                    "UPDATE Experiencia SET Estado=@Cancel WHERE IdExperiencia=@IdExp", conn, tx))
+                {
+                    ex.Parameters.AddWithValue("@Cancel", (int)BE.EstadoExperiencia.Cancelada);
+                    ex.Parameters.AddWithValue("@IdExp", idExperiencia);
+                    ex.ExecuteNonQuery();
+                }
+
+                // Recalcular DVH/DVV de las dos tablas protegidas tocadas, en la MISMA transacción.
+                DigitoVerificador.RecalcularTablaEnTransaccion(conn, tx, Reserva.DV_Tabla, Reserva.DV_Pk, Reserva.DV_Columnas);
+                DigitoVerificador.RecalcularTablaEnTransaccion(conn, tx, DV_Tabla, DV_Pk, DV_Columnas);
+            });
+        }
+
+        /// <summary>
         /// Mantenimiento por fecha: marca como Finalizada las experiencias cuyo horario ya terminó
         /// y como EnCurso las que están ocurriendo. No toca las Canceladas. Devuelve filas finalizadas.
         /// </summary>

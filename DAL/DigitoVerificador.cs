@@ -39,6 +39,35 @@ namespace DAL
             }
         }
 
+        // ── Marcador de re-sellado por tabla (__Reseal:<Tabla>) ─────────────────
+        // Lo setea una MIGRACIÓN para autorizar que la verificación de integridad (re)selle el DVH/DVV
+        // de una tabla (inicialización en instalación limpia o cambio de formato del DVH). Un DVH en
+        // NULL o una discrepancia SIN este marcador se tratan como corrupción (no se re-sella solo).
+        private const string ResealPrefix = "__Reseal:";
+
+        /// <summary>True si hay un marcador de re-sellado pendiente para la tabla.</summary>
+        public bool TieneMarcadorReseal(string nombreTabla) => ObtenerDVV(ResealPrefix + nombreTabla) != null;
+
+        /// <summary>Setea el marcador de re-sellado (lo usa la migración).</summary>
+        public void MarcarReseal(string nombreTabla) => GuardarDVV(ResealPrefix + nombreTabla, 1);
+
+        /// <summary>Consume (borra) el marcador de re-sellado tras re-sellar la tabla.</summary>
+        public void ConsumirMarcadorReseal(string nombreTabla) => EliminarDVV(ResealPrefix + nombreTabla);
+
+        /// <summary>Borra la fila de DVVertical de una tabla/marcador.</summary>
+        public void EliminarDVV(string nombreTabla)
+        {
+            try
+            {
+                acceso.Escribir("DELETE FROM DVVertical WHERE NombreTabla = @tabla",
+                    new SqlParameter[] { new SqlParameter("@tabla", nombreTabla) });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al eliminar DVV de '{nombreTabla}'.", ex);
+            }
+        }
+
         // Almacena (upsert) el DVV calculado para una tabla junto con la fecha.
         public void GuardarDVV(string nombreTabla, int dvv)
         {
@@ -173,6 +202,64 @@ namespace DAL
             acceso.Escribir(
                 "UPDATE " + Id(tabla) + " SET DVH = @dvh WHERE " + Id(pkCol) + " = @id",
                 new SqlParameter[] { new SqlParameter("@dvh", dvh), new SqlParameter("@id", id) });
+        }
+
+        // Recalcula y persiste el DVH de cada fila + el DVV de la tabla DENTRO de una transacción
+        // YA abierta (conn/tx). Permite que una operación multi-tabla (p. ej. la cancelación de una
+        // experiencia en cascada) recalcule los dígitos verificadores como parte de la MISMA
+        // transacción atómica, en lugar de depender de la auto-reparación posterior al arranque.
+        internal static void RecalcularTablaEnTransaccion(SqlConnection conn, SqlTransaction tx,
+                                                          string tabla, string pkCol, string[] columnas)
+        {
+            var svc = Seguridad.CalculadorDV.Crear();
+
+            var colsQuoted = new string[columnas.Length];
+            for (int i = 0; i < columnas.Length; i++) colsQuoted[i] = Id(columnas[i]);
+            string cols = string.Join(", ", colsQuoted);
+
+            // 1) Leer filas (PK + columnas) dentro de la transacción.
+            var filas = new List<(int Id, string[] Campos)>();
+            using (var cmd = new SqlCommand(
+                "SELECT " + Id(pkCol) + ", " + cols + " FROM " + Id(tabla) + " ORDER BY " + Id(pkCol), conn, tx))
+            using (var rd = cmd.ExecuteReader())
+            {
+                while (rd.Read())
+                {
+                    var campos = new string[columnas.Length + 1];
+                    campos[0] = rd[0].ToString();                 // la PK entra al DVH
+                    for (int i = 0; i < columnas.Length; i++)
+                        campos[i + 1] = rd.IsDBNull(i + 1) ? "" : rd[i + 1].ToString();
+                    filas.Add((Convert.ToInt32(rd[0]), campos));
+                }
+            }
+
+            // 2) Recalcular y actualizar el DVH de cada fila.
+            var dvhs = new List<int>();
+            foreach (var f in filas)
+            {
+                int dvh = svc.CalcularDVH(f.Campos);
+                dvhs.Add(dvh);
+                using (var upd = new SqlCommand(
+                    "UPDATE " + Id(tabla) + " SET DVH=@dvh WHERE " + Id(pkCol) + "=@id", conn, tx))
+                {
+                    upd.Parameters.AddWithValue("@dvh", dvh);
+                    upd.Parameters.AddWithValue("@id", f.Id);
+                    upd.ExecuteNonQuery();
+                }
+            }
+
+            // 3) Upsert del DVV de la tabla.
+            int dvv = svc.CalcularDVV(dvhs);
+            using (var dvCmd = new SqlCommand(
+                "IF EXISTS (SELECT 1 FROM DVVertical WHERE NombreTabla=@t) " +
+                "   UPDATE DVVertical SET DVV=@v, FechaCalculo=GETDATE() WHERE NombreTabla=@t " +
+                "ELSE " +
+                "   INSERT INTO DVVertical (NombreTabla, DVV, FechaCalculo) VALUES (@t,@v,GETDATE())", conn, tx))
+            {
+                dvCmd.Parameters.AddWithValue("@t", tabla);
+                dvCmd.Parameters.AddWithValue("@v", dvv);
+                dvCmd.ExecuteNonQuery();
+            }
         }
 
         // Recalcula y persiste el DVH de cada fila + el DVV de la tabla.

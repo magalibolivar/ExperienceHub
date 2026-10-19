@@ -751,7 +751,8 @@ namespace BLL
                 case "Agente de Reservas":          return "Agente de Reservas";
                 case "Coordinador de Experiencias": return "Coordinador de Experiencias";
                 case "Auditor":                     return "Auditor";
-                // Etiquetas heredadas de WardrobeFlow → nuevo rol equivalente (compatibilidad).
+                // Nombres de rol antiguos → rol actual equivalente de ExperienceHub (compatibilidad
+                // con datos que todavía traen la denominación previa).
                 case "Vendedor":
                 case "Gerente Comercial":
                 case "GerenteComercial":

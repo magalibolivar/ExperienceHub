@@ -23,12 +23,16 @@ namespace GUI
         private const string MODULO = "Membresia";
 
         private ComboBox _cboCliente, _cboPlan, _cboMedio, _cboCuotas;
+        private TextBox _txtBuscarCli;
         private CheckBox _chkVenc;
         private DateTimePicker _dtpVenc;
-        private Label _rvPlan, _rvEstado, _rvVence, _rvReservas, _rvContratacion;
+        private Label _rvPlan, _rvEstado, _rvVence, _rvReservas, _rvContratacion, _lblPlanDetalle;
         private Panel _panelVenta, _panelCaja;
-        private Button _btnRegistrar, _btnFormalizar, _btnRenovar, _btnSuspender, _btnReactivar, _btnCobrarOk, _btnCobrarFail;
+        private Button _btnRegistrar, _btnFormalizar, _btnRenovar, _btnSuspender, _btnReactivar, _btnCobrarOk, _btnCobrarFail, _btnNuevoCli;
         private BE.Contratacion _conActual;   // contratación en proceso del cliente seleccionado (si hay)
+        // Lista completa de clientes ya descifrada (DNI en claro en memoria): el filtro por nombre/DNI
+        // se hace EN MEMORIA, sin consultar la BD por DNI en claro.
+        private System.Collections.Generic.List<BE.Cliente> _todosClientes = new System.Collections.Generic.List<BE.Cliente>();
 
         public MembresiaForm()
         {
@@ -43,7 +47,14 @@ namespace GUI
             // Cliente: barra superior, siempre visible (todos eligen sobre quién operar).
             _cboCliente = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
             _cboCliente.SelectedIndexChanged += (s, e) => MostrarEstado();
-            var clienteBar = UI.BarraFiltros(UI.FiltroCampo("Cliente", _cboCliente, 320, "eh.lbl.cliente"));
+            _txtBuscarCli = new TextBox();
+            _txtBuscarCli.TextChanged += (s, e) => FiltrarClientes();
+            _btnNuevoCli = UI.Secundario("Nuevo cliente", "eh.btn.nuevocliente", (s, e) => NuevoCliente());
+            _btnNuevoCli.Height = 26; _btnNuevoCli.Margin = new Padding(0, 20, 0, 0);
+            var clienteBar = UI.BarraFiltros(
+                UI.FiltroCampo("Buscar (nombre o DNI)", _txtBuscarCli, 220, "eh.lbl.buscardni"),
+                UI.FiltroCampo("Cliente", _cboCliente, 300, "eh.lbl.cliente"),
+                _btnNuevoCli);
 
             // Zona de tarjetas (resúmenes + Venta + Caja), con scroll si no entra.
             var host = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = Estilo.Lienzo,
@@ -139,10 +150,16 @@ namespace GUI
             var venc = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = new Padding(0) };
             venc.Controls.Add(_chkVenc); venc.Controls.Add(_dtpVenc);
 
+            // Detalle del plan seleccionado (precio, reservas/mes, premium, invitados, anticipación).
+            _cboPlan.SelectedIndexChanged += (s, e) => MostrarDetallePlan();
+            _lblPlanDetalle = new Label { AutoSize = false, Width = 470, Height = 20, Margin = new Padding(0, 6, 0, 0),
+                                          ForeColor = Estilo.Gris700, Font = Estilo.Normal(9f), Text = "" };
+
             var campos = new FlowLayoutPanel { Dock = DockStyle.Fill, BackColor = Color.White,
                 FlowDirection = FlowDirection.LeftToRight, WrapContents = true };
             campos.Controls.Add(UI.FiltroCampo("Plan", _cboPlan, 220, "eh.lbl.plan"));
             campos.Controls.Add(UI.FiltroCampo("Vencimiento", venc, 230, "eh.lbl.vencimiento"));
+            campos.Controls.Add(_lblPlanDetalle);
 
             _btnRegistrar  = UI.Primario("Registrar contratación", "eh.btn.nuevacontratacion", (s, e) => Registrar());
             _btnFormalizar = UI.Primario("Formalizar suscripción", "eh.btn.formalizar",        (s, e) => Formalizar());
@@ -153,7 +170,7 @@ namespace GUI
             card.Controls.Add(campos);
             card.Controls.Add(BarraBotones(_btnRegistrar, _btnFormalizar, _btnRenovar, _btnSuspender, _btnReactivar));
             card.Controls.Add(UI.TituloSeccion("Venta", "eh.mem.sec.venta"));
-            return Envoltorio("panelVenta", card, 200);
+            return Envoltorio("panelVenta", card, 236);
         }
 
         // Tarjeta CAJA: campos (medio, cuotas) + barra horizontal de cobro.
@@ -212,13 +229,77 @@ namespace GUI
             {
                 int? cli  = _cboCliente.SelectedValue as int?;
                 int? plan = _cboPlan.SelectedValue as int?;
-                _cboCliente.DataSource = _bllCli.ObtenerTodos();    _cboCliente.DisplayMember = "NombreCompleto"; _cboCliente.ValueMember = "IdCliente";
+                _todosClientes = _bllCli.ObtenerTodos();            // lista ya descifrada (DNI en claro)
+                FiltrarClientes();
                 _cboPlan.DataSource    = _bllPlan.ObtenerActivos(); _cboPlan.DisplayMember    = "Nombre";          _cboPlan.ValueMember    = "IdPlan";
                 if (cli.HasValue)  _cboCliente.SelectedValue = cli.Value;
                 if (plan.HasValue) _cboPlan.SelectedValue    = plan.Value;
+                MostrarDetallePlan();
                 MostrarEstado();
             }
             catch (Exception ex) { MostrarError(ex); }
+        }
+
+        // Filtra la lista de clientes EN MEMORIA por nombre o DNI (sin SQL por DNI en claro).
+        private void FiltrarClientes()
+        {
+            int? sel = _cboCliente.SelectedValue as int?;
+            string q = (_txtBuscarCli?.Text ?? "").Trim();
+            var lista = string.IsNullOrEmpty(q)
+                ? _todosClientes
+                : _todosClientes.FindAll(c =>
+                    (c.NombreCompleto ?? "").IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    (c.DNI ?? "").IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);
+            _cboCliente.DataSource = lista;
+            _cboCliente.DisplayMember = "NombreCompleto";
+            _cboCliente.ValueMember = "IdCliente";
+            if (sel.HasValue && lista.Exists(c => c.IdCliente == sel.Value))
+                _cboCliente.SelectedValue = sel.Value;
+        }
+
+        // Punto 4 — detalle del plan seleccionado en la sección Venta.
+        private void MostrarDetallePlan()
+        {
+            if (_lblPlanDetalle == null) return;
+            if (_cboPlan.SelectedItem is BE.PlanSuscripcion p)
+                _lblPlanDetalle.Text = string.Format(
+                    I18n.T("eh.mem.plandetalle", "${0:N2} · {1} reservas/mes · premium {2} · hasta {3} invitado(s) · anticip. {4} días"),
+                    p.Precio, p.ReservasMensuales, p.AccesoPremium ? "✓" : "—", p.CantidadInvitados, p.AnticipacionMaximaDias);
+            else
+                _lblPlanDetalle.Text = "";
+        }
+
+        // Punto 5 — alta de cliente desde esta pantalla: abre ClienteForm, persiste y lo deja seleccionado.
+        private void NuevoCliente()
+        {
+            BE.Cliente prefill = null;   // datos del intento anterior, para reabrir sin perderlos
+            while (true)
+            {
+                using (var form = prefill == null ? new ClienteForm() : new ClienteForm(prefill, false))
+                {
+                    if (form.ShowDialog(this) != DialogResult.OK) return;   // canceló
+
+                    try
+                    {
+                        _bllCli.Alta(MODULO, form.ClienteEditado);          // valida (edad/DNI duplicado) y persiste
+                    }
+                    catch (Exception ex)
+                    {
+                        MostrarError(ex);                                    // muestra el motivo del rechazo
+                        prefill = form.ClienteEditado;                       // conserva lo cargado y reabre el diálogo
+                        continue;
+                    }
+
+                    string dni = form.ClienteEditado.DNI;
+                    _todosClientes = _bllCli.ObtenerTodos();                 // recarga con el nuevo cliente
+                    _txtBuscarCli.Text = "";                                 // limpia filtro para que sea visible
+                    FiltrarClientes();
+                    var nuevo = _todosClientes.Find(c => c.DNI == dni);      // Alta no devuelve Id → se ubica por DNI
+                    if (nuevo != null) _cboCliente.SelectedValue = nuevo.IdCliente;
+                    MostrarEstado();
+                    return;
+                }
+            }
         }
 
         private void MostrarEstado()

@@ -85,9 +85,13 @@ GO
       Inicio: 1ro del mes actual. Vencimiento: fin del mes +2 (futuro).
    ---------------------------------------------------------------------------- */
 DECLARE @hoy2 date = CAST(GETDATE() AS date);
+-- Inicio: 1ro del mes, DOS meses atras (cubre las reservas demo, que van hasta -25 dias respecto de
+-- hoy); asi el backfill de IdSuscripcion (PN03) las asocia a esta suscripcion y no quedan en NULL.
+-- Vencimiento: fin del mes +2 (futuro) → la suscripcion sigue Activa y vigente.
+DECLARE @ini2 date = DATEFROMPARTS(YEAR(DATEADD(month, -2, @hoy2)), MONTH(DATEADD(month, -2, @hoy2)), 1);
 INSERT INTO Suscripcion (IdCliente, IdPlan, FechaInicio, FechaVencimiento, Estado, ReservasConsumidasMes)
 SELECT c.IdCliente, c.IdPlan,
-       DATEFROMPARTS(YEAR(@hoy2), MONTH(@hoy2), 1),
+       @ini2,
        EOMONTH(@hoy2, 2),
        0 /*Activa*/, 0
 FROM Cliente c

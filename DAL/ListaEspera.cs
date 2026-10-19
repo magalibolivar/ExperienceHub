@@ -12,7 +12,8 @@ namespace DAL
 
         private const string SELECT_BASE =
             "SELECT le.IdListaEspera, le.IdExperiencia, le.IdCliente, le.Posicion, le.FechaIngreso, le.Estado, le.FechaOferta, " +
-            "       c.Nombre + ' ' + c.Apellido AS NombreCliente, e.Nombre AS NombreExperiencia " +
+            "       c.Nombre + ' ' + c.Apellido AS NombreCliente, e.Nombre AS NombreExperiencia, " +
+            "       (CAST(e.Fecha AS DATETIME) + CAST(e.HoraInicio AS DATETIME)) AS FechaHoraExperiencia " +
             "FROM ListaEspera le " +
             "LEFT JOIN Cliente     c ON c.IdCliente     = le.IdCliente " +
             "LEFT JOIN Experiencia e ON e.IdExperiencia = le.IdExperiencia ";
@@ -120,6 +121,33 @@ namespace DAL
                 new[] { new SqlParameter("@Estado", (int)estado), new SqlParameter("@Id", idListaEspera) });
         }
 
+        /// <summary>IdExperiencia de todas las experiencias que hoy tienen una oferta vigente (Ofrecido).
+        /// Insumo para procesar vencimientos de forma global (p. ej. al iniciar sesión).</summary>
+        public List<int> ObtenerExperienciasConOfertaVigente()
+        {
+            var ids = new List<int>();
+            DataTable t = acceso.Leer(
+                "SELECT DISTINCT IdExperiencia FROM ListaEspera WHERE Estado=@Ofrecido",
+                new[] { new SqlParameter("@Ofrecido", (object)(int)BE.EstadoListaEspera.Ofrecido) });
+            foreach (DataRow row in t.Rows) ids.Add(Convert.ToInt32(row["IdExperiencia"]));
+            return ids;
+        }
+
+        /// <summary>Cantidad de entradas activas de una experiencia (Esperando u Ofrecido): clientes que
+        /// se verían afectados si se cierra su lista de espera (preview de la cancelación de experiencia).</summary>
+        public int ContarActivas(int idExperiencia)
+        {
+            var dt = acceso.Leer(
+                "SELECT COUNT(*) AS Total FROM ListaEspera WHERE IdExperiencia=@IdExp AND Estado IN (@Esp,@Ofr)",
+                new[]
+                {
+                    new SqlParameter("@IdExp", idExperiencia),
+                    new SqlParameter("@Esp", (object)(int)BE.EstadoListaEspera.Esperando),
+                    new SqlParameter("@Ofr", (object)(int)BE.EstadoListaEspera.Ofrecido)
+                });
+            return dt.Rows.Count > 0 ? Convert.ToInt32(dt.Rows[0]["Total"]) : 0;
+        }
+
         private BE.ListaEspera Mapear(DataRow row) => new BE.ListaEspera
         {
             IdListaEspera     = Convert.ToInt32(row["IdListaEspera"]),
@@ -131,7 +159,9 @@ namespace DAL
             FechaOferta       = row.Table.Columns.Contains("FechaOferta") && row["FechaOferta"] != DBNull.Value
                                     ? (DateTime?)Convert.ToDateTime(row["FechaOferta"]) : null,
             NombreCliente     = row["NombreCliente"] != DBNull.Value ? row["NombreCliente"].ToString() : null,
-            NombreExperiencia = row["NombreExperiencia"] != DBNull.Value ? row["NombreExperiencia"].ToString() : null
+            NombreExperiencia = row["NombreExperiencia"] != DBNull.Value ? row["NombreExperiencia"].ToString() : null,
+            FechaHoraExperiencia = row.Table.Columns.Contains("FechaHoraExperiencia") && row["FechaHoraExperiencia"] != DBNull.Value
+                                    ? (DateTime?)Convert.ToDateTime(row["FechaHoraExperiencia"]) : null
         };
     }
 }

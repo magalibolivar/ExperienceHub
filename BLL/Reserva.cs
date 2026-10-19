@@ -30,12 +30,12 @@ namespace BLL
         /// <summary>Reglas 6-7: horas de anticipación que separan una cancelación "a tiempo" de una "tardía".</summary>
         private const int  HORAS_ANTICIPACION_CANCELACION = 48;
         /// <summary>
-        /// PN01: si un cliente ya tiene un "pedido activo" no puede armar uno nuevo. En WardrobeFlow
-        /// el pedido es físico (uno por vez); en ExperienceHub se reinterpreta como "reserva Pendiente
-        /// sin resolver". Las Confirmadas NO bloquean (un cliente reserva varias experiencias).
-        /// En true exige confirmar o cancelar la pendiente antes de armar otra.
+        /// Un cliente con una reserva PENDIENTE sin resolver no puede armar otra: una reserva Pendiente
+        /// (aún no confirmada) bloquea una nueva. Las Confirmadas NO bloquean (un cliente puede tener
+        /// varias experiencias reservadas). En true exige confirmar o cancelar la pendiente antes de
+        /// armar otra.
         /// </summary>
-        private const bool BLOQUEAR_SI_PEDIDO_PENDIENTE = true;
+        private const bool BLOQUEAR_SI_RESERVA_PENDIENTE = true;
 
         // ── Consultas ─────────────────────────────────────────────────────────
         public List<BE.Reserva> ObtenerTodos()               => dalReserva.ObtenerTodos();
@@ -53,11 +53,11 @@ namespace BLL
         public List<BE.Reserva> ObtenerPorCliente(int id)    => dalReserva.ObtenerPorCliente(id);
         public BE.Reserva       ObtenerPorId(int id)         => dalReserva.ObtenerPorId(id);
 
-        // ── PN01 · CU03-VEN — Consultar Situación del Cliente (solo lectura) ───
+        // ── CU03-AGR — Consultar Situación del Cliente (solo lectura) ──────────
         /// <summary>
-        /// Devuelve el estado comercial del cliente (plan, cupo disponible, vigencia y reserva
-        /// pendiente si corresponde). No modifica nada. Permite al Vendedor decidir si avanzar a
-        /// armar el pedido. Mapea los códigos de la spec a <see cref="BE.EstadoSituacionCliente"/>.
+        /// Devuelve el estado comercial del cliente (plan, reservas restantes, vigencia y reserva
+        /// pendiente si corresponde). No modifica nada. Permite al Agente de Reservas decidir si
+        /// avanzar a armar la reserva. Mapea los estados a <see cref="BE.EstadoSituacionCliente"/>.
         /// </summary>
         public BE.SituacionCliente ConsultarSituacionCliente(int idCliente)
         {
@@ -65,7 +65,7 @@ namespace BLL
 
             var situacion = BE.SituacionCliente.Resolver(dalCliente.ObtenerPorId(idCliente));
 
-            // Enriquecer con el "pedido activo" (reserva Pendiente) — requiere consultar las reservas.
+            // Enriquecer con la reserva Pendiente sin resolver — requiere consultar las reservas.
             if (situacion.Estado == BE.EstadoSituacionCliente.Ok)
             {
                 var pendiente = dalReserva.ObtenerActivasConHorario(idCliente)
@@ -100,11 +100,11 @@ namespace BLL
         }
 
         /// <summary>
-        /// Decisión PURA (sin BD ni sesión): ¿el cliente tiene un "pedido activo" que impide armar
-        /// uno nuevo? Con el bloqueo activo, una reserva en estado Pendiente bloquea; las Confirmadas
+        /// Decisión PURA (sin BD ni sesión): ¿el cliente tiene una reserva PENDIENTE que impide armar
+        /// una nueva? Con el bloqueo activo, una reserva en estado Pendiente bloquea; las Confirmadas
         /// no. Separada así para poder testearla sin BD (patrón PermisosAccion.PermiteAccion).
         /// </summary>
-        public static bool TienePedidoActivoBloqueante(
+        public static bool TieneReservaPendienteBloqueante(
             IEnumerable<BE.Reserva> reservasActivas, bool bloquearSiPendiente)
         {
             if (!bloquearSiPendiente || reservasActivas == null) return false;
@@ -112,16 +112,19 @@ namespace BLL
         }
 
         // ── Crear Reserva (reglas 1-5 + premium + edad + invitados) ────────────
-        public int CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados)
+        // idListaEsperaAConfirmar > 0 → esta reserva nace de confirmar una oferta de lista de espera;
+        // la entrada se marca Confirmado en la MISMA transacción que la reserva (atomicidad, punto 1).
+        public int CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados,
+                                int idListaEsperaAConfirmar = 0)
         {
             PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
 
             var cliente = ObtenerClienteValidado(idCliente);
 
-            // PN01 — un cliente con un "pedido activo" (reserva Pendiente sin resolver) no puede armar
-            // otro. Este chequeo ocurre al principio del proceso, no recién al formalizar.
-            if (TienePedidoActivoBloqueante(dalReserva.ObtenerActivasConHorario(idCliente), BLOQUEAR_SI_PEDIDO_PENDIENTE))
-                throw new BE.AppException("err.bll.reserva.pedido_activo",
+            // CU03-AGR — un cliente con una reserva Pendiente sin resolver no puede armar otra. Este
+            // chequeo ocurre al principio del proceso (al registrar la reserva, CU01-AGR).
+            if (TieneReservaPendienteBloqueante(dalReserva.ObtenerActivasConHorario(idCliente), BLOQUEAR_SI_RESERVA_PENDIENTE))
+                throw new BE.AppException("err.bll.reserva.reserva_pendiente",
                     "El cliente ya tiene una reserva pendiente sin confirmar. Confirmala o cancelala antes de armar una nueva.");
 
             var experiencia = ObtenerExperienciaValidada(idExperiencia);
@@ -131,7 +134,7 @@ namespace BLL
             // (vía ConfirmarOferta → este mismo método) puede tomarlo.
             var ofertaEspera = dalEspera.ObtenerOfertaVigente(idExperiencia);
             if (ofertaEspera != null
-                && !ofertaEspera.OfertaVencida(ListaEspera.HORAS_VIGENCIA_OFERTA, DateTime.Now)
+                && !ofertaEspera.OfertaVencida(ListaEspera.HorasVigenciaOferta, ListaEspera.MargenInicioHoras, DateTime.Now)
                 && ofertaEspera.IdCliente != idCliente)
                 throw new BE.AppException("err.bll.reserva.cupo_reservado_espera",
                     "El cupo liberado de '{0}' está reservado para la lista de espera.", experiencia.Nombre);
@@ -201,7 +204,7 @@ namespace BLL
                 ("FechaReserva", null, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             });
             int idNuevo = dalReserva.CrearConCupo(reserva, lugares,
-                cliente.Suscripcion.IdSuscripcion, registrosCrear);
+                cliente.Suscripcion.IdSuscripcion, registrosCrear, idListaEsperaAConfirmar);
 
             bitacora.Registrar(modulo,
                 $"Crear Reserva #{idNuevo} — {cliente.NombreCompleto} — {experiencia.Nombre} — {lugares} lugar(es)",
@@ -258,7 +261,9 @@ namespace BLL
         // ── Cancelar (reglas 6-7 + 9) ──────────────────────────────────────────
         public void Cancelar(string modulo, BE.Reserva reserva, string motivo)
         {
-            PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
+            // Regla 9 — patente propia de "Cancelar reserva". Fallback a ReservasEditar: en una base
+            // sin migrar (sin la patente nueva) exige lo mismo que antes, así nadie pierde acceso.
+            PermisosAccion.Exigir(BE.Patentes.ReservasCancelar, BE.Patentes.ReservasEditar);
             if (!reserva.PuedeCancelarse())
                 throw new BE.AppException("err.bll.reserva.cancelar_estado",
                     "Solo se pueden cancelar reservas Pendientes o Confirmadas. Esta reserva está '{0}'.", reserva.Estado);
@@ -266,24 +271,45 @@ namespace BLL
                 throw new BE.AppException("err.bll.reserva.cancelar_sin_motivo", "Es obligatorio ingresar un motivo de cancelación.");
 
             var experiencia = dalExp.ObtenerPorId(reserva.IdExperiencia);
+
+            // Regla 1 — solo se cancela una reserva de una experiencia que NO esté EnCurso ni
+            // Finalizada (una vez que la experiencia arrancó, la reserva ya no es cancelable).
+            if (experiencia != null &&
+                (experiencia.Estado == BE.EstadoExperiencia.EnCurso ||
+                 experiencia.Estado == BE.EstadoExperiencia.Finalizada))
+                throw new BE.AppException("err.bll.reserva.cancelar_experiencia_iniciada",
+                    "No se puede cancelar la reserva: la experiencia '{0}' ya está {1}.",
+                    experiencia.Nombre, experiencia.Estado);
+
             double horas = experiencia != null ? (experiencia.FechaHoraInicio - DateTime.Now).TotalHours : 0;
             bool aTiempo = horas >= HORAS_ANTICIPACION_CANCELACION;
             int  lugares = reserva.LugaresOcupados;
 
-            // Regla 6/7: a tiempo → libera cupo y devuelve el beneficio; tardía → consume el beneficio
-            dalReserva.Cancelar(reserva.IdReserva, reserva.IdExperiencia, lugares, motivo.Trim(), liberarCupo: aTiempo);
+            // Regla 2 — el cupo se libera SIEMPRE (a tiempo o tardía) para poder reasignarlo por lista
+            // de espera; el beneficio del plan SOLO se devuelve en la cancelación a tiempo (la tardía
+            // es penalizada: pierde la reserva del plan). La devolución va a la suscripción CON LA QUE
+            // se hizo la reserva y solo si sigue vigente (ver ResolverSuscripcionADevolver).
+            int idSuscripcionADevolver = aTiempo ? ResolverSuscripcionADevolver(reserva, dalSus) : 0;
 
-            var cliente = dalCliente.ObtenerPorId(reserva.IdCliente);
-            if (aTiempo && cliente?.Suscripcion != null)
-                dalSus.DecrementarConsumo(cliente.Suscripcion.IdSuscripcion);
+            // Regla 2 — advertencia: cancelación a tiempo de una reserva SIN suscripción registrada
+            // (previa a PN03): no se puede devolver el beneficio a ciegas, queda constancia.
+            if (aTiempo && !reserva.IdSuscripcion.HasValue)
+                bitacoraNeg.Registrar(BE.TipoEventoNegocio.Cancelacion,
+                    $"ADVERTENCIA: no se devolvió el beneficio del plan de la Reserva #{reserva.IdReserva} — no tiene suscripción registrada (reserva previa a PN03).",
+                    idReserva: reserva.IdReserva, idCliente: reserva.IdCliente);
 
-            RegistrarHistorial(reserva.IdReserva, "CANCELAR", new List<(string, string, string)>
+            // Regla 7 — cancelación + liberación de cupo + devolución del plan + historial, TODO en una
+            // única transacción atómica (si algo falla, rollback total: nada de devoluciones a medias).
+            int idOp = dalHistorial.ObtenerSiguienteIdOperacion(reserva.IdReserva);
+            var historial = ConstruirRegistros(reserva.IdReserva, idOp, "CANCELAR", new List<(string, string, string)>
             {
                 ("Estado",            reserva.Estado.ToString(), BE.EstadoReserva.Cancelada.ToString()),
                 ("MotivoCancelacion", reserva.MotivoCancelacion, motivo.Trim())
             });
+            dalReserva.Cancelar(reserva.IdReserva, reserva.IdExperiencia, lugares, motivo.Trim(),
+                liberarCupo: true, idSuscripcionADevolver: idSuscripcionADevolver, historial: historial);
 
-            string detalle = aTiempo ? "a tiempo (libera cupo, devuelve beneficio)" : "tardía (consume beneficio)";
+            string detalle = aTiempo ? "a tiempo (libera cupo, devuelve beneficio)" : "tardía (libera cupo, NO devuelve beneficio)";
             bitacora.Registrar(modulo,
                 $"Cancelar Reserva #{reserva.IdReserva} — {reserva.NombreCliente} — {detalle} — Motivo: {motivo}",
                 BE.Criticidad.Media);
@@ -291,9 +317,8 @@ namespace BLL
                 $"Reserva #{reserva.IdReserva} cancelada ({detalle}) — {reserva.NombreCliente} — Motivo: {motivo}",
                 idReserva: reserva.IdReserva, idCliente: reserva.IdCliente);
 
-            // Regla 9: al liberarse un cupo, ofrecer al primero de la lista de espera
-            if (aTiempo)
-                OfrecerCupoAlPrimeroEnEspera(modulo, reserva.IdExperiencia);
+            // Regla 3 — al liberarse un cupo, ofrecer al primero de la lista de espera (a tiempo o tardía).
+            OfrecerCupoAlPrimeroEnEspera(modulo, reserva.IdExperiencia);
         }
 
         // ── Historial y restauración (Memento a nivel de reserva) ──────────────
@@ -336,6 +361,21 @@ namespace BLL
             if (diasFalta < 1) return BE.NivelUrgencia.Urgente;
             if (diasFalta < 3) return BE.NivelUrgencia.Normal;
             return BE.NivelUrgencia.Reciente;
+        }
+
+        /// <summary>
+        /// PN03 (regla 2) — Resuelve a QUÉ suscripción se le devuelve el beneficio del plan al
+        /// cancelar: la suscripción CON LA QUE se hizo la reserva (<see cref="BE.Reserva.IdSuscripcion"/>)
+        /// y SOLO si sigue vigente. Si la reserva NO tiene suscripción registrada (previa a PN03) NO
+        /// se devuelve a ninguna —NO se usa la vigente del cliente, que sería el mismo error que se
+        /// corrigió— y se deja que el llamador registre la advertencia. Devuelve 0 cuando no hay a
+        /// qué devolver (sub ausente o no vigente); nunca aborta. Compartida por CU06 y CU01.
+        /// </summary>
+        public static int ResolverSuscripcionADevolver(BE.Reserva reserva, DAL.Suscripcion dalSuscripcion)
+        {
+            if (!reserva.IdSuscripcion.HasValue) return 0;   // sin origen conocido → no se devuelve
+            var sus = dalSuscripcion.ObtenerPorId(reserva.IdSuscripcion.Value);
+            return (sus != null && sus.EstaVigente()) ? sus.IdSuscripcion : 0;
         }
 
         // ── Helpers de validación ──────────────────────────────────────────────
@@ -385,6 +425,16 @@ namespace BLL
         {
             var primero = dalEspera.ObtenerPrimeroEnEspera(idExperiencia);
             if (primero == null) return;
+
+            // Regla 5 — si falta menos del margen para el inicio, no se ofrece: el cupo queda libre
+            // para reserva directa (no hay tiempo para que el primero de la fila responda).
+            if (!primero.HayMargenParaOferta(ListaEspera.MargenInicioHoras, DateTime.Now))
+            {
+                bitacora.Registrar(modulo,
+                    $"Lista de espera: cupo liberado en experiencia #{idExperiencia} sin ofrecer (a menos de {ListaEspera.MargenInicioHoras} h del inicio); queda para reserva directa.",
+                    BE.Criticidad.Baja);
+                return;
+            }
 
             // Se ofrece y se sella la fecha: desde acá corre el plazo de vigencia y el cupo queda
             // RETENIDO para este cliente (CrearReserva rechaza que lo tome otro mientras siga vigente).

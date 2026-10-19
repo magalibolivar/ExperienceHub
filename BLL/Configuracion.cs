@@ -79,6 +79,87 @@ namespace BLL
         /// Retorna false y un mensaje de error si la conexión falla.
         /// Se invoca desde Program.Main() antes de mostrar cualquier formulario.
         /// </summary>
+        // ── PN03 · Parámetros de negocio de la oferta de cupo (regla 5) ─────────
+        // Configurables desde la tabla [Parametro]; si no está migrada, caen al default (24 h).
+        private const int DefaultOfertaVencimientoHoras = 24;
+        private const int DefaultOfertaMargenInicioHoras = 24;
+
+        /// <summary>Horas de vigencia de una oferta de cupo de lista de espera antes de vencer
+        /// y pasar al siguiente de la fila (regla 5). Default 24 h.</summary>
+        public static int HorasVencimientoOferta()
+            => new DAL.Parametro().ObtenerEntero("OfertaVencimientoHoras", DefaultOfertaVencimientoHoras);
+
+        /// <summary>Margen mínimo antes del inicio de la experiencia: una oferta vence (y no se ofrece
+        /// a nadie más) si falta menos de este margen, para que el cupo quede libre para reserva
+        /// directa. Default 24 h.</summary>
+        public static int MargenInicioOfertaHoras()
+            => new DAL.Parametro().ObtenerEntero("OfertaMargenInicioHoras", DefaultOfertaMargenInicioHoras);
+
+        // ── Verificación de integridad DV: estado por tabla (criterio unificado) ─
+        /// <summary>Estado de la verificación de DV de una tabla protegida.</summary>
+        public enum EstadoVerificacionDV
+        {
+            SinDatos,          // tabla vacía: nada que verificar (se sella en el primer INSERT)
+            PendienteReseal,   // hay marcador de re-sellado (migración): (re)sellado AUTORIZADO
+            Integro,           // DVH y DVV coinciden
+            Comprometido       // discrepancia o DVH en NULL SIN marcador → corrupción
+        }
+
+        /// <summary>
+        /// Decisión PURA del estado de DV de una tabla (sin BD). Centraliza el criterio para
+        /// Usuario y tablas de negocio: la inicialización/re-sellado SOLO ocurre con marcador de
+        /// migración; un DVH en NULL o una discrepancia sin marcador es CORRUPCIÓN (no se auto-repara).
+        /// </summary>
+        public static EstadoVerificacionDV EvaluarEstadoDV(
+            int cantFilas, bool todosDvhNull, bool dvvAusente,
+            bool hayMarcadorReseal, bool dvhCoincide, bool dvvCoincide)
+        {
+            if (cantFilas == 0)       return EstadoVerificacionDV.SinDatos;
+            if (hayMarcadorReseal)    return EstadoVerificacionDV.PendienteReseal;   // init o cambio de formato autorizado
+            if (todosDvhNull && dvvAusente) return EstadoVerificacionDV.Comprometido; // NULL sin marcador = corrupción
+            if (dvhCoincide && dvvCoincide) return EstadoVerificacionDV.Integro;
+            return EstadoVerificacionDV.Comprometido;                                // discrepancia sin marcador
+        }
+
+        /// <summary>
+        /// Clasifica un error ocurrido al verificar una tabla: true si es por esquema aún no migrado
+        /// (columna DVH / tabla inexistente), caso tolerado; false si es cualquier otro error, que
+        /// NO puede pasar como íntegro → la tabla se marca "no verificable" (COMPROMETIDO).
+        /// </summary>
+        public static bool EsErrorEsquemaNoMigrado(Exception ex)
+        {
+            string m = ((ex?.Message ?? "") + " " + (ex?.InnerException?.Message ?? "")).ToLowerInvariant();
+            return m.Contains("dvh")
+                || m.Contains("dvvertical")
+                || m.Contains("invalid column") || m.Contains("nombre de columna")
+                || m.Contains("invalid object")  || m.Contains("nombre de objeto");
+        }
+
+        /// <summary>
+        /// Gate de ingreso ante el resultado de integridad (regla de login unificada): se ingresa si
+        /// la integridad está OK, o si el usuario es Administrador (entra para reparar/restaurar). Un
+        /// no-Administrador con integridad comprometida queda bloqueado (mensaje de mantenimiento).
+        /// </summary>
+        public static bool PuedeIngresar(bool integridadOk, bool esAdministrador)
+            => integridadOk || esAdministrador;
+
+        // Registro en bitácora (criticidad Alta) de un evento de integridad de una tabla de negocio.
+        private static void LogearIntegridadNegocio(string tabla, string actividad, string detalle)
+        {
+            try
+            {
+                int? idActor = Seguridad.SessionManager.IsLoggedIn
+                               ? (int?)Seguridad.SessionManager.GetInstance().Usuario.Id : null;
+                new Servicios.Bitacora().RegistrarSinSesion(
+                    modulo:     "Integridad de Datos",
+                    actividad:  actividad,
+                    criticidad: BE.Criticidad.Alta,
+                    idUsuario:  idActor,
+                    detalle:    $"Tabla '{tabla}': {detalle} ({DateTime.Now:yyyy-MM-dd HH:mm:ss}).");
+            }
+            catch { /* el fallo del log no debe alterar la verificación */ }
+        }
+
         public static bool VerificarConexionDAL(out string mensajeError)
         {
             mensajeError = null;
@@ -359,24 +440,32 @@ namespace BLL
             Seguridad.ICalculadorDV svc, string tabla, Func<List<BE.FilaDV>> obtenerFilas)
         {
             List<BE.FilaDV> filas;
-            try { filas = obtenerFilas(); } catch { return; }   // tabla sin migrar → no se evalúa
-            if (filas.Count == 0) return;
+            try { filas = obtenerFilas(); }
+            catch (Exception ex)
+            {
+                if (EsErrorEsquemaNoMigrado(ex)) return;   // sin migrar → no se evalúa
+                corruptas.Add(tabla + " (no verificable)");
+                return;
+            }
 
-            int? dvvAlm = dvDAL.ObtenerDVV(tabla);
-            // Primer arranque sin DV (todo en null/0) → no es corrupción.
-            bool todosNull = filas.TrueForAll(f => f.DVHAlmacenado == null || f.DVHAlmacenado == 0);
-            if (todosNull && (dvvAlm == null || dvvAlm == 0)) return;
+            bool hayMarcador = dvDAL.TieneMarcadorReseal(tabla);
+            int? dvvAlm      = dvDAL.ObtenerDVV(tabla);
+            bool todosNull   = filas.TrueForAll(f => f.DVHAlmacenado == null || f.DVHAlmacenado == 0);
 
             var dvhs = new List<int>();
-            bool rota = false;
+            bool dvhOk = true;
             foreach (var f in filas)
             {
                 int calc = svc.CalcularDVH(f.Campos);
                 dvhs.Add(calc);
-                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc) rota = true;
+                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc) dvhOk = false;
             }
-            if (dvvAlm == null || dvvAlm != svc.CalcularDVV(dvhs)) rota = true;
-            if (rota) corruptas.Add(tabla);
+            bool dvvOk = dvvAlm != null && dvvAlm == svc.CalcularDVV(dvhs);
+
+            // Solo lectura: NO recalcula. Un re-sellado pendiente (marcador) no es corrupción.
+            if (EvaluarEstadoDV(filas.Count, todosNull, dvvAlm == null || dvvAlm == 0, hayMarcador, dvhOk, dvvOk)
+                == EstadoVerificacionDV.Comprometido)
+                corruptas.Add(tabla);
         }
 
         // #5 — Guard fail-closed para operaciones sobre Dígitos Verificadores.
@@ -543,45 +632,63 @@ namespace BLL
         {
             List<BE.FilaDV> filas;
             try { filas = obtenerFilas(); }
-            catch { return; }   // tabla/columna DVH sin migrar → no se verifica
-            if (filas.Count == 0) return;
-
-            // Primer arranque: sin DVH ni DVV → inicializar (no es corrupción).
-            bool todosNull = filas.TrueForAll(f => f.DVHAlmacenado == null || f.DVHAlmacenado == 0);
-            int? dvvAlm = dvDAL.ObtenerDVV(tabla);
-            if (todosNull && (dvvAlm == null || dvvAlm == 0))
+            catch (Exception ex)
             {
-                recalcular();
-                int? dvvNuevoTbl = dvDAL.ObtenerDVV(tabla);
-                LogearVerificacion(tabla, dvvNuevoTbl, dvvNuevoTbl ?? 0, true, 0, "Arranque");
+                // Esquema aún sin migrar (columna DVH / tabla inexistente): caso tolerado, no corrupción.
+                if (EsErrorEsquemaNoMigrado(ex))
+                {
+                    LogearVerificacion(tabla, null, 0, true, 0, "Arranque (sin migrar)");
+                    return;
+                }
+                // Cualquier otro error NO puede pasar como íntegro: tabla NO VERIFICABLE → COMPROMETIDO.
+                corruptas.Add(tabla + " (no verificable)");
+                LogearIntegridadNegocio(tabla, "Tabla no verificable (DV)", "error al verificar la integridad: " + ex.Message);
+                LogearVerificacion(tabla, null, 0, false, 0, "Arranque (no verificable)");
                 return;
             }
 
-            // A diferencia de Usuario (entidad SENSIBLE: si su DV no coincide se BLOQUEA el acceso),
-            // estas tablas son de NEGOCIO/operativas y suelen quedar fuera de sincronía por cargas de
-            // datos externas (scripts de seed, restauración de backup, ediciones directas en SSMS).
-            // En vez de bloquear el login, se AUTO-REPARAN al arranque (se recalcula y re-sella el DV
-            // con los datos actuales) y queda constancia en la bitácora de integridad.
+            bool hayMarcador = dvDAL.TieneMarcadorReseal(tabla);
+            int? dvvAlm      = dvDAL.ObtenerDVV(tabla);
+            bool todosNull   = filas.TrueForAll(f => f.DVHAlmacenado == null || f.DVHAlmacenado == 0);
+
             var dvhs = new List<int>();
-            bool rota = false;
+            bool dvhOk = true;
             foreach (var f in filas)
             {
                 int calc = svc.CalcularDVH(f.Campos);
                 dvhs.Add(calc);
-                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc) rota = true;
+                if (f.DVHAlmacenado == null || f.DVHAlmacenado != calc) dvhOk = false;
             }
-            int dvvCalc = svc.CalcularDVV(dvhs);
-            if (dvvAlm == null || dvvAlm != dvvCalc) rota = true;
+            int  dvvCalc = svc.CalcularDVV(dvhs);
+            bool dvvOk   = dvvAlm != null && dvvAlm == dvvCalc;
 
-            if (rota)
+            switch (EvaluarEstadoDV(filas.Count, todosNull, dvvAlm == null || dvvAlm == 0, hayMarcador, dvhOk, dvvOk))
             {
-                recalcular();   // re-sella el DV; NO bloquea el acceso
-                int? dvvNuevo = dvDAL.ObtenerDVV(tabla);
-                LogearVerificacion(tabla, dvvNuevo, dvvNuevo ?? 0, true, 0, "Arranque (auto-reparado)");
-            }
-            else
-            {
-                LogearVerificacion(tabla, dvvAlm, dvvCalc, true, 0, "Arranque");
+                case EstadoVerificacionDV.SinDatos:
+                    if (hayMarcador) dvDAL.ConsumirMarcadorReseal(tabla);
+                    return;
+
+                case EstadoVerificacionDV.PendienteReseal:
+                    // (Re)sellado AUTORIZADO por una migración (instalación limpia o cambio de formato
+                    // del DVH). Se recalcula, se consume el marcador y queda constancia (Alta).
+                    recalcular();
+                    dvDAL.ConsumirMarcadorReseal(tabla);
+                    LogearIntegridadNegocio(tabla, "Re-sellado de DV por migración",
+                        "re-sellado autorizado (marcador de migración); DVH/DVV recalculados");
+                    LogearVerificacion(tabla, dvDAL.ObtenerDVV(tabla), 0, true, 0, "Arranque (re-sellado por migración)");
+                    return;
+
+                case EstadoVerificacionDV.Integro:
+                    LogearVerificacion(tabla, dvvAlm, dvvCalc, true, 0, "Arranque");
+                    return;
+
+                default: // Comprometido — NO se auto-repara: queda COMPROMETIDO y se bloquea (Alta).
+                    corruptas.Add(tabla);
+                    LogearIntegridadNegocio(tabla, "DV COMPROMETIDO",
+                        todosNull ? "DVH en NULL sin marcador de re-sellado (posible manipulación)"
+                                  : "discrepancia de DVH/DVV sin marcador de re-sellado (posible manipulación)");
+                    LogearVerificacion(tabla, dvvAlm, dvvCalc, false, 0, "Arranque (comprometido)");
+                    return;
             }
         }
 

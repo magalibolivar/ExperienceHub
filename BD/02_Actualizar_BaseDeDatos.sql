@@ -230,80 +230,9 @@ ELSE
     PRINT 'Tabla Cliente ya existe — sin cambios.';
 GO
 
--- Prenda (refs Cliente — FK nullable: prenda disponible no tiene cliente)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Prenda')
-BEGIN
-    CREATE TABLE Prenda (
-        IdPrenda        INT           IDENTITY(1,1) PRIMARY KEY,
-        Nombre          NVARCHAR(100) NOT NULL,
-        Descripcion     NVARCHAR(500) NULL,
-        Talle           NVARCHAR(20)  NULL,
-        Color           NVARCHAR(50)  NULL,
-        Categoria       NVARCHAR(100) NULL,
-        Estado          INT           NOT NULL DEFAULT 0,
-        IdClienteActual INT           NULL REFERENCES Cliente(IdCliente),
-        FechaAlta       DATETIME      NOT NULL DEFAULT GETDATE()
-    );
-    PRINT 'Tabla Prenda creada.';
-END
-ELSE
-    PRINT 'Tabla Prenda ya existe — sin cambios.';
-GO
 
--- Pedido (refs Cliente + Empleado)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Pedido')
-BEGIN
-    CREATE TABLE Pedido (
-        IdPedido          INT           IDENTITY(1,1) PRIMARY KEY,
-        IdCliente         INT           NOT NULL REFERENCES Cliente(IdCliente),
-        IdEmpleado        INT           NOT NULL REFERENCES Empleado(IdEmpleado),
-        Estado            INT           NOT NULL DEFAULT 0,
-        FechaPedido       DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaDespacho     DATETIME      NULL,
-        FechaEntrega      DATETIME      NULL,
-        MotivoCancelacion NVARCHAR(500) NULL,
-        DVH               INT           NULL              -- T07: DV horizontal (incluye sus líneas)
-    );
-    PRINT 'Tabla Pedido creada.';
-END
-ELSE
-    PRINT 'Tabla Pedido ya existe — sin cambios.';
-GO
 
--- PedidoPrenda (junction Pedido-Prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoPrenda')
-BEGIN
-    CREATE TABLE PedidoPrenda (
-        IdPedido INT NOT NULL REFERENCES Pedido(IdPedido),
-        IdPrenda INT NOT NULL REFERENCES Prenda(IdPrenda),
-        CONSTRAINT PK_PedidoPrenda PRIMARY KEY (IdPedido, IdPrenda)
-    );
-    PRINT 'Tabla PedidoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoPrenda ya existe — sin cambios.';
-GO
 
--- PedidoHistorial (auditoría de cambios de pedidos — refs Pedido + Usuario)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PedidoHistorial')
-BEGIN
-    CREATE TABLE PedidoHistorial (
-        IdHistorial   INT            IDENTITY(1,1) PRIMARY KEY,
-        IdPedido      INT            NOT NULL REFERENCES Pedido(IdPedido),
-        IdOperacion   INT            NOT NULL,
-        Fecha         DATETIME       NOT NULL DEFAULT GETDATE(),
-        IdUsuario     INT            NULL REFERENCES Usuario(IdUsuario),
-        NombreUsuario NVARCHAR(200)  NULL,
-        Accion        NVARCHAR(200)  NOT NULL,
-        Campo         NVARCHAR(100)  NOT NULL,
-        ValorAnterior NVARCHAR(1000) NULL,
-        ValorNuevo    NVARCHAR(1000) NULL
-    );
-    PRINT 'Tabla PedidoHistorial creada.';
-END
-ELSE
-    PRINT 'Tabla PedidoHistorial ya existe — sin cambios.';
-GO
 
 -- BitacoraNegocio (eventos de negocio — refs Usuario, Pedido, Prenda, Cliente)
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BitacoraNegocio')
@@ -313,8 +242,8 @@ BEGIN
         Fecha       DATETIME      NOT NULL DEFAULT GETDATE(),
         Tipo        NVARCHAR(100) NOT NULL,
         IdUsuario   INT           NULL REFERENCES Usuario(IdUsuario),
-        IdPedido    INT           NULL REFERENCES Pedido(IdPedido),
-        IdPrenda    INT           NULL REFERENCES Prenda(IdPrenda),
+        IdReserva     INT           NULL,
+        IdExperiencia INT           NULL,
         IdCliente   INT           NULL REFERENCES Cliente(IdCliente),
         Descripcion NVARCHAR(500) NOT NULL
     );
@@ -883,12 +812,6 @@ BEGIN
     PRINT 'Columna DVH agregada a Empleado (T07).';
 END
 GO
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='Pedido' AND COLUMN_NAME='DVH')
-BEGIN
-    ALTER TABLE Pedido ADD DVH INT NULL;
-    PRINT 'Columna DVH agregada a Pedido (T07 multi-tabla).';
-END
-GO
 
 -- FechaVencimiento en Cliente (suscripción con fecha de vencimiento)
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
@@ -1023,21 +946,6 @@ END
 PRINT 'Consolidación de roles (v8) aplicada.';
 GO
 
--- MantenimientoPrenda (historial de limpieza/mantenimiento por prenda)
-IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'MantenimientoPrenda')
-BEGIN
-    CREATE TABLE MantenimientoPrenda (
-        IdMantenimiento INT           IDENTITY(1,1) PRIMARY KEY,
-        IdPrenda        INT           NOT NULL REFERENCES Prenda(IdPrenda),
-        FechaEntrada    DATETIME      NOT NULL DEFAULT GETDATE(),
-        FechaSalida     DATETIME      NULL,
-        Actor           NVARCHAR(100) NULL
-    );
-    PRINT 'Tabla MantenimientoPrenda creada.';
-END
-ELSE
-    PRINT 'Tabla MantenimientoPrenda ya existe — sin cambios.';
-GO
 
 -- ============================================================
 -- DATOS DEMO (presentación / pruebas)
@@ -1090,71 +998,7 @@ WHERE NOT EXISTS (SELECT 1 FROM Cliente c WHERE c.Nombre = v.Nombre AND c.Apelli
 PRINT 'Demo: clientes.';
 GO
 
--- Prendas (catálogo de stock; todas Disponible inicialmente)
-INSERT INTO Prenda (Nombre, Descripcion, Talle, Color, Categoria, Estado, IdClienteActual, FechaAlta)
-SELECT v.Nombre, v.Descripcion, v.Talle, v.Color, v.Categoria, 0, NULL, GETDATE()
-FROM (VALUES
-    (N'Vestido Largo Negro',    N'Vestido de fiesta largo',  'M',  N'Negro',      N'Vestido'),
-    (N'Blazer Beige',           N'Blazer entallado',         'L',  N'Beige',      N'Saco'),
-    (N'Camisa Blanca Clásica',  N'Camisa de algodón',        'M',  N'Blanco',     N'Camisa'),
-    (N'Pantalón Sastre Gris',   N'Pantalón de vestir',       '42', N'Gris',       N'Pantalón'),
-    (N'Abrigo Largo Camel',     N'Tapado de paño',           'L',  N'Camel',      N'Abrigo'),
-    (N'Vestido Floral',         N'Vestido estampado verano', 'S',  N'Estampado',  N'Vestido'),
-    (N'Camisa Celeste',         N'Camisa de lino',           'L',  N'Celeste',    N'Camisa'),
-    (N'Jean Recto Azul',        N'Jean clásico',             '40', N'Azul',       N'Pantalón'),
-    (N'Saco a Cuadros',         N'Saco príncipe de Gales',   'M',  N'Multicolor', N'Saco'),
-    (N'Falda Plisada Negra',    N'Falda midi plisada',       'S',  N'Negro',      N'Falda'),
-    (N'Sweater Oversize Crema', N'Sweater de lana',          'L',  N'Crema',      N'Sweater'),
-    (N'Gabardina Verde',        N'Gabardina impermeable',    'M',  N'Verde',      N'Abrigo')
-) AS v(Nombre, Descripcion, Talle, Color, Categoria)
-WHERE NOT EXISTS (SELECT 1 FROM Prenda pr WHERE pr.Nombre = v.Nombre);
-PRINT 'Demo: prendas (stock).';
-GO
 
--- Pedidos demo (sólo si aún no hay pedidos) + prendas EnUso asignadas a su cliente,
--- replicando lo que hace la app al crear/despachar (Prenda.Estado=EnUso, IdClienteActual).
-IF NOT EXISTS (SELECT 1 FROM Pedido)
-   AND EXISTS (SELECT 1 FROM Empleado WHERE Legajo = 'L-001')
-   AND EXISTS (SELECT 1 FROM Cliente WHERE Nombre = N'Lucía' AND Apellido = N'Fernández')
-BEGIN
-    DECLARE @emp     INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo = 'L-001');
-    DECLARE @cLucia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Lucía'  AND Apellido=N'Fernández');
-    DECLARE @cMartin INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Martín' AND Apellido=N'Gómez');
-    DECLARE @cSofia  INT = (SELECT TOP 1 IdCliente FROM Cliente WHERE Nombre=N'Sofía'  AND Apellido=N'Rossi');
-
-    DECLARE @pr1 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Vestido Largo Negro');
-    DECLARE @pr2 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Blazer Beige');
-    DECLARE @pr3 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Camisa Blanca Clásica');
-    DECLARE @pr4 INT = (SELECT IdPrenda FROM Prenda WHERE Nombre=N'Pantalón Sastre Gris');
-
-    -- Pedido 1: Lucía — Entregado (2 prendas)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, FechaEntrega, DVH)
-    VALUES (@cLucia, @emp, 2, DATEADD(day,-20,GETDATE()), DATEADD(day,-18,GETDATE()), DATEADD(day,-15,GETDATE()), 0);
-    DECLARE @ped1 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped1, @pr1), (@ped1, @pr2);
-
-    -- Pedido 2: Martín — Despachado (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, FechaDespacho, DVH)
-    VALUES (@cMartin, @emp, 1, DATEADD(day,-5,GETDATE()), DATEADD(day,-3,GETDATE()), 0);
-    DECLARE @ped2 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped2, @pr3);
-
-    -- Pedido 3: Sofía — Pendiente (1 prenda)
-    INSERT INTO Pedido (IdCliente, IdEmpleado, Estado, FechaPedido, DVH)
-    VALUES (@cSofia, @emp, 0, DATEADD(day,-1,GETDATE()), 0);
-    DECLARE @ped3 INT = SCOPE_IDENTITY();
-    INSERT INTO PedidoPrenda (IdPedido, IdPrenda) VALUES (@ped3, @pr4);
-
-    -- Marcar prendas EnUso (Estado=1) con su cliente
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cLucia  WHERE IdPrenda IN (@pr1,@pr2);
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cMartin WHERE IdPrenda=@pr3;
-    UPDATE Prenda SET Estado=1, IdClienteActual=@cSofia  WHERE IdPrenda=@pr4;
-
-    PRINT 'Demo: 3 pedidos (Entregado/Despachado/Pendiente) + prendas asignadas.';
-END
-ELSE
-    PRINT 'Demo: pedidos ya existen o faltan datos base — sin cambios.';
-GO
 
 -- ============================================================
 -- ÍNDICES NO-CLUSTERED Y RESTRICCIONES DE INTEGRIDAD
@@ -1176,18 +1020,6 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_RolPermiso_IdPermiso' 
     CREATE NONCLUSTERED INDEX IX_RolPermiso_IdPermiso ON RolPermiso(IdPermiso);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Traduccion_IdIdioma' AND object_id = OBJECT_ID('Traduccion'))
     CREATE NONCLUSTERED INDEX IX_Traduccion_IdIdioma ON Traduccion(IdIdioma);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdCliente' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdCliente ON Pedido(IdCliente);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_IdEmpleado' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_IdEmpleado ON Pedido(IdEmpleado);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Pedido_FechaPedido' AND object_id = OBJECT_ID('Pedido'))
-    CREATE NONCLUSTERED INDEX IX_Pedido_FechaPedido ON Pedido(FechaPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoPrenda_IdPrenda' AND object_id = OBJECT_ID('PedidoPrenda'))
-    CREATE NONCLUSTERED INDEX IX_PedidoPrenda_IdPrenda ON PedidoPrenda(IdPrenda);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PedidoHistorial_IdPedido' AND object_id = OBJECT_ID('PedidoHistorial'))
-    CREATE NONCLUSTERED INDEX IX_PedidoHistorial_IdPedido ON PedidoHistorial(IdPedido);
-IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Prenda_IdClienteActual' AND object_id = OBJECT_ID('Prenda'))
-    CREATE NONCLUSTERED INDEX IX_Prenda_IdClienteActual ON Prenda(IdClienteActual);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_HistorialUsuario_IdUsuario' AND object_id = OBJECT_ID('HistorialUsuario'))
     CREATE NONCLUSTERED INDEX IX_HistorialUsuario_IdUsuario ON HistorialUsuario(IdUsuario);
 PRINT 'Índices no-clustered verificados/creados.';

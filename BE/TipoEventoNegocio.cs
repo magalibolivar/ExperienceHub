@@ -33,6 +33,11 @@ namespace BE
         Calificacion = 15,
 
         // ── Genérico ──────────────────────────────────────────────────────────
-        Reactivacion = 16
+        Reactivacion = 16,
+
+        // ── PN03 — Cancelación de experiencia por el Coordinador (CU01-COO) ──────
+        // La experiencia se cancela y, en cascada, se cancelan sus reservas activas
+        // (con devolución del plan) y se cierra su lista de espera.
+        CancelacionExperiencia = 17
     }
 }

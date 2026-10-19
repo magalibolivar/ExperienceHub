@@ -97,7 +97,7 @@ namespace GUI
             this.lblLimite.Name = "lblLimite";
             this.lblLimite.Size = new System.Drawing.Size(286, 17);
             this.lblLimite.TabIndex = 3;
-            this.lblLimite.Tag = "lbl.limiteprendas";
+            this.lblLimite.Tag = "lbl.limitereservas";
             this.lblLimite.Text = "Reservas mensuales *";
             // 
             // nudLimite

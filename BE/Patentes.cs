@@ -32,6 +32,14 @@ namespace BE
         // BLL.PermisosAccion cae al permiso de VER (retrocompatibilidad — ver PermisosAccion).
         public const string ExperienciasEditar       = "mnuExperienciasEditar";
         public const string ClientesEditar           = "mnuClientesEditar";
+
+        // ── PN03 — Patentes de CANCELACIÓN separadas (regla 9) ───────────────────────
+        // Gobiernan específicamente la cancelación, distinta del alta/edición genérica.
+        // Se asignan: ReservasCancelar → Agente de Reservas + Administrador;
+        //             ExperienciasCancelar → Coordinador de Experiencias + Administrador.
+        // ("Gestionar lista de espera" se gobierna con la patente ya existente mnuListaEspera).
+        public const string ReservasCancelar         = "mnuReservasCancelar";
+        public const string ExperienciasCancelar     = "mnuExperienciasCancelar";
         public const string PlanSuscripcionesEditar  = "mnuPlanSuscripcionesEditar";
         public const string ReservasEditar           = "mnuReservasEditar";
         public const string ReservasRealizadasEditar = "mnuReservasRealizadasEditar";

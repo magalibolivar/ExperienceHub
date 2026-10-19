@@ -101,7 +101,7 @@ namespace GUI
                     dgvPlanes.Columns[col].HeaderText = fallback;
             }
             RH("Nombre",  "col.plan.nombre",  "Nombre");
-            RH("Prendas", "col.plan.prendas", "Prendas");
+            RH("ReservasMes", "col.plan.reservasmes", "Reservas / mes");
             RH("Precio",  "col.plan.precio",  "Precio");
             RH("Estado",  "col.plan.estado",  "Estado");
         }
@@ -139,7 +139,7 @@ namespace GUI
                 var tabla = new DataTable();
                 tabla.Columns.Add("ID",      typeof(int));
                 tabla.Columns.Add("Nombre",  typeof(string));
-                tabla.Columns.Add("Prendas", typeof(int));
+                tabla.Columns.Add("ReservasMes", typeof(int));
                 tabla.Columns.Add("Precio",  typeof(string));
                 tabla.Columns.Add("Estado",  typeof(string));
 
@@ -157,9 +157,9 @@ namespace GUI
                     dgvPlanes.Columns["ID"].Visible = false;   // ID técnico oculto
 
                 TraducirHeadersGrilla();
-                // La columna "Prendas" en realidad muestra las reservas mensuales del plan (resabio).
-                if (dgvPlanes.Columns.Contains("Prendas"))
-                    dgvPlanes.Columns["Prendas"].HeaderText = "Reservas / mes";
+                // La columna ReservasMes muestra las reservas mensuales que incluye el plan.
+                if (dgvPlanes.Columns.Contains("ReservasMes"))
+                    dgvPlanes.Columns["ReservasMes"].HeaderText = T("col.plan.reservasmes", "Reservas / mes");
 
                 // Resaltar planes inactivos en gris claro (detección por bool, no por texto)
                 int rowIdx = 0;

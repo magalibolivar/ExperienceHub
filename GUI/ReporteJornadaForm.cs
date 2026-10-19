@@ -16,8 +16,8 @@ namespace GUI
         private readonly ReporteJornada _servicio = new ReporteJornada();
 
         // KPI banner value labels (created in code, like the primer parcial)
-        private Label _kpiPrendasVal, _kpiClientesVal, _kpiEventosVal, _kpiBackupVal;
-        private Label _kpiPrendasLbl, _kpiClientesLbl, _kpiEventosLbl, _kpiBackupLbl;
+        private Label _kpiExperienciasVal, _kpiClientesVal, _kpiEventosVal, _kpiBackupVal;
+        private Label _kpiExperienciasLbl, _kpiClientesLbl, _kpiEventosLbl, _kpiBackupLbl;
 
         // Context menus for export buttons
         private ContextMenuStrip _menuExportar;
@@ -151,7 +151,7 @@ namespace GUI
             btnLimpiar.Text    = T("rpt.limpiar",     "Limpiar");
             if (_btnTendencia != null) _btnTendencia.Text = T("rpt.tendencia", "Tendencia (rango)");
 
-            if (_kpiPrendasLbl != null) _kpiPrendasLbl.Text = T("rpt.kpi.prendas",  "Experiencias disponibles");
+            if (_kpiExperienciasLbl != null) _kpiExperienciasLbl.Text = T("rpt.kpi.experiencias",  "Experiencias disponibles");
             if (_kpiClientesLbl != null) _kpiClientesLbl.Text = T("rpt.kpi.clientes", "Clientes registrados");
             if (_kpiEventosLbl != null) _kpiEventosLbl.Text = T("rpt.kpi.eventos",  "Eventos del día");
             if (_kpiBackupLbl != null) _kpiBackupLbl.Text = T("rpt.kpi.backup",   "días sin backup");
@@ -229,14 +229,14 @@ namespace GUI
                 titLabels[i] = lblTit;
             }
 
-            _kpiPrendasVal  = valLabels[0];  _kpiPrendasLbl  = titLabels[0];
+            _kpiExperienciasVal  = valLabels[0];  _kpiExperienciasLbl  = titLabels[0];
             _kpiClientesVal = valLabels[1];  _kpiClientesLbl = titLabels[1];
             _kpiEventosVal  = valLabels[2];  _kpiEventosLbl  = titLabels[2];
             _kpiBackupVal   = valLabels[3];  _kpiBackupLbl   = titLabels[3];
 
             var tk = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
             string Tk(string k, string fb) => tk.ContainsKey(k) ? tk[k].Texto : fb;
-            _kpiPrendasLbl.Text  = Tk("rpt.kpi.prendas",  "Experiencias disponibles");
+            _kpiExperienciasLbl.Text  = Tk("rpt.kpi.experiencias",  "Experiencias disponibles");
             _kpiClientesLbl.Text = Tk("rpt.kpi.clientes", "Clientes registrados");
             _kpiEventosLbl.Text  = Tk("rpt.kpi.eventos",  "Eventos del día");
             _kpiBackupLbl.Text   = Tk("rpt.kpi.backup",   "Días sin backup");
@@ -253,7 +253,7 @@ namespace GUI
         {
             try
             {
-                _kpiPrendasVal.Text  = _servicio.ContarExperienciasDisponibles().ToString();
+                _kpiExperienciasVal.Text  = _servicio.ContarExperienciasDisponibles().ToString();
                 _kpiClientesVal.Text = _servicio.ContarClientes().ToString();
                 _kpiEventosVal.Text  = _servicio.ContarEventosDia(fecha).ToString();
 
@@ -491,7 +491,7 @@ namespace GUI
                 lblStatus.Text  = $"{lbl["rptoegenerado"]} — {DateTime.Now:HH:mm:ss}";
                 _esComparacion = false;
                 btnExportarComp.Visible = false;
-                if (_kpiPrendasVal != null) ActualizarKPIs(fecha);
+                if (_kpiExperienciasVal != null) ActualizarKPIs(fecha);
             }
             catch (Exception ex)
             {

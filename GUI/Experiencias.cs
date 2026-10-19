@@ -22,10 +22,16 @@ namespace GUI
         private CheckBox _chkPremium;
         private Label _lblFormTitulo;
         private Panel _scrollEdicion;
+        private ComboBox _cboFiltroEstado;
+        private Label _lblContador;
+        private Button _btnCancelarExp;
         private int _idSel;
+        private System.Collections.Generic.List<BE.Experiencia> _todas = new System.Collections.Generic.List<BE.Experiencia>();
 
         public Experiencias()
         {
+            // Name debe coincidir con [ControlMapeado].Formulario para gatear los botones por patente.
+            Name = "Experiencias";
             Text = "Experiencias"; Size = new Size(1060, 640); BackColor = Estilo.Lienzo;
             MinimumSize = new Size(880, 560);
             ConstruirUI();
@@ -83,15 +89,30 @@ namespace GUI
             _scrollEdicion = new Panel { Dock = DockStyle.Fill, AutoScroll = true, BackColor = Color.White };
             _scrollEdicion.Controls.Add(campos);
 
+            // Nombre estable para que ManejadorSeguridad lo oculte a quien no tenga mnuExperienciasCancelar.
+            _btnCancelarExp = UI.Peligro("Cancelar experiencia", "eh.btn.cancelarexperiencia", (s, e) => CancelarExperiencia());
+            _btnCancelarExp.Name = "btnCancelarExperiencia";
             var barra = UI.BarraAcciones(
                 UI.Primario("Guardar",         "eh.btn.guardar",       (s, e) => Guardar()),
                 UI.Secundario("Nueva",         "eh.btn.nueva",         (s, e) => Limpiar()),
-                UI.Secundario("Cambiar estado","eh.btn.cambiarestado", (s, e) => CambiarEstado()));
+                UI.Secundario("Cambiar estado","eh.btn.cambiarestado", (s, e) => CambiarEstado()),
+                _btnCancelarExp);
             barra.BackColor = Color.White;
 
             panel.Controls.Add(_scrollEdicion);    // Fill
             panel.Controls.Add(barra);             // Bottom
             panel.Controls.Add(_lblFormTitulo);    // Top (título pinneado, siempre visible)
+
+            // ── Barra de filtros sobre la grilla: estado + contador ──────────────
+            _cboFiltroEstado = UI.ComboFiltroEstados<BE.EstadoExperiencia>(EstadoLabel, "Todos");
+            _cboFiltroEstado.SelectedIndexChanged += (s, e) => AplicarFiltro();
+            _lblContador = UI.Contador();
+            var filtros = UI.BarraFiltros(
+                UI.FiltroCampo("Estado", _cboFiltroEstado, 200, "eh.lbl.filtroestado"),
+                UI.FiltroCampo(" ", _lblContador, 170));
+
+            // Lectura de un vistazo: color de texto por estado de la experiencia.
+            UI.PintarFilasPorEstado<BE.Experiencia>(_grid, ex => ColorEstado(ex.Estado));
 
             // ── Encabezado + montaje ─────────────────────────────────────────────
             var header = UI.Encabezado("Experiencias",
@@ -100,7 +121,35 @@ namespace GUI
 
             Controls.Add(_grid);    // Fill (Estilo lo envuelve en tarjeta)
             Controls.Add(panel);    // Right
+            Controls.Add(filtros);  // Top (debajo del header)
             Controls.Add(header);   // Top (ancho completo)
+        }
+
+        // Etiqueta legible de cada estado de la experiencia.
+        private static string EstadoLabel(BE.EstadoExperiencia e)
+        {
+            switch (e)
+            {
+                case BE.EstadoExperiencia.Programada: return "Programada";
+                case BE.EstadoExperiencia.Completa:   return "Completa";
+                case BE.EstadoExperiencia.EnCurso:    return "En curso";
+                case BE.EstadoExperiencia.Finalizada: return "Finalizada";
+                case BE.EstadoExperiencia.Cancelada:  return "Cancelada";
+                default: return e.ToString();
+            }
+        }
+
+        // Color por estado: programada verde, completa ámbar, en curso coral, finalizada gris, cancelada roja.
+        private static Color ColorEstado(BE.EstadoExperiencia e)
+        {
+            switch (e)
+            {
+                case BE.EstadoExperiencia.Programada: return Estilo.Verde;
+                case BE.EstadoExperiencia.Completa:   return Estilo.Naranja;
+                case BE.EstadoExperiencia.EnCurso:    return Estilo.Coral;
+                case BE.EstadoExperiencia.Cancelada:  return Estilo.Rojo;
+                default:                              return Estilo.Gris700;  // Finalizada
+            }
         }
 
         private ComboBox NuevoCombo() => new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
@@ -146,7 +195,20 @@ namespace GUI
         {
             try
             {
-                _grid.DataSource = _bll.ObtenerTodos();
+                _todas = _bll.ObtenerTodos();
+                AplicarFiltro();
+            }
+            catch (Exception ex) { MostrarError(ex); }
+        }
+
+        private void AplicarFiltro()
+        {
+            try
+            {
+                var estado = UI.EstadoSeleccionado<BE.EstadoExperiencia>(_cboFiltroEstado);
+                var lista = estado.HasValue ? _todas.FindAll(x => x.Estado == estado.Value) : _todas;
+
+                _grid.DataSource = lista;
                 UI.Columnas(_grid,
                     ("Nombre", 22), ("NombreCategoria", 14), ("NombreCiudad", 12),
                     ("Fecha", 15), ("HoraInicio", 11), ("CupoDisponible", 9), ("Estado", 17));
@@ -163,8 +225,20 @@ namespace GUI
                 }
                 if (_grid.Columns.Contains("CupoDisponible"))
                     _grid.Columns["CupoDisponible"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                if (_lblContador != null)
+                    _lblContador.Text = string.Format(I18n.T("eh.lbl.mostrando", "Mostrando {0} de {1}"), lista.Count, _todas.Count);
             }
             catch (Exception ex) { MostrarError(ex); }
+        }
+
+        // "Cancelar experiencia" solo si la seleccionada no está ya Finalizada/Cancelada.
+        private void ActualizarBotonCancelar(BE.Experiencia ex)
+        {
+            if (_btnCancelarExp == null) return;
+            _btnCancelarExp.Enabled = ex != null
+                && ex.Estado != BE.EstadoExperiencia.Finalizada
+                && ex.Estado != BE.EstadoExperiencia.Cancelada;
         }
 
         private void CargarSeleccion()
@@ -179,6 +253,7 @@ namespace GUI
                 _numDuracion.Value = Math.Max(1, ex.DuracionMinutos); _numCupo.Value = Math.Max(1, ex.CupoMaximo); _numEdad.Value = ex.EdadMinima;
                 _chkPremium.Checked = ex.Premium; _cboEstado.SelectedItem = ex.Estado;
                 if (_lblFormTitulo != null) _lblFormTitulo.Text = "Editar: " + ex.Nombre;
+                ActualizarBotonCancelar(ex);
             }
         }
 
@@ -191,6 +266,7 @@ namespace GUI
             if (_lblFormTitulo != null) _lblFormTitulo.Text = "Nueva experiencia";
             if (_scrollEdicion != null) _scrollEdicion.AutoScrollPosition = new Point(0, 0);
             _grid.ClearSelection();
+            ActualizarBotonCancelar(null);
         }
 
         private BE.Experiencia Leer() => new BE.Experiencia
@@ -241,9 +317,49 @@ namespace GUI
             {
                 var ex = _bll.ObtenerPorId(_idSel);
                 var nuevo = (BE.EstadoExperiencia)_cboEstado.SelectedItem;
+
+                // Cancelar NO es un simple cambio de estado: dispara la cascada (reservas + lista de
+                // espera). Se redirige a «Cancelar experiencia» para no dejar datos inconsistentes.
+                if (nuevo == BE.EstadoExperiencia.Cancelada)
+                {
+                    MostrarError("Para cancelar una experiencia usá «Cancelar experiencia»: cancela sus reservas (con devolución) y cierra la lista de espera.");
+                    return;
+                }
+
                 _bll.CambiarEstado(MODULO, ex, nuevo);
                 MostrarOk($"Estado cambiado a «{nuevo}».");
                 Cargar();
+            }
+            catch (Exception ex) { MostrarError(ex); }
+        }
+
+        // CU01-COO — Cancela la experiencia seleccionada en cascada, pidiendo motivo obligatorio y
+        // confirmando con el impacto (reservas y personas en lista de espera afectadas).
+        private void CancelarExperiencia()
+        {
+            if (_idSel == 0) { MostrarError("Seleccioná una experiencia del listado para cancelarla."); return; }
+            try
+            {
+                var ex = _bll.ObtenerPorId(_idSel);
+                var impacto = _bll.ObtenerImpactoCancelacion(_idSel);
+
+                var confirm = MessageBox.Show(
+                    $"Vas a cancelar «{ex.Nombre}».\n\n" +
+                    $"• Reservas activas que se cancelarán (con devolución del plan): {impacto.ReservasActivas}\n" +
+                    $"• Clientes en lista de espera que se darán de baja: {impacto.EnListaEspera}\n\n" +
+                    "Esta acción no se puede deshacer. ¿Confirmás?",
+                    "Cancelar experiencia",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirm != DialogResult.Yes) return;
+
+                using (var dlg = new InputDialog("Cancelar experiencia", "Motivo de cancelación:", false))
+                {
+                    if (dlg.ShowDialog(this) != DialogResult.OK) return;
+                    _bll.CancelarExperiencia(MODULO, ex, dlg.InputText);
+                }
+
+                MostrarOk($"Experiencia cancelada. Se cancelaron {impacto.ReservasActivas} reserva(s) con devolución y se cerró la lista de espera.");
+                Cargar(); Limpiar();
             }
             catch (Exception ex) { MostrarError(ex); }
         }

@@ -299,6 +299,61 @@ namespace GUI
             Refrescar();
         }
 
+        // ── Coloreo de filas por estado (lectura de un vistazo) ──────────────────
+        /// <summary>
+        /// Pinta el texto de cada fila de la grilla según su item de datos (patrón tomado del
+        /// proyecto hermano WardrobeFlow: el estado se "lee" por color sin abrir la fila). Se engancha
+        /// a DataBindingComplete para repintar en cada recarga/orden. <paramref name="color"/> devuelve
+        /// el color de texto para un item; devolver <c>null</c> deja el color por defecto.
+        /// </summary>
+        public static void PintarFilasPorEstado<T>(DataGridView g, Func<T, Color?> color) where T : class
+        {
+            void Pintar()
+            {
+                foreach (DataGridViewRow row in g.Rows)
+                {
+                    if (!(row.DataBoundItem is T item)) continue;
+                    Color? c = color(item);
+                    if (c.HasValue) row.DefaultCellStyle.ForeColor = c.Value;
+                }
+            }
+            g.DataBindingComplete += (s, e) => Pintar();
+            Pintar();
+        }
+
+        /// <summary>Combo de estados listo para la barra de filtros: "Todos" + un ítem por valor del
+        /// enum. El texto de cada estado lo resuelve <paramref name="etiqueta"/> (traducible).</summary>
+        public static ComboBox ComboFiltroEstados<TEnum>(Func<TEnum, string> etiqueta, string textoTodos = "Todos")
+            where TEnum : struct, Enum
+        {
+            var cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+            cbo.Items.Add(new ItemEstado<TEnum>(null, textoTodos));
+            foreach (TEnum v in Enum.GetValues(typeof(TEnum)))
+                cbo.Items.Add(new ItemEstado<TEnum>(v, etiqueta(v)));
+            cbo.SelectedIndex = 0;
+            return cbo;
+        }
+
+        /// <summary>Estado seleccionado en un combo creado con <see cref="ComboFiltroEstados{TEnum}"/>;
+        /// null = "Todos".</summary>
+        public static TEnum? EstadoSeleccionado<TEnum>(ComboBox cbo) where TEnum : struct, Enum
+            => (cbo?.SelectedItem as ItemEstado<TEnum>)?.Valor;
+
+        // Ítem del combo de estados: guarda el valor del enum (o null para "Todos") y muestra su etiqueta.
+        private sealed class ItemEstado<TEnum> where TEnum : struct, Enum
+        {
+            public TEnum? Valor { get; }
+            private readonly string _texto;
+            public ItemEstado(TEnum? valor, string texto) { Valor = valor; _texto = texto; }
+            public override string ToString() => _texto;
+        }
+
+        /// <summary>Label para el contador "Mostrando X de Y" al pie de la barra de filtros.</summary>
+        public static Label Contador()
+            => new Label { AutoSize = false, Width = 160, Height = 26, Dock = DockStyle.Bottom,
+                           ForeColor = Estilo.Gris700, Font = Estilo.Normal(9f),
+                           TextAlign = ContentAlignment.MiddleLeft };
+
         // ── Fila resumen clave: "Etiqueta: valor" para paneles de resumen ────────
         public static TableLayoutPanel Resumen()
         {

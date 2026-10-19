@@ -21,7 +21,8 @@ namespace BLL.Interfaces
         BE.SituacionCliente       ConsultarSituacionCliente(int idCliente);          // CU03-VEN
         BE.ResultadoDisponibilidad VerificarDisponibilidad(int idExperiencia, int lugares); // CU01-DEP
 
-        int  CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados);
+        int  CrearReserva(string modulo, int idCliente, int idExperiencia, int cantidadInvitados,
+                          int idListaEsperaAConfirmar = 0);
         void Confirmar(string modulo, BE.Reserva reserva);
         void RegistrarAsistencia(string modulo, BE.Reserva reserva, bool asistio);
         void Cancelar(string modulo, BE.Reserva reserva, string motivo);

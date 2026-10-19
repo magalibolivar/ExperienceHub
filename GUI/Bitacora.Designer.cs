@@ -50,8 +50,8 @@ namespace GUI
             this.btnNegUltimosDias = new System.Windows.Forms.Button();
             this.lblTipoEvento = new System.Windows.Forms.Label();
             this.cmbTipoEvento = new System.Windows.Forms.ComboBox();
-            this.lblIdPedido = new System.Windows.Forms.Label();
-            this.txtNegPedido = new System.Windows.Forms.TextBox();
+            this.lblIdReserva = new System.Windows.Forms.Label();
+            this.txtNegReserva = new System.Windows.Forms.TextBox();
             this.lblIdCliente = new System.Windows.Forms.Label();
             this.txtNegCliente = new System.Windows.Forms.TextBox();
             this.btnNegBuscar = new System.Windows.Forms.Button();
@@ -396,8 +396,8 @@ namespace GUI
             this.panelFiltrosNegocio.Controls.Add(this.btnNegUltimosDias);
             this.panelFiltrosNegocio.Controls.Add(this.lblTipoEvento);
             this.panelFiltrosNegocio.Controls.Add(this.cmbTipoEvento);
-            this.panelFiltrosNegocio.Controls.Add(this.lblIdPedido);
-            this.panelFiltrosNegocio.Controls.Add(this.txtNegPedido);
+            this.panelFiltrosNegocio.Controls.Add(this.lblIdReserva);
+            this.panelFiltrosNegocio.Controls.Add(this.txtNegReserva);
             this.panelFiltrosNegocio.Controls.Add(this.lblIdCliente);
             this.panelFiltrosNegocio.Controls.Add(this.txtNegCliente);
             this.panelFiltrosNegocio.Controls.Add(this.btnNegBuscar);
@@ -474,13 +474,13 @@ namespace GUI
             this.cmbTipoEvento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTipoEvento.Items.AddRange(new object[] {
             "Todos",
-            "Venta",
+            "Reserva",
+            "Confirmacion",
             "Cancelacion",
-            "Despacho",
-            "Entrega",
-            "AltaPrenda",
-            "ModificacionPrenda",
-            "CambioEstadoPrenda",
+            "Asistencia",
+            "AltaExperiencia",
+            "ModificacionExperiencia",
+            "CambioEstadoExperiencia",
             "AltaCliente",
             "ModificacionCliente",
             "BajaCliente"});
@@ -489,23 +489,23 @@ namespace GUI
             this.cmbTipoEvento.Size = new System.Drawing.Size(160, 21);
             this.cmbTipoEvento.TabIndex = 5;
             // 
-            // lblIdPedido
+            // lblIdReserva
             // 
-            this.lblIdPedido.Location = new System.Drawing.Point(518, 14);
-            this.lblIdPedido.Name = "lblIdPedido";
-            this.lblIdPedido.Size = new System.Drawing.Size(70, 23);
-            this.lblIdPedido.TabIndex = 6;
-            this.lblIdPedido.Tag = "lbl.idpedido";
-            this.lblIdPedido.Text = "ID Reserva:";
+            this.lblIdReserva.Location = new System.Drawing.Point(518, 14);
+            this.lblIdReserva.Name = "lblIdReserva";
+            this.lblIdReserva.Size = new System.Drawing.Size(70, 23);
+            this.lblIdReserva.TabIndex = 6;
+            this.lblIdReserva.Tag = "lbl.idreserva";
+            this.lblIdReserva.Text = "ID Reserva:";
             // 
-            // txtNegPedido
+            // txtNegReserva
             // 
-            this.txtNegPedido.Location = new System.Drawing.Point(590, 10);
-            this.txtNegPedido.Name = "txtNegPedido";
-            this.txtNegPedido.MaxLength = 10;
-            this.txtNegPedido.Size = new System.Drawing.Size(60, 20);
-            this.txtNegPedido.TabIndex = 7;
-            this.txtNegPedido.Text = "0";
+            this.txtNegReserva.Location = new System.Drawing.Point(590, 10);
+            this.txtNegReserva.Name = "txtNegReserva";
+            this.txtNegReserva.MaxLength = 10;
+            this.txtNegReserva.Size = new System.Drawing.Size(60, 20);
+            this.txtNegReserva.TabIndex = 7;
+            this.txtNegReserva.Text = "0";
             // 
             // lblIdCliente
             // 
@@ -626,8 +626,8 @@ namespace GUI
         private System.Windows.Forms.Button        btnNegUltimosDias;
         private System.Windows.Forms.Label         lblTipoEvento;
         private System.Windows.Forms.ComboBox      cmbTipoEvento;
-        private System.Windows.Forms.Label         lblIdPedido;
-        private System.Windows.Forms.TextBox       txtNegPedido;
+        private System.Windows.Forms.Label         lblIdReserva;
+        private System.Windows.Forms.TextBox       txtNegReserva;
         private System.Windows.Forms.Label         lblIdCliente;
         private System.Windows.Forms.TextBox       txtNegCliente;
         private System.Windows.Forms.Button        btnNegBuscar;

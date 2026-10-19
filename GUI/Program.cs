@@ -106,7 +106,9 @@ namespace GUI
                     // A cualquier otro usuario se le bloquea el ingreso con un mensaje GENÉRICO de
                     // mantenimiento: NO se le revela que la base fue manipulada (no darle esa pista a
                     // un posible atacante). El detalle real solo lo ve el Administrador.
-                    if (usuario == null || !usuario.EsAdministrador)
+                    // Criterio unificado (mismo gate para Usuario y tablas de negocio comprometidas).
+                    bool esAdmin = usuario != null && usuario.EsAdministrador;
+                    if (!BLL.Configuracion.PuedeIngresar(integridadOk, esAdmin))
                     {
                         var t = Servicios.Multiidioma.Traductor.ObtenerTraducciones(
                                     Servicios.Multiidioma.GestorIdioma.IdiomaActual);
@@ -129,6 +131,12 @@ namespace GUI
                             return;   // no reparó → no se entra con la base comprometida
                     }
                 }
+
+                // PN03 (regla 5) — barrido de ofertas de lista de espera vencidas al iniciar sesión
+                // (además del vencimiento perezoso al abrir el formulario). Tarea de sistema: un
+                // fallo no debe impedir entrar al sistema.
+                try { new BLL.ListaEspera().ProcesarVencimientosGlobal(); }
+                catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Program] ProcesarVencimientosGlobal: " + ex.Message); }
 
                 Application.Run(new Menu());
             }
