@@ -860,12 +860,10 @@ namespace GUI
                 // ③ Fidelidad.
                 try { _cliFidelidad.Text = "★ " + BE.Fidelidad.Etiqueta(_bllRec.NivelFidelidad(_clienteSel.IdCliente)); } catch { _cliFidelidad.Text = ""; }
 
-                // ④ Reserva pendiente bloqueante (regla vigente, sin cambios).
-                bool tienePendiente = false; int? idPend = null;
-                try { var sit = _bll.ConsultarSituacionCliente(_clienteSel.IdCliente); tienePendiente = sit.TieneReservaActiva; idPend = sit.IdReservaActiva; } catch { }
-
+                // ④ Habilitación para reservar: suscripción vigente + cupo mensual disponible.
+                // (La antigua "reserva Pendiente bloqueante" se eliminó: crear+confirmar es atómico.)
                 bool conCupo = vigente && sus != null && sus.ReservasRestantes() > 0;
-                _clienteOk = vigente && conCupo && !tienePendiente;
+                _clienteOk = vigente && conCupo;
 
                 // ⑤ Veredicto claro + alerta ACCIONABLE (no repite el estado) + continuidad comercial.
                 if (_clienteOk)
@@ -876,10 +874,7 @@ namespace GUI
                 else
                 {
                     _cliHabilitado.Text = I18n.T("eh.res.nopuede", "✗ No puede reservar"); _cliHabilitado.ForeColor = Estilo.Rojo;
-                    if (tienePendiente)
-                        MostrarAlerta(Estilo.Amarillo, Estilo.AzulOscuro,
-                            string.Format(I18n.T("eh.res.aviso.pendiente", "⚠ Reserva pendiente #{0} sin resolver — confirmala o cancelala"), idPend));
-                    else if (sus == null)
+                    if (sus == null)
                     { MostrarAlerta(Estilo.Amarillo, Estilo.AzulOscuro, I18n.T("eh.res.alerta.sinsus", "Sin suscripción. Contratá un plan para poder reservar.")); _btnContratar.Visible = true; }
                     else if (cat == SitCat.Suspendida)
                         MostrarAlerta(Estilo.Amarillo, Estilo.AzulOscuro, I18n.T("eh.res.alerta.suspendida", "Suscripción suspendida. Reactivala desde Clientes."));
@@ -1121,29 +1116,16 @@ namespace GUI
             }
             catch (Exception ex) { MostrarError(ex); return; }
 
-            // Confirmación inmediata (dos operaciones BLL separadas; sin fusionar la transición).
-            bool confirmada = false;
-            try
-            {
-                var creada = _bll.ObtenerPorId(idNuevo);
-                if (creada != null && creada.PuedeConfirmarse()) { _bll.Confirmar(MODULO, creada); confirmada = true; }
-            }
-            catch (Exception ex) { MostrarError(ex); }
-
+            // La reserva nace CONFIRMADA de forma atómica en la BLL (crear+confirmar en una transacción).
+            // La GUI ya no vuelve a confirmar: solo informa y ofrece el comprobante.
             Estilo.Exito(this,
-                confirmada ? I18n.T("eh.res.result.titulo", "Reserva confirmada")
-                           : I18n.T("eh.res.result.pendtitulo", "Reserva creada"),
-                string.Format(confirmada ? I18n.T("eh.res.ok.reservada",  "Reserva #{0} creada y confirmada.")
-                                         : I18n.T("eh.res.ok.creadapend", "Reserva #{0} creada (Pendiente)."), idNuevo));
+                I18n.T("eh.res.result.titulo", "Reserva confirmada"),
+                string.Format(I18n.T("eh.res.ok.reservada", "Reserva #{0} creada y confirmada."), idNuevo));
 
             CargarExistentes();
 
-            // PDF solo si quedó Confirmada.
-            if (confirmada)
-            {
-                try { var fresca = _bll.ObtenerPorId(idNuevo); if (fresca != null && fresca.Estado == BE.EstadoReserva.Confirmada) OfrecerPdf(fresca); }
-                catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Reservas] post-alta: " + ex.Message); }
-            }
+            try { var fresca = _bll.ObtenerPorId(idNuevo); if (fresca != null && fresca.Estado == BE.EstadoReserva.Confirmada) OfrecerPdf(fresca); }
+            catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Reservas] post-alta: " + ex.Message); }
 
             // Evitar doble reserva accidental: se bloquea «Reservar» y se ofrece iniciar otra.
             _btnReservar.Enabled = false;

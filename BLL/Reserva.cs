@@ -29,13 +29,8 @@ namespace BLL
         private const bool BLOQUEAR_SI_YA_REALIZADA = true;
         /// <summary>Reglas 6-7: horas de anticipación que separan una cancelación "a tiempo" de una "tardía".</summary>
         private const int  HORAS_ANTICIPACION_CANCELACION = 48;
-        /// <summary>
-        /// Un cliente con una reserva PENDIENTE sin resolver no puede armar otra: una reserva Pendiente
-        /// (aún no confirmada) bloquea una nueva. Las Confirmadas NO bloquean (un cliente puede tener
-        /// varias experiencias reservadas). En true exige confirmar o cancelar la pendiente antes de
-        /// armar otra.
-        /// </summary>
-        private const bool BLOQUEAR_SI_RESERVA_PENDIENTE = true;
+        // NOTA: la antigua regla "reserva Pendiente bloqueante" se eliminó cuando crear+confirmar pasó a
+        // ser una única operación atómica (la reserva nace Confirmada; ya no quedan Pendientes nuevas).
 
         // ── Consultas ─────────────────────────────────────────────────────────
         public List<BE.Reserva> ObtenerTodos()               => dalReserva.ObtenerTodos();
@@ -63,21 +58,9 @@ namespace BLL
         {
             PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
 
-            var situacion = BE.SituacionCliente.Resolver(dalCliente.ObtenerPorId(idCliente));
-
-            // Enriquecer con la reserva Pendiente sin resolver — requiere consultar las reservas.
-            if (situacion.Estado == BE.EstadoSituacionCliente.Ok)
-            {
-                var pendiente = dalReserva.ObtenerActivasConHorario(idCliente)
-                                          .Find(r => r.Estado == BE.EstadoReserva.Pendiente);
-                if (pendiente != null)
-                {
-                    situacion.TieneReservaActiva      = true;
-                    situacion.IdReservaActiva         = pendiente.IdReserva;
-                    situacion.NombreExperienciaActiva = pendiente.NombreExperiencia;
-                }
-            }
-            return situacion;
+            // Solo situación comercial (plan, reservas restantes, vigencia). La antigua "reserva Pendiente
+            // bloqueante" se eliminó: crear+confirmar es atómico, no hay Pendientes nuevas que bloqueen.
+            return BE.SituacionCliente.Resolver(dalCliente.ObtenerPorId(idCliente));
         }
 
         // ── PN01 · CU01-DEP — Verificar Disponibilidad (solo lectura) ──────────
@@ -99,17 +82,6 @@ namespace BLL
             return BE.ResultadoDisponibilidad.Evaluar(idExperiencia, exp.Estado, exp.CupoDisponible, lugares);
         }
 
-        /// <summary>
-        /// Decisión PURA (sin BD ni sesión): ¿el cliente tiene una reserva PENDIENTE que impide armar
-        /// una nueva? Con el bloqueo activo, una reserva en estado Pendiente bloquea; las Confirmadas
-        /// no. Separada así para poder testearla sin BD (patrón PermisosAccion.PermiteAccion).
-        /// </summary>
-        public static bool TieneReservaPendienteBloqueante(
-            IEnumerable<BE.Reserva> reservasActivas, bool bloquearSiPendiente)
-        {
-            if (!bloquearSiPendiente || reservasActivas == null) return false;
-            return reservasActivas.Any(r => r.Estado == BE.EstadoReserva.Pendiente);
-        }
 
         /// <summary>
         /// PN02 (preview comercial) — evalúa de SOLO LECTURA la compatibilidad de un lote de experiencias
@@ -162,12 +134,6 @@ namespace BLL
 
             var cliente = ObtenerClienteValidado(idCliente);
 
-            // CU03-AGR — un cliente con una reserva Pendiente sin resolver no puede armar otra. Este
-            // chequeo ocurre al principio del proceso (al registrar la reserva, CU01-AGR).
-            if (TieneReservaPendienteBloqueante(dalReserva.ObtenerActivasConHorario(idCliente), BLOQUEAR_SI_RESERVA_PENDIENTE))
-                throw new BE.AppException("err.bll.reserva.reserva_pendiente",
-                    "El cliente ya tiene una reserva pendiente sin confirmar. Confirmala o cancelala antes de armar una nueva.");
-
             var experiencia = ObtenerExperienciaValidada(idExperiencia);
 
             // Cupo RETENIDO por lista de espera: si hay una oferta vigente para OTRO cliente, su cupo
@@ -203,39 +169,46 @@ namespace BLL
 
             int lugares = 1 + Math.Max(0, cantidadInvitados);
 
+            // Crear+confirmar es UNA sola operación atómica: la reserva nace directamente CONFIRMADA
+            // dentro de la transacción de CrearConCupo (cupo + consumo del plan + historial + cierre de
+            // la entrada de lista de espera). Idéntico para "Nueva reserva" y para ConfirmarOferta.
             var reserva = new BE.Reserva
             {
                 IdCliente         = idCliente,
                 IdExperiencia     = idExperiencia,
                 IdEmpleado        = ResolverEmpleadoActivo(),
-                Estado            = BE.EstadoReserva.Pendiente,
+                Estado            = BE.EstadoReserva.Confirmada,
                 FechaReserva      = DateTime.Now,
                 CantidadInvitados = Math.Max(0, cantidadInvitados)
             };
 
-            // Regla 1 — descuento de cupo + consumo del beneficio mensual + historial de CREAR,
-            // TODO en una única transacción atómica (lanza sin_cupo si el cupo ya no alcanza).
-            // Antes el consumo y el historial se escribían después de CrearConCupo: si alguno
-            // fallaba, la reserva quedaba creada sin descontar el cupo o sin su registro de cambios.
-            var registrosCrear = ConstruirRegistros(0, 1, "CREAR", new List<(string, string, string)>
+            // Historial único "CREAR_CONFIRMAR": registra la creación y la confirmación en un solo evento
+            // (op. #1), dentro de la MISMA transacción atómica. Mismo criterio en los dos caminos.
+            var registrosCrear = ConstruirRegistros(0, 1, "CREAR_CONFIRMAR", new List<(string, string, string)>
             {
-                ("Estado",       null, BE.EstadoReserva.Pendiente.ToString()),
+                ("Estado",       null, BE.EstadoReserva.Confirmada.ToString()),
                 ("FechaReserva", null, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
             });
             int idNuevo = dalReserva.CrearConCupo(reserva, lugares,
                 cliente.Suscripcion.IdSuscripcion, registrosCrear, idListaEsperaAConfirmar);
 
             bitacora.Registrar(modulo,
-                $"Crear Reserva #{idNuevo} — {cliente.NombreCompleto} — {experiencia.Nombre} — {lugares} lugar(es)",
+                $"Crear y confirmar Reserva #{idNuevo} — {cliente.NombreCompleto} — {experiencia.Nombre} — {lugares} lugar(es)",
                 BE.Criticidad.Media);
             bitacoraNeg.Registrar(BE.TipoEventoNegocio.Reserva,
-                $"Reserva #{idNuevo} — {cliente.NombreCompleto} — {experiencia.Nombre} — {DateTime.Now:dd/MM/yyyy HH:mm}",
+                $"Reserva #{idNuevo} creada y confirmada — {cliente.NombreCompleto} — {experiencia.Nombre} — {DateTime.Now:dd/MM/yyyy HH:mm}",
+                idReserva: idNuevo, idExperiencia: idExperiencia, idCliente: idCliente);
+            bitacoraNeg.Registrar(BE.TipoEventoNegocio.Confirmacion,
+                $"Reserva #{idNuevo} confirmada — {cliente.NombreCompleto} — {experiencia.Nombre}",
                 idReserva: idNuevo, idExperiencia: idExperiencia, idCliente: idCliente);
 
             return idNuevo;
         }
 
         // ── Confirmar ──────────────────────────────────────────────────────────
+        // COMPATIBILIDAD: crear+confirmar ahora es atómico (la reserva nace Confirmada), así que este
+        // método ya no se usa en el alta. Se conserva para resolver reservas PENDIENTE heredadas de
+        // bases anteriores (botón "Confirmar" de la grilla, habilitado solo si la reserva está Pendiente).
         public void Confirmar(string modulo, BE.Reserva reserva)
         {
             PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);

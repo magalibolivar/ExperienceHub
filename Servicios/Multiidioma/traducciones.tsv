@@ -4376,10 +4376,6 @@ ES	eh.msg.reservaregistrada.cuerpo	Quedó registrada en estado Pendiente. Confir
 EN	eh.msg.reservaregistrada.cuerpo	Saved as Pending. Confirm it from the grid when appropriate.
 RU	eh.msg.reservaregistrada.cuerpo	Сохранено как «Ожидает». Подтвердите из таблицы при необходимости.
 PT	eh.msg.reservaregistrada.cuerpo	Registrada como Pendente. Confirme pela grade quando corresponder.
-ES	eh.res.aviso.pendiente	⚠ Reserva pendiente #{0} sin resolver — confirmala o cancelala
-EN	eh.res.aviso.pendiente	⚠ Pending booking #{0} unresolved — confirm or cancel it
-RU	eh.res.aviso.pendiente	⚠ Ожидающая бронь #{0} не решена — подтвердите или отмените
-PT	eh.res.aviso.pendiente	⚠ Reserva pendente #{0} sem resolver — confirme ou cancele
 ES	eh.res.aviso.sincupo	⚠ Sin reservas disponibles este mes
 EN	eh.res.aviso.sincupo	⚠ No bookings available this month
 RU	eh.res.aviso.sincupo	⚠ Нет доступных броней в этом месяце

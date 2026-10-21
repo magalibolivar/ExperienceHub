@@ -2795,8 +2795,8 @@ GO
      • Ciudad de los clientes + una suscripcion ACTIVA y vigente para cada uno.
      • ~18 experiencias repartidas desde hoy hasta ENERO (pasadas finalizadas,
        futuras programadas, una COMPLETA para lista de espera).
-     • Reservas en varios estados (Asistio historico, Confirmada, Pendiente,
-       Cancelada) vinculando clientes con experiencias de su ciudad.
+     • Reservas en varios estados (Asistio historico, Confirmada, Cancelada)
+       vinculando clientes con experiencias de su ciudad.
      • Una lista de espera FIFO sobre la experiencia completa.
 
    IDEMPOTENTE: los bloques estan guardados con IF NOT EXISTS, se puede correr
@@ -2973,8 +2973,8 @@ DECLARE @emp INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo = 'L-001'
         (N'Sofía',  N'Rossi',     N'Trekking Cerro Mirador',    1, 0,  -2, NULL),
         (N'Diego',  N'Paz',       N'Salida de Fotografía Urbana',1,1,  -2, NULL),
         (N'Diego',  N'Paz',       N'Clase de Cocina de Verano', 1, 0,  -1, NULL),
-        -- Pendiente (0)
-        (N'Nicolás',N'Herrera',   N'Obra: Tango y Luna',        0, 0,  -1, NULL),
+        -- Confirmada (1) — antes Pendiente; crear+confirmar es atómico, ya no se siembran Pendientes.
+        (N'Nicolás',N'Herrera',   N'Obra: Tango y Luna',        1, 0,  -1, NULL),
         -- Cancelada (2) con motivo
         (N'Valeria',N'Soto',      N'Taller de Cerámica',        2, 0,  -6, N'El cliente no puede asistir por viaje.'),
         -- Experiencia COMPLETA: 3 reservas llenan el cupo (CupoMaximo = 3)

@@ -35,7 +35,9 @@ namespace BE
         public int     ReservasRestantes { get; set; }
         public System.DateTime? FechaVencimiento { get; set; }
 
-        /// <summary>True si el cliente tiene un "pedido activo" (reserva pendiente sin resolver).</summary>
+        // COMPATIBILIDAD: campos de la antigua "reserva Pendiente bloqueante" (regla eliminada cuando
+        // crear+confirmar pasó a ser atómico). Ya no los llena ConsultarSituacionCliente; se conservan
+        // para no romper serialización/binding de registros o consumidores externos.
         public bool    TieneReservaActiva      { get; set; }
         public int?    IdReservaActiva         { get; set; }
         public string  NombreExperienciaActiva { get; set; }

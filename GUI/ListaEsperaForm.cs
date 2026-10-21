@@ -18,6 +18,7 @@ namespace GUI
     {
         private readonly BLL.ListaEspera _bll    = new BLL.ListaEspera();
         private readonly BLL.Experiencia _bllExp = new BLL.Experiencia();
+        private readonly BLL.Reserva     _bllRes = new BLL.Reserva();
         private const string MODULO = "ListaEspera";
 
         private enum Pestania { Activas, Historial }
@@ -582,15 +583,29 @@ namespace GUI
             if (entrada == null || !entrada.PuedeConfirmarse())
             { MostrarError(I18n.T("eh.le.err.seloferta", "Seleccioná la entrada con la oferta vigente.")); return; }
             if (!Estilo.Confirmar(this, I18n.T("eh.le.confirmar.titulo", "Confirmar oferta"),
-                    string.Format(I18n.T("eh.le.confirmar.cuerpo", "¿Confirmar la oferta de «{0}» para {1}?\n\nSe creará la reserva (quedará Pendiente de confirmación)."),
+                    string.Format(I18n.T("eh.le.confirmar.cuerpo", "¿Confirmar la oferta de «{0}» para {1}?\n\nSe creará y confirmará la reserva."),
                         entrada.NombreExperiencia, entrada.NombreCliente)))
                 return;
             try
             {
+                // ConfirmarOferta crea la reserva CONFIRMADA de forma atómica (mismo camino que Nueva reserva).
                 int idReserva = _bll.ConfirmarOferta(MODULO, entrada);
                 Estilo.Exito(this, I18n.T("eh.le.ok.confirmada.titulo", "¡Cupo confirmado!"),
-                    string.Format(I18n.T("eh.le.ok.confirmada.cuerpo", "Se creó la reserva #{0} desde la lista de espera (queda Pendiente de confirmación)."), idReserva));
+                    string.Format(I18n.T("eh.le.ok.confirmada.cuerpo", "Reserva #{0} creada y confirmada desde la lista de espera."), idReserva));
                 Actualizar();
+                // Comprobante de confirmación (igual que en Nueva reserva).
+                try
+                {
+                    var r = _bllRes.ObtenerPorId(idReserva);
+                    if (r != null && r.Estado == BE.EstadoReserva.Confirmada
+                        && Estilo.Confirmar(this, I18n.T("eh.res.verpdf.titulo", "Confirmación de reserva"),
+                               I18n.T("eh.res.verpdf.cuerpo", "¿Ver la confirmación de la reserva en PDF?")))
+                    {
+                        var exp = _bllExp.ObtenerPorId(r.IdExperiencia);
+                        Exportacion.DocumentosReserva.Mostrar(Exportacion.DocumentosReserva.ConfirmacionReserva(r, exp), this);
+                    }
+                }
+                catch (Exception ex) { System.Diagnostics.Trace.TraceError("[ListaEspera] post-confirmar PDF: " + ex.Message); }
             }
             catch (Exception ex) { MostrarError(ex); }
         }

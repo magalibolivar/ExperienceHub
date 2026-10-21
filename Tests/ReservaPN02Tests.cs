@@ -9,7 +9,6 @@ namespace Tests
     /// proceso, sin BD ni sesión:
     ///   • CU03-AGR → BE.SituacionCliente.Resolver (situación del cliente)
     ///   • CU01-DEP → BE.ResultadoDisponibilidad.Evaluar (disponibilidad real de cupo)
-    ///   • Regla "reserva pendiente" → BLL.Reserva.TieneReservaPendienteBloqueante
     /// </summary>
     [TestClass]
     public class ReservaPN02Tests
@@ -97,34 +96,9 @@ namespace Tests
             Assert.IsFalse(r.Disponible);
         }
 
-        // ── Regla "reserva pendiente" ────────────────────────────────────────────
-        [TestMethod]
-        public void ReservaPendiente_ConPendiente_Bloquea()
-        {
-            var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Confirmada), Res(BE.EstadoReserva.Pendiente) };
-            Assert.IsTrue(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: true));
-        }
-
-        [TestMethod]
-        public void ReservaPendiente_SoloConfirmadas_NoBloquea()
-        {
-            var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Confirmada), Res(BE.EstadoReserva.Confirmada) };
-            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: true));
-        }
-
-        [TestMethod]
-        public void ReservaPendiente_FlagApagado_NoBloquea()
-        {
-            var activas = new List<BE.Reserva> { Res(BE.EstadoReserva.Pendiente) };
-            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(activas, bloquearSiPendiente: false));
-        }
-
-        [TestMethod]
-        public void ReservaPendiente_SinReservas_NoBloquea()
-        {
-            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(null, bloquearSiPendiente: true));
-            Assert.IsFalse(BLL.Reserva.TieneReservaPendienteBloqueante(new List<BE.Reserva>(), bloquearSiPendiente: true));
-        }
+        // NOTA: la antigua regla "reserva Pendiente bloqueante" (BLL.Reserva.TieneReservaPendienteBloqueante)
+        // se eliminó al unificar crear+confirmar en una operación atómica (la reserva nace Confirmada).
+        // Sus tests se retiraron en consecuencia.
 
         // ── Flujo de confirmación (máquina de estados) — respalda el paso 3 "Confirmación" ───────
         // La UI pide confirmación deliberada y, solo si la reserva está Pendiente, ejecuta la
