@@ -4108,30 +4108,6 @@ ES	eh.con.hint.pag	pagada → formalizá en ③ Venta.
 EN	eh.con.hint.pag	paid → formalize in ③ Sales.
 PT	eh.con.hint.pag	paga → formalize em ③ Vendas.
 RU	eh.con.hint.pag	оплачено → оформите в ③ Продажах.
-ES	eh.frm.membresia	Membresía del cliente
-EN	eh.frm.membresia	Client membership
-PT	eh.frm.membresia	Assinatura do cliente
-RU	eh.frm.membresia	Членство клиента
-ES	eh.mem.header.desc	Comercialización y gestión de la suscripción en una pantalla. Venta y Caja ven solo su parte; el administrador, todo.
-EN	eh.mem.header.desc	Sales and subscription management in one screen. Sales and Cashier see only their part; the administrator sees everything.
-PT	eh.mem.header.desc	Comercialização e gestão da assinatura em uma tela. Vendas e Caixa veem só a sua parte; o administrador vê tudo.
-RU	eh.mem.header.desc	Продажа и управление подпиской на одном экране. Продажи и Касса видят только свою часть; администратор — всё.
-ES	eh.mem.sec.contratacion	Contratación en proceso
-EN	eh.mem.sec.contratacion	Contract in progress
-PT	eh.mem.sec.contratacion	Contratação em andamento
-RU	eh.mem.sec.contratacion	Договор в процессе
-ES	eh.mem.sec.venta	Venta
-EN	eh.mem.sec.venta	Sales
-PT	eh.mem.sec.venta	Vendas
-RU	eh.mem.sec.venta	Продажи
-ES	eh.mem.sec.caja	Caja
-EN	eh.mem.sec.caja	Cashier
-PT	eh.mem.sec.caja	Caixa
-RU	eh.mem.sec.caja	Касса
-ES	mnu.cat.membresia	Membresía del cliente
-EN	mnu.cat.membresia	Client membership
-PT	mnu.cat.membresia	Assinatura do cliente
-RU	mnu.cat.membresia	Членство клиента
 ES	eh.diag.header.desc	Verificación de dígitos verificadores (DVH/DVV) por entidad protegida.
 EN	eh.diag.header.desc	Verification of check digits (DVH/DVV) per protected entity.
 PT	eh.diag.header.desc	Verificação de dígitos verificadores (DVH/DVV) por entidade protegida.
@@ -4380,10 +4356,6 @@ ES	eh.res.aviso.sincupo	⚠ Sin reservas disponibles este mes
 EN	eh.res.aviso.sincupo	⚠ No bookings available this month
 RU	eh.res.aviso.sincupo	⚠ Нет доступных броней в этом месяце
 PT	eh.res.aviso.sincupo	⚠ Sem reservas disponíveis este mês
-ES	eh.mem.plandetalle	${0:N2} · {1} reservas/mes · premium {2} · hasta {3} invitado(s) · anticip. {4} días
-EN	eh.mem.plandetalle	${0:N2} · {1} bookings/mo · premium {2} · up to {3} guest(s) · {4} days ahead
-RU	eh.mem.plandetalle	${0:N2} · {1} брон./мес · премиум {2} · до {3} гостей · за {4} дн.
-PT	eh.mem.plandetalle	${0:N2} · {1} reservas/mês · premium {2} · até {3} convidado(s) · antecip. {4} dias
 ES	mnu.cat.nuevacontratacion	Nueva contratación
 EN	mnu.cat.nuevacontratacion	New contract
 RU	mnu.cat.nuevacontratacion	Новый договор
