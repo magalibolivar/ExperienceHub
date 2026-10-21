@@ -20,6 +20,11 @@ namespace BE
         /// <summary>Intentos de pago fallidos acumulados.</summary>
         public int               IntentosPago      { get; set; }
 
+        /// <summary>Alta de suscripción nueva o Renovación de una existente (PN01).</summary>
+        public TipoContratacion  Tipo              { get; set; } = TipoContratacion.Alta;
+        /// <summary>Suscripción que extiende la renovación (null en las altas).</summary>
+        public int?              IdSuscripcionRenovada { get; set; }
+
         /// <summary>Medio con el que se cobró (null hasta que se concreta el pago).</summary>
         public MedioPago?        Medio             { get; set; }
         public DateTime?         FechaPago         { get; set; }

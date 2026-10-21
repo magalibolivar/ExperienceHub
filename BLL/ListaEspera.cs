@@ -30,6 +30,13 @@ namespace BLL
 
         public List<BE.ListaEspera> ObtenerCola(int idExperiencia) => dal.ObtenerColaPorExperiencia(idExperiencia);
 
+        /// <summary>Vista orientada a tareas (PN02): todas las ofertas vigentes (Ofrecido), de cualquier
+        /// experiencia. Solo lectura; la BLL media entre GUI y DAL.</summary>
+        public List<BE.ListaEspera> ObtenerOfertasVigentes() => dal.ObtenerOfertasVigentes();
+
+        /// <summary>Resumen de actividad por experiencia (Esperando/Ofrecido). Solo lectura.</summary>
+        public List<BE.ResumenListaEspera> ObtenerResumenActivo() => dal.ObtenerResumenActivo();
+
         /// <summary>Todas las entradas de la experiencia (para ver ofrecidos/confirmados).</summary>
         public List<BE.ListaEspera> ObtenerTodas(int idExperiencia) => dal.ObtenerPorExperiencia(idExperiencia);
 

@@ -111,6 +111,47 @@ namespace BLL
             return reservasActivas.Any(r => r.Estado == BE.EstadoReserva.Pendiente);
         }
 
+        /// <summary>
+        /// PN02 (preview comercial) — evalúa de SOLO LECTURA la compatibilidad de un lote de experiencias
+        /// para un cliente, reutilizando las MISMAS reglas que <see cref="CrearReserva"/> a través de
+        /// <see cref="BE.CompatibilidadReserva.Evaluar"/>. Carga el contexto POR LOTES (cliente, plan,
+        /// reservas activas, asistidas y cola) para no consultar por cada experiencia. No persiste nada:
+        /// la validación definitiva y el cupo atómico siguen en CrearReserva/CrearConCupo.
+        /// </summary>
+        public Dictionary<int, BE.CompatibilidadReserva> EvaluarCompatibilidades(
+            int idCliente, List<BE.Experiencia> experiencias, int invitados)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ReservasEditar, BE.Patentes.Reservas);
+            var res = new Dictionary<int, BE.CompatibilidadReserva>();
+            if (experiencias == null || experiencias.Count == 0) return res;
+
+            var cliente = dalCliente.ObtenerPorId(idCliente);
+            if (cliente?.Suscripcion == null) return res;   // el gate del paso ① ya exige suscripción vigente
+            var sus  = cliente.Suscripcion;
+            var plan = dalPlan.ObtenerPorId(sus.IdPlan);
+            int edad = cliente.Edad();
+
+            var activas   = dalReserva.ObtenerActivasConHorario(idCliente);
+            var asistidas = dalReserva.ObtenerIdExperienciasAsistidas(idCliente);
+            var enCola    = dalEspera.ObtenerIdExperienciasEnCola(idCliente);
+            int margenHoras = ListaEspera.MargenInicioHoras;
+            DateTime ahora  = DateTime.Now;
+
+            foreach (var exp in experiencias)
+            {
+                bool hayMargen = (exp.FechaHoraInicio - ahora).TotalHours >= margenHoras;
+                res[exp.IdExperiencia] = BE.CompatibilidadReserva.Evaluar(
+                    exp, sus, plan, cliente.IdCiudad, cliente.NombreCiudad, edad, invitados,
+                    yaAsistio:             asistidas.Contains(exp.IdExperiencia),
+                    nombreSolapada:        NombreSolapada(activas, exp),
+                    yaEnCola:              enCola.Contains(exp.IdExperiencia),
+                    hayMargenOferta:       hayMargen,
+                    permitirFueraDeCiudad: PERMITIR_FUERA_DE_CIUDAD,
+                    bloquearSiYaRealizada: BLOQUEAR_SI_YA_REALIZADA);
+            }
+            return res;
+        }
+
         // ── Crear Reserva (reglas 1-5 + premium + edad + invitados) ────────────
         // idListaEsperaAConfirmar > 0 → esta reserva nace de confirmar una oferta de lista de espera;
         // la entrada se marca Confirmado en la MISMA transacción que la reserva (atomicidad, punto 1).
@@ -141,46 +182,24 @@ namespace BLL
 
             var plan = dalPlan.ObtenerPorId(cliente.Suscripcion.IdPlan);
 
-            // Regla 3 — no superar la cantidad de reservas del plan
+            // Regla 3 — no superar la cantidad de reservas del plan (nivel cliente).
             if (!cliente.PuedeReservar())
                 throw new BE.AppException("err.bll.reserva.limite_plan",
                     "El plan '{0}' permite {1} reserva(s) por mes y ya no quedan disponibles este período.",
                     cliente.Suscripcion.NombrePlan, cliente.Suscripcion.ReservasDelPlan);
 
-            // Experiencia premium: requiere plan con acceso premium
-            if (experiencia.Premium && !cliente.Suscripcion.AccesoPremiumDelPlan)
-                throw new BE.AppException("err.bll.reserva.premium",
-                    "'{0}' es una experiencia premium; el plan del cliente no incluye acceso premium.",
-                    experiencia.Nombre);
-
-            // Edad mínima
-            if (!experiencia.CumpleEdadMinima(cliente.Edad()))
-                throw new BE.AppException("err.bll.reserva.edad_minima",
-                    "La experiencia requiere una edad mínima de {0} años.", experiencia.EdadMinima);
-
-            // Invitados dentro del beneficio del plan
-            if (plan != null && !plan.AdmiteInvitados(cantidadInvitados))
-                throw new BE.AppException("err.bll.reserva.invitados",
-                    "El plan permite hasta {0} invitado(s) por reserva.", plan?.CantidadInvitados ?? 0);
-
-            // Regla 4 — respetar la ciudad del cliente
-            if (!PERMITIR_FUERA_DE_CIUDAD && cliente.IdCiudad.HasValue
-                && experiencia.IdCiudad != cliente.IdCiudad.Value)
-                throw new BE.AppException("err.bll.reserva.fuera_ciudad",
-                    "La experiencia es en {0} y el cliente está en {1}.",
-                    experiencia.NombreCiudad, cliente.NombreCiudad);
-
-            // Regla 5 — no repetir una experiencia ya realizada
-            if (dalReserva.ExisteAsistenciaPrevia(idCliente, idExperiencia))
-            {
-                if (BLOQUEAR_SI_YA_REALIZADA)
-                    throw new BE.AppException("err.bll.reserva.ya_realizada",
-                        "El cliente ya asistió a '{0}' anteriormente.", experiencia.Nombre);
-                // (modo advertencia: se registraría un aviso; aquí se continúa)
-            }
-
-            // Regla 2 — no solapar horarios con otras reservas activas
-            ValidarSinSolapamiento(idCliente, experiencia);
+            // Reglas cliente×experiencia (premium, edad, invitados, ciudad, ya realizada, solapamiento):
+            // se evalúan con el MISMO evaluador de solo lectura que usa el preview del formulario, para NO
+            // duplicar reglas. La clave/mensaje/args del motivo coinciden con las excepciones anteriores.
+            // El cupo se sigue resolviendo de forma ATÓMICA en CrearConCupo (concurrencia intacta).
+            string nombreSolapada = NombreSolapada(dalReserva.ObtenerActivasConHorario(idCliente), experiencia);
+            bool yaAsistio = dalReserva.ExisteAsistenciaPrevia(idCliente, idExperiencia);
+            var comp = BE.CompatibilidadReserva.Evaluar(
+                experiencia, cliente.Suscripcion, plan, cliente.IdCiudad, cliente.NombreCiudad, cliente.Edad(),
+                cantidadInvitados, yaAsistio, nombreSolapada, yaEnCola: false, hayMargenOferta: true,
+                PERMITIR_FUERA_DE_CIUDAD, BLOQUEAR_SI_YA_REALIZADA);
+            if (comp.EsIncompatible)
+                throw new BE.AppException(comp.MotivoClave, comp.MotivoFallback, comp.MotivoArgs);
 
             int lugares = 1 + Math.Max(0, cantidadInvitados);
 
@@ -405,19 +424,20 @@ namespace BLL
             return exp;
         }
 
-        // Regla 2 — solapamiento de horarios con reservas activas del cliente.
-        private void ValidarSinSolapamiento(int idCliente, BE.Experiencia nueva)
+        // Regla 2 — nombre de la primera reserva activa del cliente que se solapa en horario con la
+        // experiencia (o null si no hay solapamiento). Insumo del evaluador de compatibilidad; lo usan
+        // tanto el preview como CrearReserva (una sola fuente de verdad del solapamiento).
+        private static string NombreSolapada(List<BE.Reserva> activas, BE.Experiencia nueva)
         {
-            foreach (var r in dalReserva.ObtenerActivasConHorario(idCliente))
+            if (activas == null) return null;
+            foreach (var r in activas)
             {
                 if (!r.FechaHoraExperiencia.HasValue) continue;
-                DateTime existeIni = r.FechaHoraExperiencia.Value;
-                DateTime existeFin = existeIni.AddMinutes(r.DuracionExperienciaMinutos);
-                if (nueva.FechaHoraInicio < existeFin && existeIni < nueva.FechaHoraFin)
-                    throw new BE.AppException("err.bll.reserva.solapamiento",
-                        "El cliente ya tiene la reserva '{0}' que se superpone en horario con '{1}'.",
-                        r.NombreExperiencia, nueva.Nombre);
+                DateTime ini = r.FechaHoraExperiencia.Value;
+                DateTime fin = ini.AddMinutes(r.DuracionExperienciaMinutos);
+                if (nueva.FechaHoraInicio < fin && ini < nueva.FechaHoraFin) return r.NombreExperiencia;
             }
+            return null;
         }
 
         // Regla 9 — ofrecer el cupo liberado al primero de la cola.
@@ -447,6 +467,11 @@ namespace BLL
                 BE.Criticidad.Baja);
         }
 
+        // Atribución (opcional) del agente que registra la reserva. IdEmpleado es un FK NULLABLE
+        // (el DAL lo graba como NULL cuando es 0) y NO entra al DV. Si el usuario en sesión no tiene
+        // un Empleado vinculado —caso típico del Administrador, que no es agente y puede operar por
+        // bypass, igual que en PN01, que ni siquiera atribuye empleado— la reserva se crea SIN agente
+        // en vez de bloquear. Cuando el usuario SÍ es un agente con Empleado, se atribuye a él.
         private int ResolverEmpleadoActivo()
         {
             if (!Seguridad.SessionManager.IsLoggedIn)
@@ -454,9 +479,11 @@ namespace BLL
             var usuario = Seguridad.SessionManager.GetInstance().Usuario;
             var empleado = dalEmpleado.ObtenerPorUsuario(usuario.Id);
             if (empleado == null)
-                throw new BE.AppException("err.bll.reserva.empleado_sin_vinculo",
-                    "El usuario '{0}' no tiene un Empleado vinculado. Pedíle al Administrador que configure el vínculo.",
-                    usuario.Username);
+            {
+                System.Diagnostics.Trace.TraceInformation(
+                    $"[BLL.Reserva] Usuario '{usuario.Username}' sin Empleado vinculado: la reserva se registra sin agente (IdEmpleado NULL).");
+                return 0;   // → IdEmpleado NULL en DAL.Reserva.CrearConCupo
+            }
             return empleado.IdEmpleado;
         }
 

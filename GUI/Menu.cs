@@ -51,6 +51,7 @@ namespace GUI
         private ToolStripMenuItem _adminUsuariosItem;
         // Submenús de "Administrar" (reorganización): "Usuarios ▸" y "Sistema ▸".
         private ToolStripMenuItem _grpUsuarios, _grpSistema;
+        private ToolStripMenuItem _miSeedDev, _miSeedLimpiar;   // acciones de datos de prueba (solo-admin, DEV)
         // Helper de traducción con fallback (para ítems creados por código).
         private static string Tx(string key, string fallback)
         {
@@ -155,6 +156,14 @@ namespace GUI
             _grpSistema.DropDownItems.Add(idiomasToolStripMenuItem);
             _grpSistema.DropDownItems.Add(backupToolStripMenuItem);
             _grpSistema.DropDownItems.Add(integridadToolStripMenuItem);
+            // Datos de prueba (DEV) — solo-admin. Siembran/limpian por los flujos de negocio (marca [SEED]).
+            _miSeedDev     = new ToolStripMenuItem(Tx("mnu.seed.sembrar", "Sembrar datos de prueba (DEV)")) { Tag = "mnu.seed.sembrar" };
+            _miSeedDev.Click += SeedSembrar_Click;
+            _miSeedLimpiar = new ToolStripMenuItem(Tx("mnu.seed.limpiar", "Limpiar datos de prueba (DEV)")) { Tag = "mnu.seed.limpiar" };
+            _miSeedLimpiar.Click += SeedLimpiar_Click;
+            _grpSistema.DropDownItems.Add(new ToolStripSeparator());
+            _grpSistema.DropDownItems.Add(_miSeedDev);
+            _grpSistema.DropDownItems.Add(_miSeedLimpiar);
 
             // Reconstruir el dropdown de "Administrar": Usuarios ▸, Perfiles, ──── , Sistema ▸.
             gestionToolStripMenuItem.DropDownItems.Clear();
@@ -257,8 +266,9 @@ namespace GUI
                 (experienciasToolStripMenuItem,           "mnuExperiencias"),
                 (clientesToolStripMenuItem,          "mnuClientes"),
                 (planesToolStripMenuItem,            "mnuPlanSuscripciones"),
-                (reservasToolStripMenuItem,      "mnuReservas"),
-                (reservasRealizadasToolStripMenuItem, "mnuReservasRealizadas"),
+                // "Reservas" unifica Nueva/Gestionar (mnuReservas) + Asistencia y valoración
+                // (mnuReservasRealizadas). Visible si tiene CUALQUIERA; su visibilidad se resuelve aparte
+                // (abajo) porque el mapa de hojas asocia 1 patente por ítem.
                 // Bloque "Administrar" + "Sistema": todo gobernado por la patente de gestión.
                 (usuariosToolStripMenuItem,          "mnuUsuarios"),
                 (perfilesToolStripMenuItem,          "mnuUsuarios"),
@@ -278,23 +288,28 @@ namespace GUI
                 (_miOrganizadores, "mnuOrganizadores"),
                 (_miCategorias,    "mnuCategorias"),
                 (_miCiudades,      "mnuCiudades"),
+                // PN01 — comercialización por rol: Nueva contratación y Para formalizar = Venta;
+                // Cobros pendientes = Caja. El Administrador ve las tres por bypass de Permite().
+                (_miNuevaContratacion, "mnuContratacionVenta"),
+                (_miFormalizar,        "mnuContratacionVenta"),
+                (_miCobros,            "mnuContratacionCaja"),
             };
             foreach (var h in hojas)
                 if (h.Item != null) h.Item.Visible = Permite(h.Permiso);
 
-            // Membresía del cliente: unifica comercialización (Venta + Caja) y gestión de la suscripción.
-            // El ítem es visible con CUALQUIERA de las dos patentes (OR); dentro del form, ManejadorSeguridad
-            // oculta la sección Venta o Caja según la patente (el Administrador ve todo por bypass).
-            if (_miMembresia != null)
-                _miMembresia.Visible = Permite("mnuContratacionVenta") || Permite("mnuContratacionCaja");
+            // "Reservas" (form unificado) visible con mnuReservas O mnuReservasRealizadas: un rol que solo
+            // registra asistencia/valoración también debe poder abrirlo (ve únicamente su pestaña).
+            if (reservasToolStripMenuItem != null)
+                reservasToolStripMenuItem.Visible = Permite("mnuReservas") || Permite("mnuReservasRealizadas");
 
             // ── Visibilidad de los BLOQUES de negocio (según patentes de sus ítems) ──
             // Se usa .Available (no .Visible): dentro de un dropdown cerrado, .Visible siempre es false.
             SetGrupoVisible(_mnuComercializacion,
-                clientesToolStripMenuItem, planesToolStripMenuItem, _miMembresia);
+                clientesToolStripMenuItem, planesToolStripMenuItem,
+                _miNuevaContratacion, _miFormalizar, _miCobros);
 
             SetGrupoVisible(_mnuReservas,
-                experienciasToolStripMenuItem, reservasToolStripMenuItem, reservasRealizadasToolStripMenuItem,
+                experienciasToolStripMenuItem, reservasToolStripMenuItem,
                 _miListaEspera, _miOrganizadores, _miCategorias, _miCiudades);
 
             // ── Administración (técnica): submenús + Bitácora ──
@@ -425,7 +440,9 @@ namespace GUI
         // Ítems de los módulos de catálogo/negocio (construidos por código). Se ubican luego en los
         // bloques de negocio del menú (Fidelización / Operación) en ReorganizarNavegacionPorBloques.
         private ToolStripMenuItem _miOrganizadores, _miCategorias, _miCiudades,
-                                  _miMembresia, _miListaEspera;
+                                  _miListaEspera;
+        // PN01 — Comercialización por rol (reemplazan al único "Membresía del cliente").
+        private ToolStripMenuItem _miNuevaContratacion, _miFormalizar, _miCobros;
         // Grupos del menú principal (uno por proceso de negocio), creados por código.
         private ToolStripMenuItem _mnuComercializacion, _mnuReservas;
         // (compat) referencia usada por código legacy null-guardeado; ya no se crea el menú "Catálogos".
@@ -450,8 +467,102 @@ namespace GUI
             _miOrganizadores   = NuevoItemForm("Organizadores",   "mnu.cat.organizadores",   typeof(Organizadores),       () => new Organizadores());
             _miCategorias      = NuevoItemForm("Categorías",      "mnu.cat.categorias",      typeof(Categorias),          () => new Categorias());
             _miCiudades        = NuevoItemForm("Ciudades",        "mnu.cat.ciudades",        typeof(Ciudades),            () => new Ciudades());
-            _miMembresia       = NuevoItemForm("Membresía del cliente", "mnu.cat.membresia",     typeof(MembresiaForm),       () => new MembresiaForm());
             _miListaEspera     = NuevoItemForm("Lista de espera", "mnu.cat.listaespera",     typeof(ListaEsperaForm),     () => new ListaEsperaForm());
+
+            // PN01 — tres pantallas por rol. Se abren con wiring de eventos (contadores + atajos),
+            // por eso no usan NuevoItemForm sino métodos dedicados.
+            _miNuevaContratacion = new ToolStripMenuItem("Nueva contratación") { Tag = "mnu.cat.nuevacontratacion" };
+            _miNuevaContratacion.Click += (s, e) => AbrirNuevaContratacion();
+            _miFormalizar = new ToolStripMenuItem("Para formalizar") { Tag = "mnu.cat.formalizar" };
+            _miFormalizar.Click += (s, e) => AbrirFormalizacion(0);
+            _miCobros = new ToolStripMenuItem("Cobros pendientes") { Tag = "mnu.cat.cobros" };
+            _miCobros.Click += (s, e) => AbrirCobros(0);
+        }
+
+        // Trae al frente el hijo MDI del tipo pedido o lo crea con la fábrica dada.
+        private T TraerOCrear<T>(Func<T> crear) where T : Form
+        {
+            foreach (Form h in this.MdiChildren)
+                if (h is T existente) { existente.BringToFront(); return existente; }
+            var f = crear(); f.MdiParent = this; f.Show();
+            return f;
+        }
+
+        private void AbrirNuevaContratacion() => AbrirNuevaContratacionPara(0);
+
+        // Abre (o trae al frente) "Nueva contratación"; si idCliente>0, lo preselecciona (renovación).
+        private void AbrirNuevaContratacionPara(int idCliente)
+        {
+            var f = TraerOCrear(() =>
+            {
+                var x = new NuevaContratacionForm();
+                x.OperacionRealizada += ActualizarContadoresComercializacion;
+                x.SolicitaIrACobrar  += AbrirCobros;
+                x.FormClosed         += (s, e) => ActualizarContadoresComercializacion();
+                return x;
+            });
+            if (idCliente > 0) f.SeleccionarCliente(idCliente);
+        }
+
+        // Abre (o trae al frente) "Cobros pendientes" y, si se pide, selecciona la contratación.
+        private void AbrirCobros(int idContratacion)
+        {
+            bool yaAbierto = false;
+            foreach (Form h in this.MdiChildren) if (h is CobrosPendientesForm) { yaAbierto = true; break; }
+            var f = TraerOCrear(() =>
+            {
+                var x = new CobrosPendientesForm();
+                x.OperacionRealizada    += ActualizarContadoresComercializacion;
+                x.SolicitaIrAFormalizar += AbrirFormalizacion;
+                x.FormClosed            += (s, e) => ActualizarContadoresComercializacion();
+                return x;
+            });
+            if (idContratacion > 0) { if (yaAbierto) f.Refrescar(); f.SeleccionarContratacion(idContratacion); }
+        }
+
+        // Abre (o trae al frente) "Para formalizar" y, si se pide, selecciona la contratación.
+        private void AbrirFormalizacion(int idContratacion)
+        {
+            bool yaAbierto = false;
+            foreach (Form h in this.MdiChildren) if (h is FormalizacionForm) { yaAbierto = true; break; }
+            var f = TraerOCrear(() =>
+            {
+                var x = new FormalizacionForm();
+                x.OperacionRealizada += ActualizarContadoresComercializacion;
+                x.FormClosed         += (s, e) => ActualizarContadoresComercializacion();
+                return x;
+            });
+            if (idContratacion > 0) { if (yaAbierto) f.Refrescar(); f.SeleccionarContratacion(idContratacion); }
+        }
+
+        // Actualiza el texto de los ítems de Comercialización, incluyendo los contadores
+        // "Para formalizar (N)" y "Cobros pendientes (N)". Solo consulta si el usuario ve el ítem
+        // (evita queries innecesarias). Tolerante a fallos: no debe romper el menú.
+        private void ActualizarContadoresComercializacion()
+        {
+            var t = Servicios.Multiidioma.Traductor.ObtenerTraducciones(Servicios.Multiidioma.GestorIdioma.IdiomaActual);
+            string Tx(string k, string fb) => t.ContainsKey(k) ? t[k].Texto : fb;
+
+            if (_miNuevaContratacion != null)
+                _miNuevaContratacion.Text = Tx("mnu.cat.nuevacontratacion", "Nueva contratación");
+
+            try
+            {
+                var bll = new BLL.Contratacion();
+                if (_miFormalizar != null)
+                {
+                    string baseF = Tx("mnu.cat.formalizar", "Para formalizar");
+                    _miFormalizar.Text = (_miFormalizar.Available || PermisosGui.Permite("mnuContratacionVenta"))
+                        ? $"{baseF} ({bll.ObtenerPagadas().Count})" : baseF;
+                }
+                if (_miCobros != null)
+                {
+                    string baseC = Tx("mnu.cat.cobros", "Cobros pendientes");
+                    _miCobros.Text = (_miCobros.Available || PermisosGui.Permite("mnuContratacionCaja"))
+                        ? $"{baseC} ({bll.ObtenerPendientes().Count})" : baseC;
+                }
+            }
+            catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Menu.Contadores] " + ex.Message); }
         }
 
         // ── Reorganización de la navegación en BLOQUES DE NEGOCIO (reutiliza ítems/forms existentes) ──
@@ -462,13 +573,15 @@ namespace GUI
             _mnuComercializacion = new ToolStripMenuItem(Tx("mnu.blq.comercializacion", "Comercialización")) { Tag = "mnu.blq.comercializacion" };
             _mnuComercializacion.DropDownItems.Add(clientesToolStripMenuItem);
             _mnuComercializacion.DropDownItems.Add(planesToolStripMenuItem);
-            _mnuComercializacion.DropDownItems.Add(_miMembresia);
+            _mnuComercializacion.DropDownItems.Add(new ToolStripSeparator());
+            _mnuComercializacion.DropDownItems.Add(_miNuevaContratacion);
+            _mnuComercializacion.DropDownItems.Add(_miCobros);
+            _mnuComercializacion.DropDownItems.Add(_miFormalizar);
 
             // 2 · PN02 — RESERVAS DE EXPERIENCIAS (armado del pedido/reserva + catálogos de apoyo)
             _mnuReservas = new ToolStripMenuItem(Tx("mnu.blq.reservas", "Reservas")) { Tag = "mnu.blq.reservas" };
             _mnuReservas.DropDownItems.Add(experienciasToolStripMenuItem);            // Experiencias
-            _mnuReservas.DropDownItems.Add(reservasToolStripMenuItem);       // Reservas
-            _mnuReservas.DropDownItems.Add(reservasRealizadasToolStripMenuItem);  // Reservas Realizadas
+            _mnuReservas.DropDownItems.Add(reservasToolStripMenuItem);       // Reservas (Nueva/Gestionar/Asistencia)
             _mnuReservas.DropDownItems.Add(_miListaEspera);
             _mnuReservas.DropDownItems.Add(new ToolStripSeparator());
             _mnuReservas.DropDownItems.Add(_miOrganizadores);

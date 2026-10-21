@@ -79,6 +79,9 @@
     <EmbeddedResource Include="..\BD\17_Limpieza_Legacy.sql">
       <LogicalName>DAL.Migracion.Legacy.sql</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\BD\20_Contratacion_Renovacion.sql">
+      <LogicalName>DAL.Migracion.Renovacion.sql</LogicalName>
+    </EmbeddedResource>
     <Compile Include="Calificacion.cs" />
     <Compile Include="Permiso.cs" />
     <Compile Include="PlanSuscripcion.cs" />

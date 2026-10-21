@@ -163,6 +163,24 @@ namespace DAL
             return lista;
         }
 
+        /// <summary>
+        /// IdExperiencia de todas las experiencias a las que el cliente YA asistió. Carga por lotes del
+        /// insumo de la regla 5 (evita un COUNT por cada experiencia al evaluar compatibilidad en PN02).
+        /// </summary>
+        public System.Collections.Generic.HashSet<int> ObtenerIdExperienciasAsistidas(int idCliente)
+        {
+            var set = new System.Collections.Generic.HashSet<int>();
+            var dt = acceso.Leer(
+                "SELECT DISTINCT IdExperiencia FROM Reserva WHERE IdCliente=@Id AND Estado=@Asistio",
+                new[]
+                {
+                    new SqlParameter("@Id", idCliente),
+                    new SqlParameter("@Asistio", (object)(int)BE.EstadoReserva.Asistio)
+                });
+            foreach (DataRow row in dt.Rows) set.Add(Convert.ToInt32(row["IdExperiencia"]));
+            return set;
+        }
+
         /// <summary>True si el cliente ya asistió antes a esa experiencia (regla 5).</summary>
         public bool ExisteAsistenciaPrevia(int idCliente, int idExperiencia)
         {

@@ -4388,3 +4388,1307 @@ ES	eh.mem.plandetalle	${0:N2} · {1} reservas/mes · premium {2} · hasta {3} in
 EN	eh.mem.plandetalle	${0:N2} · {1} bookings/mo · premium {2} · up to {3} guest(s) · {4} days ahead
 RU	eh.mem.plandetalle	${0:N2} · {1} брон./мес · премиум {2} · до {3} гостей · за {4} дн.
 PT	eh.mem.plandetalle	${0:N2} · {1} reservas/mês · premium {2} · até {3} convidado(s) · antecip. {4} dias
+ES	mnu.cat.nuevacontratacion	Nueva contratación
+EN	mnu.cat.nuevacontratacion	New contract
+RU	mnu.cat.nuevacontratacion	Новый договор
+PT	mnu.cat.nuevacontratacion	Nova contratação
+ES	mnu.cat.formalizar	Para formalizar
+EN	mnu.cat.formalizar	To formalize
+RU	mnu.cat.formalizar	К оформлению
+PT	mnu.cat.formalizar	Para formalizar
+ES	mnu.cat.cobros	Cobros pendientes
+EN	mnu.cat.cobros	Pending payments
+RU	mnu.cat.cobros	Ожидают оплаты
+PT	mnu.cat.cobros	Cobranças pendentes
+ES	eh.lbl.cuotas	Cuotas
+EN	eh.lbl.cuotas	Installments
+RU	eh.lbl.cuotas	Платежи
+PT	eh.lbl.cuotas	Parcelas
+ES	eh.btn.siguiente	Siguiente
+EN	eh.btn.siguiente	Next
+RU	eh.btn.siguiente	Далее
+PT	eh.btn.siguiente	Próximo
+ES	eh.btn.atras	Atrás
+EN	eh.btn.atras	Back
+RU	eh.btn.atras	Назад
+PT	eh.btn.atras	Voltar
+ES	eh.btn.confirmarrenov	Confirmar renovación
+EN	eh.btn.confirmarrenov	Confirm renewal
+RU	eh.btn.confirmarrenov	Подтвердить продление
+PT	eh.btn.confirmarrenov	Confirmar renovação
+ES	eh.si	Sí
+EN	eh.si	Yes
+RU	eh.si	Да
+PT	eh.si	Sim
+ES	eh.nva.titulo	Nueva contratación
+EN	eh.nva.titulo	New contract
+RU	eh.nva.titulo	Новый договор
+PT	eh.nva.titulo	Nova contratação
+ES	eh.nva.header.desc	Asistente en 3 pasos: elegí el cliente, el plan y confirmá para derivar a Caja.
+EN	eh.nva.header.desc	3-step wizard: pick customer and plan, then confirm to send to Cashier.
+RU	eh.nva.header.desc	Мастер из 3 шагов: выберите клиента и план, затем подтвердите для передачи в кассу.
+PT	eh.nva.header.desc	Assistente em 3 passos: escolha o cliente e o plano e confirme para enviar ao Caixa.
+ES	eh.nva.pasoind	Paso {0} de 3
+EN	eh.nva.pasoind	Step {0} of 3
+RU	eh.nva.pasoind	Шаг {0} из 3
+PT	eh.nva.pasoind	Passo {0} de 3
+ES	eh.nva.btn.registrar	Registrar y derivar a Caja
+EN	eh.nva.btn.registrar	Register and send to Cashier
+RU	eh.nva.btn.registrar	Создать и передать в кассу
+PT	eh.nva.btn.registrar	Registrar e enviar ao Caixa
+ES	eh.nva.cli.empty	Buscá un cliente por nombre, apellido o DNI.
+EN	eh.nva.cli.empty	Search a customer by name or ID.
+RU	eh.nva.cli.empty	Найдите клиента по имени или DNI.
+PT	eh.nva.cli.empty	Busque um cliente por nome ou DNI.
+ES	eh.nva.cli.sec	Cliente
+EN	eh.nva.cli.sec	Customer
+RU	eh.nva.cli.sec	Клиент
+PT	eh.nva.cli.sec	Cliente
+ES	eh.nva.plan.empty	No hay planes activos.
+EN	eh.nva.plan.empty	No active plans.
+RU	eh.nva.plan.empty	Нет активных планов.
+PT	eh.nva.plan.empty	Não há planos ativos.
+ES	eh.nva.plan.sec	Detalle del plan
+EN	eh.nva.plan.sec	Plan details
+RU	eh.nva.plan.sec	Детали плана
+PT	eh.nva.plan.sec	Detalhes do plano
+ES	eh.nva.plan.detalle	Plan: {0}\n\nImporte: ${1:N2}\nReservas por mes: {2}\nAcceso premium: {3}\nInvitados por reserva: {4}\nAnticipación máxima: {5} días
+EN	eh.nva.plan.detalle	Plan: {0}\n\nPrice: ${1:N2}\nBookings per month: {2}\nPremium access: {3}\nGuests per booking: {4}\nMax. lead time: {5} days
+RU	eh.nva.plan.detalle	План: {0}\n\nЦена: ${1:N2}\nБроней в месяц: {2}\nПремиум-доступ: {3}\nГостей на бронь: {4}\nМакс. срок: {5} дн.
+PT	eh.nva.plan.detalle	Plano: {0}\n\nValor: ${1:N2}\nReservas por mês: {2}\nAcesso premium: {3}\nConvidados por reserva: {4}\nAntecedência máx.: {5} dias
+ES	eh.nva.conf.sec	Confirmación
+EN	eh.nva.conf.sec	Confirmation
+RU	eh.nva.conf.sec	Подтверждение
+PT	eh.nva.conf.sec	Confirmação
+ES	eh.nva.conf.derivar	Al registrar, la contratación queda Pendiente de pago y se deriva a Caja para su cobro.
+EN	eh.nva.conf.derivar	On register, the contract becomes Pending payment and is sent to Cashier.
+RU	eh.nva.conf.derivar	При создании договор получает статус «Ожидает оплаты» и передаётся в кассу.
+PT	eh.nva.conf.derivar	Ao registrar, a contratação fica Pendente de pagamento e vai ao Caixa.
+ES	eh.nva.btn.ircobrar	Ir a cobrar ahora
+EN	eh.nva.btn.ircobrar	Go charge now
+RU	eh.nva.btn.ircobrar	Перейти к оплате
+PT	eh.nva.btn.ircobrar	Ir cobrar agora
+ES	eh.nva.err.sincliente	Seleccioná un cliente para continuar.
+EN	eh.nva.err.sincliente	Select a customer to continue.
+RU	eh.nva.err.sincliente	Выберите клиента, чтобы продолжить.
+PT	eh.nva.err.sincliente	Selecione um cliente para continuar.
+ES	eh.nva.err.enproceso	El cliente ya tiene una contratación en proceso. Resolvela antes de crear otra.
+EN	eh.nva.err.enproceso	The customer already has a contract in progress. Resolve it before creating another.
+RU	eh.nva.err.enproceso	У клиента уже есть договор в процессе. Завершите его перед созданием нового.
+PT	eh.nva.err.enproceso	O cliente já tem uma contratação em andamento. Resolva antes de criar outra.
+ES	eh.nva.err.incompleto	Falta elegir cliente y plan.
+EN	eh.nva.err.incompleto	Choose a customer and a plan.
+RU	eh.nva.err.incompleto	Нужно выбрать клиента и план.
+PT	eh.nva.err.incompleto	Falta escolher cliente e plano.
+ES	eh.nva.sinsus	Sin suscripción
+EN	eh.nva.sinsus	No subscription
+RU	eh.nva.sinsus	Нет подписки
+PT	eh.nva.sinsus	Sem assinatura
+ES	eh.nva.aviso.enproceso	⚠ Ya tiene la contratación #{0} ({1}) en proceso. No se puede iniciar otra.
+EN	eh.nva.aviso.enproceso	⚠ Already has contract #{0} ({1}) in progress. Cannot start another.
+RU	eh.nva.aviso.enproceso	⚠ Уже есть договор №{0} ({1}) в процессе. Нельзя начать другой.
+PT	eh.nva.aviso.enproceso	⚠ Já possui a contratação #{0} ({1}) em andamento. Não é possível iniciar outra.
+ES	eh.nva.ok.titulo	Contratación registrada
+EN	eh.nva.ok.titulo	Contract registered
+RU	eh.nva.ok.titulo	Договор создан
+PT	eh.nva.ok.titulo	Contratação registrada
+ES	eh.nva.ok.cuerpo	Contratación #{0} creada (Pendiente de pago). La cobra Caja.
+EN	eh.nva.ok.cuerpo	Contract #{0} created (Pending payment). Cashier will charge it.
+RU	eh.nva.ok.cuerpo	Договор №{0} создан (ожидает оплаты). Оплатит касса.
+PT	eh.nva.ok.cuerpo	Contratação #{0} criada (Pendente de pagamento). O Caixa cobra.
+ES	eh.form.titulo	Para formalizar
+EN	eh.form.titulo	To formalize
+RU	eh.form.titulo	К оформлению
+PT	eh.form.titulo	Para formalizar
+ES	eh.form.header.desc	Contrataciones ya cobradas. Formalizá la suscripción para dejarla vigente.
+EN	eh.form.header.desc	Paid contracts. Formalize the subscription to activate it.
+RU	eh.form.header.desc	Оплаченные договоры. Оформите подписку, чтобы активировать.
+PT	eh.form.header.desc	Contratações pagas. Formalize a assinatura para ativá-la.
+ES	eh.form.empty	No hay contrataciones para formalizar.\nAparecen acá cuando Caja concreta el pago.
+EN	eh.form.empty	Nothing to formalize.\nItems appear here once Cashier completes payment.
+RU	eh.form.empty	Нет договоров для оформления.\nОни появляются после оплаты в кассе.
+PT	eh.form.empty	Nada para formalizar.\nAparecem aqui quando o Caixa conclui o pagamento.
+ES	eh.form.sec.detalle	Contratación pagada
+EN	eh.form.sec.detalle	Paid contract
+RU	eh.form.sec.detalle	Оплаченный договор
+PT	eh.form.sec.detalle	Contratação paga
+ES	eh.form.btn.formalizar	Formalizar suscripción
+EN	eh.form.btn.formalizar	Formalize subscription
+RU	eh.form.btn.formalizar	Оформить подписку
+PT	eh.form.btn.formalizar	Formalizar assinatura
+ES	eh.form.err.seleccion	Seleccioná una contratación pagada.
+EN	eh.form.err.seleccion	Select a paid contract.
+RU	eh.form.err.seleccion	Выберите оплаченный договор.
+PT	eh.form.err.seleccion	Selecione uma contratação paga.
+ES	eh.form.ok.titulo	Suscripción formalizada
+EN	eh.form.ok.titulo	Subscription formalized
+RU	eh.form.ok.titulo	Подписка оформлена
+PT	eh.form.ok.titulo	Assinatura formalizada
+ES	eh.form.ok.cuerpo	Suscripción #{0} vigente. Constancia generada.
+EN	eh.form.ok.cuerpo	Subscription #{0} active. Receipt generated.
+RU	eh.form.ok.cuerpo	Подписка №{0} активна. Справка создана.
+PT	eh.form.ok.cuerpo	Assinatura #{0} ativa. Comprovante gerado.
+ES	eh.cob.titulo	Cobros pendientes
+EN	eh.cob.titulo	Pending payments
+RU	eh.cob.titulo	Ожидают оплаты
+PT	eh.cob.titulo	Cobranças pendentes
+ES	eh.cob.header.desc	Cobrá las contrataciones derivadas por Venta. Al concretar el pago se emite el comprobante.
+EN	eh.cob.header.desc	Charge the contracts sent by Sales. Completing the payment issues the receipt.
+RU	eh.cob.header.desc	Принимайте оплату по договорам из отдела продаж. При оплате выдаётся чек.
+PT	eh.cob.header.desc	Cobre as contratações enviadas por Vendas. Ao concluir o pagamento, emite-se o comprovante.
+ES	eh.cob.empty	No hay cobros pendientes.\nLas nuevas contrataciones aparecen acá para cobrar.
+EN	eh.cob.empty	No pending payments.\nNew contracts appear here to be charged.
+RU	eh.cob.empty	Нет ожидающих оплат.\nНовые договоры появляются здесь для оплаты.
+PT	eh.cob.empty	Não há cobranças pendentes.\nNovas contratações aparecem aqui para cobrar.
+ES	eh.cob.sec.cobro	Cobro
+EN	eh.cob.sec.cobro	Payment
+RU	eh.cob.sec.cobro	Оплата
+PT	eh.cob.sec.cobro	Cobrança
+ES	eh.cob.sec.contratacion	Contratación
+EN	eh.cob.sec.contratacion	Contract
+RU	eh.cob.sec.contratacion	Договор
+PT	eh.cob.sec.contratacion	Contratação
+ES	eh.cob.btn.aprobado	Pago aprobado
+EN	eh.cob.btn.aprobado	Payment approved
+RU	eh.cob.btn.aprobado	Платёж одобрен
+PT	eh.cob.btn.aprobado	Pagamento aprovado
+ES	eh.cob.btn.rechazado	Pago rechazado
+EN	eh.cob.btn.rechazado	Payment declined
+RU	eh.cob.btn.rechazado	Платёж отклонён
+PT	eh.cob.btn.rechazado	Pagamento recusado
+ES	eh.cob.btn.irformalizar	Ir a formalizar
+EN	eh.cob.btn.irformalizar	Go to formalize
+RU	eh.cob.btn.irformalizar	Перейти к оформлению
+PT	eh.cob.btn.irformalizar	Ir para formalizar
+ES	eh.cob.hoy	hoy
+EN	eh.cob.hoy	today
+RU	eh.cob.hoy	сегодня
+PT	eh.cob.hoy	hoje
+ES	eh.cob.dias	hace {0} día(s)
+EN	eh.cob.dias	{0} day(s) ago
+RU	eh.cob.dias	{0} дн. назад
+PT	eh.cob.dias	há {0} dia(s)
+ES	eh.cob.err.seleccion	Seleccioná una contratación de la cola.
+EN	eh.cob.err.seleccion	Select a contract from the queue.
+RU	eh.cob.err.seleccion	Выберите договор из очереди.
+PT	eh.cob.err.seleccion	Selecione uma contratação da fila.
+ES	eh.cob.ok.titulo	Pago concretado
+EN	eh.cob.ok.titulo	Payment completed
+RU	eh.cob.ok.titulo	Платёж выполнен
+PT	eh.cob.ok.titulo	Pagamento concluído
+ES	eh.cob.ok.cuerpo	Comprobante {0}. Ahora Venta puede formalizar la suscripción.
+EN	eh.cob.ok.cuerpo	Receipt {0}. Sales can now formalize the subscription.
+RU	eh.cob.ok.cuerpo	Чек {0}. Теперь отдел продаж может оформить подписку.
+PT	eh.cob.ok.cuerpo	Comprovante {0}. Vendas já pode formalizar a assinatura.
+ES	eh.cob.cancel.titulo	Contratación cancelada
+EN	eh.cob.cancel.titulo	Contract cancelled
+RU	eh.cob.cancel.titulo	Договор отменён
+PT	eh.cob.cancel.titulo	Contratação cancelada
+ES	eh.cob.cancel.cuerpo	Se alcanzaron {0} pagos rechazados. La contratación quedó cancelada.
+EN	eh.cob.cancel.cuerpo	{0} declined payments reached. The contract was cancelled.
+RU	eh.cob.cancel.cuerpo	Достигнуто {0} отклонённых платежей. Договор отменён.
+PT	eh.cob.cancel.cuerpo	Atingidos {0} pagamentos recusados. A contratação foi cancelada.
+ES	eh.cob.rech.titulo	Pago rechazado
+EN	eh.cob.rech.titulo	Payment declined
+RU	eh.cob.rech.titulo	Платёж отклонён
+PT	eh.cob.rech.titulo	Pagamento recusado
+ES	eh.cob.rech.cuerpo	Intento {0}/{1}. Podés reintentar el cobro.
+EN	eh.cob.rech.cuerpo	Attempt {0}/{1}. You can retry the charge.
+RU	eh.cob.rech.cuerpo	Попытка {0}/{1}. Можно повторить оплату.
+PT	eh.cob.rech.cuerpo	Tentativa {0}/{1}. Você pode tentar novamente.
+ES	eh.cob.irform.titulo	Ir a formalizar
+EN	eh.cob.irform.titulo	Go to formalize
+RU	eh.cob.irform.titulo	Перейти к оформлению
+PT	eh.cob.irform.titulo	Ir para formalizar
+ES	eh.cob.irform.cuerpo	¿Abrir «Para formalizar» con la contratación #{0}?
+EN	eh.cob.irform.cuerpo	Open 'To formalize' with contract #{0}?
+RU	eh.cob.irform.cuerpo	Открыть «К оформлению» с договором №{0}?
+PT	eh.cob.irform.cuerpo	Abrir 'Para formalizar' com a contratação #{0}?
+ES	eh.cli.sec.suscripcion	Suscripción
+EN	eh.cli.sec.suscripcion	Subscription
+RU	eh.cli.sec.suscripcion	Подписка
+PT	eh.cli.sec.suscripcion	Assinatura
+ES	eh.cli.sus.sincliente	Seleccioná un cliente para ver su suscripción.
+EN	eh.cli.sus.sincliente	Select a customer to see their subscription.
+RU	eh.cli.sus.sincliente	Выберите клиента, чтобы увидеть подписку.
+PT	eh.cli.sus.sincliente	Selecione um cliente para ver a assinatura.
+ES	eh.cli.sus.sin	Sin suscripción
+EN	eh.cli.sus.sin	No subscription
+RU	eh.cli.sus.sin	Нет подписки
+PT	eh.cli.sus.sin	Sem assinatura
+ES	eh.cli.sus.estado	Estado
+EN	eh.cli.sus.estado	Status
+RU	eh.cli.sus.estado	Статус
+PT	eh.cli.sus.estado	Estado
+ES	eh.cli.sus.plan	Plan
+EN	eh.cli.sus.plan	Plan
+RU	eh.cli.sus.plan	План
+PT	eh.cli.sus.plan	Plano
+ES	eh.cli.sus.vence	Vence
+EN	eh.cli.sus.vence	Expires
+RU	eh.cli.sus.vence	Истекает
+PT	eh.cli.sus.vence	Vence
+ES	eh.cli.sus.sinlimite	sin límite
+EN	eh.cli.sus.sinlimite	no expiry
+RU	eh.cli.sus.sinlimite	без срока
+PT	eh.cli.sus.sinlimite	sem limite
+ES	eh.cli.sus.selplan	Seleccioná un plan.
+EN	eh.cli.sus.selplan	Select a plan.
+RU	eh.cli.sus.selplan	Выберите план.
+PT	eh.cli.sus.selplan	Selecione um plano.
+ES	eh.cli.sus.renovada	Suscripción renovada.
+EN	eh.cli.sus.renovada	Subscription renewed.
+RU	eh.cli.sus.renovada	Подписка продлена.
+PT	eh.cli.sus.renovada	Assinatura renovada.
+ES	eh.cli.sus.suspendida	Suscripción suspendida.
+EN	eh.cli.sus.suspendida	Subscription suspended.
+RU	eh.cli.sus.suspendida	Подписка приостановлена.
+PT	eh.cli.sus.suspendida	Assinatura suspensa.
+ES	eh.cli.sus.reactivada	Suscripción reactivada.
+EN	eh.cli.sus.reactivada	Subscription reactivated.
+RU	eh.cli.sus.reactivada	Подписка возобновлена.
+PT	eh.cli.sus.reactivada	Assinatura reativada.
+ES	eh.cli.sus.susp.titulo	Suspender suscripción
+EN	eh.cli.sus.susp.titulo	Suspend subscription
+RU	eh.cli.sus.susp.titulo	Приостановить подписку
+PT	eh.cli.sus.susp.titulo	Suspender assinatura
+ES	eh.cli.sus.susp.cuerpo	¿Suspender la suscripción? El cliente no podrá reservar hasta reactivarla.
+EN	eh.cli.sus.susp.cuerpo	Suspend the subscription? The customer cannot book until reactivated.
+RU	eh.cli.sus.susp.cuerpo	Приостановить подписку? Клиент не сможет бронировать до возобновления.
+PT	eh.cli.sus.susp.cuerpo	Suspender a assinatura? O cliente não poderá reservar até reativá-la.
+ES	eh.nva.paso.cliente	Cliente
+EN	eh.nva.paso.cliente	Customer
+RU	eh.nva.paso.cliente	Клиент
+PT	eh.nva.paso.cliente	Cliente
+ES	eh.nva.paso.plan	Plan
+EN	eh.nva.paso.plan	Plan
+RU	eh.nva.paso.plan	План
+PT	eh.nva.paso.plan	Plano
+ES	eh.nva.paso.confirmar	Confirmar
+EN	eh.nva.paso.confirmar	Confirm
+RU	eh.nva.paso.confirmar	Подтвердить
+PT	eh.nva.paso.confirmar	Confirmar
+ES	eh.nva.cli.listado	Clientes
+EN	eh.nva.cli.listado	Customers
+RU	eh.nva.cli.listado	Клиенты
+PT	eh.nva.cli.listado	Clientes
+ES	eh.nva.cli.ninguno	Ningún cliente seleccionado
+EN	eh.nva.cli.ninguno	No customer selected
+RU	eh.nva.cli.ninguno	Клиент не выбран
+PT	eh.nva.cli.ninguno	Nenhum cliente selecionado
+ES	eh.nva.alerta.vencida	⚠ La suscripción está {0}.
+EN	eh.nva.alerta.vencida	⚠ The subscription is {0}.
+RU	eh.nva.alerta.vencida	⚠ Подписка: {0}.
+PT	eh.nva.alerta.vencida	⚠ A assinatura está {0}.
+ES	eh.nva.cli.situacion	Situación
+EN	eh.nva.cli.situacion	Status
+RU	eh.nva.cli.situacion	Статус
+PT	eh.nva.cli.situacion	Situação
+ES	eh.nva.sit.todos	Todas las situaciones
+EN	eh.nva.sit.todos	All statuses
+RU	eh.nva.sit.todos	Все статусы
+PT	eh.nva.sit.todos	Todas as situações
+ES	eh.nva.sit.activa	Suscripción activa
+EN	eh.nva.sit.activa	Active subscription
+RU	eh.nva.sit.activa	Активная подписка
+PT	eh.nva.sit.activa	Assinatura ativa
+ES	eh.nva.sit.porvencer	Por vencer
+EN	eh.nva.sit.porvencer	Expiring soon
+RU	eh.nva.sit.porvencer	Истекает
+PT	eh.nva.sit.porvencer	A vencer
+ES	eh.nva.sit.vencida	Vencida
+EN	eh.nva.sit.vencida	Expired
+RU	eh.nva.sit.vencida	Истекла
+PT	eh.nva.sit.vencida	Vencida
+ES	eh.nva.sit.suspendida	Suspendida
+EN	eh.nva.sit.suspendida	Suspended
+RU	eh.nva.sit.suspendida	Приостановлена
+PT	eh.nva.sit.suspendida	Suspensa
+ES	eh.nva.sit.sinsus	Sin suscripción
+EN	eh.nva.sit.sinsus	No subscription
+RU	eh.nva.sit.sinsus	Нет подписки
+PT	eh.nva.sit.sinsus	Sem assinatura
+ES	eh.nva.sit.pendiente	Con contratación pendiente
+EN	eh.nva.sit.pendiente	With pending contract
+RU	eh.nva.sit.pendiente	С ожидающим договором
+PT	eh.nva.sit.pendiente	Com contratação pendente
+ES	eh.tipo.alta	Alta
+EN	eh.tipo.alta	New
+RU	eh.tipo.alta	Новая
+PT	eh.tipo.alta	Alta
+ES	eh.tipo.renovacion	Renovación
+EN	eh.tipo.renovacion	Renewal
+RU	eh.tipo.renovacion	Продление
+PT	eh.tipo.renovacion	Renovação
+ES	eh.nva.btn.registrarrenov	Registrar renovación y derivar a Caja
+EN	eh.nva.btn.registrarrenov	Register renewal and send to Cashier
+RU	eh.nva.btn.registrarrenov	Создать продление и передать в кассу
+PT	eh.nva.btn.registrarrenov	Registrar renovação e enviar ao Caixa
+ES	eh.nva.okrenov.titulo	Renovación registrada
+EN	eh.nva.okrenov.titulo	Renewal registered
+RU	eh.nva.okrenov.titulo	Продление создано
+PT	eh.nva.okrenov.titulo	Renovação registrada
+ES	eh.nva.okrenov.cuerpo	Renovación #{0} creada (Pendiente de pago). La cobra Caja.
+EN	eh.nva.okrenov.cuerpo	Renewal #{0} created (Pending payment). Cashier will charge it.
+RU	eh.nva.okrenov.cuerpo	Продление №{0} создано (ожидает оплаты). Оплатит касса.
+PT	eh.nva.okrenov.cuerpo	Renovação #{0} criada (Pendente de pagamento). O Caixa cobra.
+ES	eh.nva.alerta.suspendida	⚠ La suscripción está suspendida. Reactivala desde Clientes (no se renueva).
+EN	eh.nva.alerta.suspendida	⚠ The subscription is suspended. Reactivate it from Customers (cannot renew).
+RU	eh.nva.alerta.suspendida	⚠ Подписка приостановлена. Возобновите её в «Клиентах» (продление недоступно).
+PT	eh.nva.alerta.suspendida	⚠ A assinatura está suspensa. Reative em Clientes (não se renova).
+ES	eh.form.okrenov.titulo	Renovación formalizada
+EN	eh.form.okrenov.titulo	Renewal formalized
+RU	eh.form.okrenov.titulo	Продление оформлено
+PT	eh.form.okrenov.titulo	Renovação formalizada
+ES	eh.form.okrenov.cuerpo	Suscripción #{0} renovada: vencimiento extendido un mes.
+EN	eh.form.okrenov.cuerpo	Subscription #{0} renewed: expiry extended one month.
+RU	eh.form.okrenov.cuerpo	Подписка №{0} продлена: срок увеличен на месяц.
+PT	eh.form.okrenov.cuerpo	Assinatura #{0} renovada: vencimento estendido um mês.
+ES	eh.cob.conf.titulo	Confirmar cobro
+EN	eh.cob.conf.titulo	Confirm payment
+RU	eh.cob.conf.titulo	Подтвердить оплату
+PT	eh.cob.conf.titulo	Confirmar cobrança
+ES	eh.cob.conf.cuerpo	¿Registrar el pago de {0} por {1} ({2})?
+EN	eh.cob.conf.cuerpo	Register the payment of {0} for {1} ({2})?
+RU	eh.cob.conf.cuerpo	Зарегистрировать оплату {0} на {1} ({2})?
+PT	eh.cob.conf.cuerpo	Registrar o pagamento de {0} por {1} ({2})?
+ES	eh.cob.conf.cuotas	{0} en {1} cuota(s) de {2}
+EN	eh.cob.conf.cuotas	{0} in {1} installment(s) of {2}
+RU	eh.cob.conf.cuotas	{0} в {1} платеж(ей) по {2}
+PT	eh.cob.conf.cuotas	{0} em {1} parcela(s) de {2}
+ES	eh.nva.plan.listado	Planes disponibles
+EN	eh.nva.plan.listado	Available plans
+RU	eh.nva.plan.listado	Доступные планы
+PT	eh.nva.plan.listado	Planos disponíveis
+ES	eh.nva.plan.ninguno	Elegí un plan
+EN	eh.nva.plan.ninguno	Choose a plan
+RU	eh.nva.plan.ninguno	Выберите план
+PT	eh.nva.plan.ninguno	Escolha um plano
+ES	eh.nva.plan.reservasmes	{0} reservas por mes
+EN	eh.nva.plan.reservasmes	{0} bookings per month
+RU	eh.nva.plan.reservasmes	{0} броней в месяц
+PT	eh.nva.plan.reservasmes	{0} reservas por mês
+ES	eh.nva.plan.premium	Acceso premium
+EN	eh.nva.plan.premium	Premium access
+RU	eh.nva.plan.premium	Премиум-доступ
+PT	eh.nva.plan.premium	Acesso premium
+ES	eh.nva.plan.invitados	Hasta {0} invitado(s) por reserva
+EN	eh.nva.plan.invitados	Up to {0} guest(s) per booking
+RU	eh.nva.plan.invitados	До {0} гостей на бронь
+PT	eh.nva.plan.invitados	Até {0} convidado(s) por reserva
+ES	eh.nva.plan.anticip	Anticipación máxima: {0} días
+EN	eh.nva.plan.anticip	Max. lead time: {0} days
+RU	eh.nva.plan.anticip	Макс. срок: {0} дн.
+PT	eh.nva.plan.anticip	Antecedência máx.: {0} dias
+ES	eh.nva.conf.importe	Importe
+EN	eh.nva.conf.importe	Amount
+RU	eh.nva.conf.importe	Сумма
+PT	eh.nva.conf.importe	Valor
+ES	eh.cob.sec.cola	Cola de cobros
+EN	eh.cob.sec.cola	Payment queue
+RU	eh.cob.sec.cola	Очередь оплат
+PT	eh.cob.sec.cola	Fila de cobranças
+ES	eh.cob.total	Total a cobrar
+EN	eh.cob.total	Total to charge
+RU	eh.cob.total	Итого к оплате
+PT	eh.cob.total	Total a cobrar
+ES	eh.form.sec.cola	Contrataciones pagadas
+EN	eh.form.sec.cola	Paid contracts
+RU	eh.form.sec.cola	Оплаченные договоры
+PT	eh.form.sec.cola	Contratações pagas
+ES	eh.nva.plan.btncond	Ver condiciones (PDF)
+EN	eh.nva.plan.btncond	View terms (PDF)
+RU	eh.nva.plan.btncond	Условия (PDF)
+PT	eh.nva.plan.btncond	Ver condições (PDF)
+ES	eh.cob.vercomprob.titulo	Comprobante
+EN	eh.cob.vercomprob.titulo	Receipt
+RU	eh.cob.vercomprob.titulo	Чек
+PT	eh.cob.vercomprob.titulo	Comprovante
+ES	eh.cob.vercomprob.cuerpo	¿Ver el comprobante de pago en PDF?
+EN	eh.cob.vercomprob.cuerpo	View the payment receipt as PDF?
+RU	eh.cob.vercomprob.cuerpo	Открыть чек об оплате в PDF?
+PT	eh.cob.vercomprob.cuerpo	Ver o comprovante de pagamento em PDF?
+ES	eh.cob.vercancel.titulo	Constancia de cancelación
+EN	eh.cob.vercancel.titulo	Cancellation certificate
+RU	eh.cob.vercancel.titulo	Справка об отмене
+PT	eh.cob.vercancel.titulo	Constância de cancelamento
+ES	eh.cob.vercancel.cuerpo	¿Ver la constancia de cancelación en PDF?
+EN	eh.cob.vercancel.cuerpo	View the cancellation certificate as PDF?
+RU	eh.cob.vercancel.cuerpo	Открыть справку об отмене в PDF?
+PT	eh.cob.vercancel.cuerpo	Ver a constância de cancelamento em PDF?
+ES	eh.form.verconst.titulo	Constancia de suscripción
+EN	eh.form.verconst.titulo	Subscription certificate
+RU	eh.form.verconst.titulo	Справка о подписке
+PT	eh.form.verconst.titulo	Constância de assinatura
+ES	eh.form.verconst.cuerpo	¿Ver la constancia de suscripción en PDF?
+EN	eh.form.verconst.cuerpo	View the subscription certificate as PDF?
+RU	eh.form.verconst.cuerpo	Открыть справку о подписке в PDF?
+PT	eh.form.verconst.cuerpo	Ver a constância de assinatura em PDF?
+ES	eh.medio.efectivo	Efectivo
+EN	eh.medio.efectivo	Cash
+RU	eh.medio.efectivo	Наличные
+PT	eh.medio.efectivo	Dinheiro
+ES	eh.medio.tarjeta	Tarjeta
+EN	eh.medio.tarjeta	Card
+RU	eh.medio.tarjeta	Карта
+PT	eh.medio.tarjeta	Cartão
+ES	eh.medio.transferencia	Transferencia
+EN	eh.medio.transferencia	Transfer
+RU	eh.medio.transferencia	Перевод
+PT	eh.medio.transferencia	Transferência
+ES	eh.doc.concepto.alta	Alta de suscripción
+EN	eh.doc.concepto.alta	New subscription
+RU	eh.doc.concepto.alta	Новая подписка
+PT	eh.doc.concepto.alta	Alta de assinatura
+ES	eh.doc.concepto.renov	Renovación de suscripción
+EN	eh.doc.concepto.renov	Subscription renewal
+RU	eh.doc.concepto.renov	Продление подписки
+PT	eh.doc.concepto.renov	Renovação de assinatura
+ES	eh.doc.condiciones.tit	Condiciones del plan
+EN	eh.doc.condiciones.tit	Plan terms
+RU	eh.doc.condiciones.tit	Условия плана
+PT	eh.doc.condiciones.tit	Condições do plano
+ES	eh.doc.comprobante.tit	Comprobante de pago
+EN	eh.doc.comprobante.tit	Payment receipt
+RU	eh.doc.comprobante.tit	Чек об оплате
+PT	eh.doc.comprobante.tit	Comprovante de pagamento
+ES	eh.doc.constancia.tit	Constancia de suscripción
+EN	eh.doc.constancia.tit	Subscription certificate
+RU	eh.doc.constancia.tit	Справка о подписке
+PT	eh.doc.constancia.tit	Constância de assinatura
+ES	eh.doc.cancelacion.tit	Constancia de cancelación
+EN	eh.doc.cancelacion.tit	Cancellation certificate
+RU	eh.doc.cancelacion.tit	Справка об отмене
+PT	eh.doc.cancelacion.tit	Constância de cancelamento
+ES	eh.doc.comp.cuotas	Cuotas: {0} de ${1:N2}\nRecargo financiación: {2:0.##}%\n
+EN	eh.doc.comp.cuotas	Installments: {0} of ${1:N2}\nFinancing surcharge: {2:0.##}%\n
+RU	eh.doc.comp.cuotas	Платежи: {0} по ${1:N2}\nНаценка за рассрочку: {2:0.##}%\n
+PT	eh.doc.comp.cuotas	Parcelas: {0} de ${1:N2}\nAcréscimo financiamento: {2:0.##}%\n
+ES	eh.doc.condiciones	CONDICIONES DEL PLAN DE SUSCRIPCIÓN\n\nPlan: {0}\nValor de la suscripción: ${1:N2}\nReservas incluidas por mes: {2}\nAcceso premium: {3}\nInvitados por reserva: hasta {4}\nAnticipación máxima de reserva: {5} días\nVigencia: 1 mes desde la formalización, renovable.\n\nCondiciones particulares:\n- La suscripción se activa una vez confirmado el pago.\n- Las reservas no consumidas no se acumulan al mes siguiente.\n- La falta de pago de la renovación hace caducar la suscripción en su fecha de vencimiento.
+EN	eh.doc.condiciones	SUBSCRIPTION PLAN TERMS\n\nPlan: {0}\nSubscription price: ${1:N2}\nBookings included per month: {2}\nPremium access: {3}\nGuests per booking: up to {4}\nMax. booking lead time: {5} days\nValidity: 1 month from activation, renewable.\n\nParticular terms:\n- The subscription activates once payment is confirmed.\n- Unused bookings do not carry over to the next month.\n- Non-payment of the renewal lets the subscription lapse on its expiry date.
+RU	eh.doc.condiciones	УСЛОВИЯ ПЛАНА ПОДПИСКИ\n\nПлан: {0}\nСтоимость подписки: ${1:N2}\nБроней в месяц: {2}\nПремиум-доступ: {3}\nГостей на бронь: до {4}\nМакс. срок брони: {5} дн.\nСрок действия: 1 месяц с момента оформления, с продлением.\n\nОсобые условия:\n- Подписка активируется после подтверждения оплаты.\n- Неиспользованные брони не переносятся на следующий месяц.\n- Неоплата продления прекращает подписку в дату окончания.
+PT	eh.doc.condiciones	CONDIÇÕES DO PLANO DE ASSINATURA\n\nPlano: {0}\nValor da assinatura: ${1:N2}\nReservas incluídas por mês: {2}\nAcesso premium: {3}\nConvidados por reserva: até {4}\nAntecedência máx. de reserva: {5} dias\nVigência: 1 mês desde a formalização, renovável.\n\nCondições particulares:\n- A assinatura ativa-se após a confirmação do pagamento.\n- As reservas não usadas não se acumulam no mês seguinte.\n- A falta de pagamento da renovação faz caducar a assinatura na data de vencimento.
+ES	eh.doc.comprobante	COMPROBANTE DE PAGO\n\nN° {0}\nFecha: {1:dd/MM/yyyy HH:mm}\n\nCliente: {2}\nConcepto: {3} — Plan {4}\nMedio de pago: {5}\n{6}Importe base: ${7:N2}\nTOTAL COBRADO: ${8:N2}\n\nComprobante interno de ExperienceHub (no válido como factura fiscal).
+EN	eh.doc.comprobante	PAYMENT RECEIPT\n\nNo. {0}\nDate: {1:dd/MM/yyyy HH:mm}\n\nCustomer: {2}\nConcept: {3} — Plan {4}\nPayment method: {5}\n{6}Base amount: ${7:N2}\nTOTAL CHARGED: ${8:N2}\n\nInternal ExperienceHub receipt (not a fiscal invoice).
+RU	eh.doc.comprobante	ЧЕК ОБ ОПЛАТЕ\n\n№ {0}\nДата: {1:dd/MM/yyyy HH:mm}\n\nКлиент: {2}\nНазначение: {3} — План {4}\nСпособ оплаты: {5}\n{6}Базовая сумма: ${7:N2}\nИТОГО: ${8:N2}\n\nВнутренний чек ExperienceHub (не является фискальным счётом).
+PT	eh.doc.comprobante	COMPROVANTE DE PAGAMENTO\n\nN° {0}\nData: {1:dd/MM/yyyy HH:mm}\n\nCliente: {2}\nConceito: {3} — Plano {4}\nMeio de pagamento: {5}\n{6}Valor base: ${7:N2}\nTOTAL COBRADO: ${8:N2}\n\nComprovante interno do ExperienceHub (não válido como nota fiscal).
+ES	eh.doc.constancia	CONSTANCIA DE SUSCRIPCIÓN\n\nFecha de emisión: {0:dd/MM/yyyy}\n\nSe deja constancia de la suscripción vigente de:\nCliente: {1}\nPlan: {2}\nInicio: {3:dd/MM/yyyy}\nVigente hasta: {4}\nEstado: {5}\nComprobante de pago asociado: {6}
+EN	eh.doc.constancia	SUBSCRIPTION CERTIFICATE\n\nIssue date: {0:dd/MM/yyyy}\n\nThis certifies the active subscription of:\nCustomer: {1}\nPlan: {2}\nStart: {3:dd/MM/yyyy}\nValid until: {4}\nStatus: {5}\nAssociated payment receipt: {6}
+RU	eh.doc.constancia	СПРАВКА О ПОДПИСКЕ\n\nДата выдачи: {0:dd/MM/yyyy}\n\nНастоящим подтверждается активная подписка:\nКлиент: {1}\nПлан: {2}\nНачало: {3:dd/MM/yyyy}\nДействует до: {4}\nСтатус: {5}\nСвязанный чек: {6}
+PT	eh.doc.constancia	CONSTÂNCIA DE ASSINATURA\n\nData de emissão: {0:dd/MM/yyyy}\n\nDeclara-se a assinatura vigente de:\nCliente: {1}\nPlano: {2}\nInício: {3:dd/MM/yyyy}\nVigente até: {4}\nEstado: {5}\nComprovante de pagamento associado: {6}
+ES	eh.doc.cancelacion	CONSTANCIA DE CANCELACIÓN DE CONTRATACIÓN\n\nFecha: {0:dd/MM/yyyy HH:mm}\n\nContratación N° {1}\nCliente: {2}\nPlan: {3}\nImporte: ${4:N2}\n\nMotivo: se alcanzó el máximo de {5} intentos de pago sin concretarse.\nEstado: Cancelada.
+EN	eh.doc.cancelacion	CONTRACT CANCELLATION CERTIFICATE\n\nDate: {0:dd/MM/yyyy HH:mm}\n\nContract No. {1}\nCustomer: {2}\nPlan: {3}\nAmount: ${4:N2}\n\nReason: the maximum of {5} payment attempts was reached without completion.\nStatus: Cancelled.
+RU	eh.doc.cancelacion	СПРАВКА ОБ ОТМЕНЕ ДОГОВОРА\n\nДата: {0:dd/MM/yyyy HH:mm}\n\nДоговор № {1}\nКлиент: {2}\nПлан: {3}\nСумма: ${4:N2}\n\nПричина: достигнут максимум {5} попыток оплаты без результата.\nСтатус: Отменён.
+PT	eh.doc.cancelacion	CONSTÂNCIA DE CANCELAMENTO DE CONTRATAÇÃO\n\nData: {0:dd/MM/yyyy HH:mm}\n\nContratação N° {1}\nCliente: {2}\nPlano: {3}\nValor: ${4:N2}\n\nMotivo: atingiu-se o máximo de {5} tentativas de pagamento sem concluir.\nEstado: Cancelada.
+ES	eh.cli.filtro.plan	Plan
+EN	eh.cli.filtro.plan	Plan
+RU	eh.cli.filtro.plan	План
+PT	eh.cli.filtro.plan	Plano
+ES	eh.cli.filtro.ciudad	Ciudad
+EN	eh.cli.filtro.ciudad	City
+RU	eh.cli.filtro.ciudad	Город
+PT	eh.cli.filtro.ciudad	Cidade
+ES	eh.cli.filtro.todosplanes	Todos los planes
+EN	eh.cli.filtro.todosplanes	All plans
+RU	eh.cli.filtro.todosplanes	Все планы
+PT	eh.cli.filtro.todosplanes	Todos os planos
+ES	eh.cli.filtro.todasciudades	Todas las ciudades
+EN	eh.cli.filtro.todasciudades	All cities
+RU	eh.cli.filtro.todasciudades	Все города
+PT	eh.cli.filtro.todasciudades	Todas as cidades
+ES	eh.cli.btn.exportar	Descargar PDF
+EN	eh.cli.btn.exportar	Download PDF
+RU	eh.cli.btn.exportar	Скачать PDF
+PT	eh.cli.btn.exportar	Baixar PDF
+ES	eh.cli.export.titulo	Listado de clientes
+EN	eh.cli.export.titulo	Customer list
+RU	eh.cli.export.titulo	Список клиентов
+PT	eh.cli.export.titulo	Lista de clientes
+ES	eh.cli.export.vacio	No hay clientes para exportar.
+EN	eh.cli.export.vacio	No customers to export.
+RU	eh.cli.export.vacio	Нет клиентов для экспорта.
+PT	eh.cli.export.vacio	Não há clientes para exportar.
+ES	eh.res.paso.cliente	Cliente
+EN	eh.res.paso.cliente	Customer
+RU	eh.res.paso.cliente	Клиент
+PT	eh.res.paso.cliente	Cliente
+ES	eh.res.paso.experiencia	Experiencia
+EN	eh.res.paso.experiencia	Experience
+RU	eh.res.paso.experiencia	Впечатление
+PT	eh.res.paso.experiencia	Experiência
+ES	eh.res.paso.confirmacion	Confirmación
+EN	eh.res.paso.confirmacion	Confirmation
+RU	eh.res.paso.confirmacion	Подтверждение
+PT	eh.res.paso.confirmacion	Confirmação
+ES	eh.res.sec.cliente	① Cliente
+EN	eh.res.sec.cliente	① Customer
+RU	eh.res.sec.cliente	① Клиент
+PT	eh.res.sec.cliente	① Cliente
+ES	eh.res.sec.experiencia	② Experiencia
+EN	eh.res.sec.experiencia	② Experience
+RU	eh.res.sec.experiencia	② Впечатление
+PT	eh.res.sec.experiencia	② Experiência
+ES	eh.res.sec.confirmacion	③ Confirmación
+EN	eh.res.sec.confirmacion	③ Confirmation
+RU	eh.res.sec.confirmacion	③ Подтверждение
+PT	eh.res.sec.confirmacion	③ Confirmação
+ES	eh.res.estado.pendiente	Pendiente
+EN	eh.res.estado.pendiente	Pending
+RU	eh.res.estado.pendiente	Ожидает
+PT	eh.res.estado.pendiente	Pendente
+ES	eh.res.estado.confirmada	Confirmada
+EN	eh.res.estado.confirmada	Confirmed
+RU	eh.res.estado.confirmada	Подтверждена
+PT	eh.res.estado.confirmada	Confirmada
+ES	eh.res.estado.cancelada	Cancelada
+EN	eh.res.estado.cancelada	Cancelled
+RU	eh.res.estado.cancelada	Отменена
+PT	eh.res.estado.cancelada	Cancelada
+ES	eh.res.estado.asistio	Asistió
+EN	eh.res.estado.asistio	Attended
+RU	eh.res.estado.asistio	Посетил
+PT	eh.res.estado.asistio	Compareceu
+ES	eh.res.estado.noasistio	No asistió
+EN	eh.res.estado.noasistio	No-show
+RU	eh.res.estado.noasistio	Не явился
+PT	eh.res.estado.noasistio	Não compareceu
+ES	eh.res.sinsus	Sin suscripción
+EN	eh.res.sinsus	No subscription
+RU	eh.res.sinsus	Нет подписки
+PT	eh.res.sinsus	Sem assinatura
+ES	eh.res.vencida	vencida
+EN	eh.res.vencida	expired
+RU	eh.res.vencida	истёкла
+PT	eh.res.vencida	vencida
+ES	eh.res.saldomes	{0} de {1} este mes
+EN	eh.res.saldomes	{0} of {1} this month
+RU	eh.res.saldomes	{0} из {1} в этом месяце
+PT	eh.res.saldomes	{0} de {1} este mês
+ES	eh.res.sinsugerencias	Sin sugerencias por ahora
+EN	eh.res.sinsugerencias	No suggestions yet
+RU	eh.res.sinsugerencias	Пока нет предложений
+PT	eh.res.sinsugerencias	Sem sugestões por enquanto
+ES	eh.res.nosugerida	No hay una experiencia sugerida para este cliente.
+EN	eh.res.nosugerida	There is no suggested experience for this customer.
+RU	eh.res.nosugerida	Для этого клиента нет рекомендованного впечатления.
+PT	eh.res.nosugerida	Não há uma experiência sugerida para este cliente.
+ES	eh.res.err.selcliexp	Seleccioná un cliente y una experiencia.
+EN	eh.res.err.selcliexp	Select a customer and an experience.
+RU	eh.res.err.selcliexp	Выберите клиента и впечатление.
+PT	eh.res.err.selcliexp	Selecione um cliente e uma experiência.
+ES	eh.res.err.selreserva	Seleccioná una reserva del listado.
+EN	eh.res.err.selreserva	Select a reservation from the list.
+RU	eh.res.err.selreserva	Выберите бронь из списка.
+PT	eh.res.err.selreserva	Selecione uma reserva da lista.
+ES	eh.res.err.confestado	Solo se pueden confirmar reservas pendientes.
+EN	eh.res.err.confestado	Only pending reservations can be confirmed.
+RU	eh.res.err.confestado	Подтвердить можно только ожидающие брони.
+PT	eh.res.err.confestado	Só é possível confirmar reservas pendentes.
+ES	eh.res.sincupo.titulo	Sin cupo
+EN	eh.res.sincupo.titulo	No spots
+RU	eh.res.sincupo.titulo	Нет мест
+PT	eh.res.sincupo.titulo	Sem vagas
+ES	eh.res.sincupo.cuerpo	La experiencia está completa. ¿Querés ingresar al cliente a la lista de espera?
+EN	eh.res.sincupo.cuerpo	The experience is full. Add the customer to the waiting list?
+RU	eh.res.sincupo.cuerpo	Впечатление заполнено. Добавить клиента в лист ожидания?
+PT	eh.res.sincupo.cuerpo	A experiência está lotada. Deseja adicionar o cliente à lista de espera?
+ES	eh.res.espera.titulo	En lista de espera
+EN	eh.res.espera.titulo	On the waiting list
+RU	eh.res.espera.titulo	В листе ожидания
+PT	eh.res.espera.titulo	Na lista de espera
+ES	eh.res.espera.cuerpo	Te avisamos si se libera un lugar. Posición {0} en la fila.
+EN	eh.res.espera.cuerpo	We'll notify you if a spot opens up. Position {0} in line.
+RU	eh.res.espera.cuerpo	Мы сообщим, если освободится место. Позиция {0} в очереди.
+PT	eh.res.espera.cuerpo	Avisaremos se uma vaga for liberada. Posição {0} na fila.
+ES	eh.res.ok.confirmada	Reserva confirmada.
+EN	eh.res.ok.confirmada	Reservation confirmed.
+RU	eh.res.ok.confirmada	Бронь подтверждена.
+PT	eh.res.ok.confirmada	Reserva confirmada.
+ES	eh.res.ok.cancelada	Reserva cancelada.
+EN	eh.res.ok.cancelada	Reservation cancelled.
+RU	eh.res.ok.cancelada	Бронь отменена.
+PT	eh.res.ok.cancelada	Reserva cancelada.
+ES	eh.res.cancelar.titulo	Cancelar reserva
+EN	eh.res.cancelar.titulo	Cancel reservation
+RU	eh.res.cancelar.titulo	Отменить бронь
+PT	eh.res.cancelar.titulo	Cancelar reserva
+ES	eh.res.cancelar.motivo	Motivo de cancelación:
+EN	eh.res.cancelar.motivo	Cancellation reason:
+RU	eh.res.cancelar.motivo	Причина отмены:
+PT	eh.res.cancelar.motivo	Motivo do cancelamento:
+ES	eh.res.confirmar.titulo	Confirmar reserva
+EN	eh.res.confirmar.titulo	Confirm reservation
+RU	eh.res.confirmar.titulo	Подтвердить бронь
+PT	eh.res.confirmar.titulo	Confirmar reserva
+ES	eh.res.confirmar.cuerpo	Cliente: {0}\nExperiencia: {1}\nFecha y horario: {2}\nLugares: {3}\nReserva N° {4}\n\nEstado actual: {5} → se confirmará la reserva.\n\n¿Confirmás la operación?
+EN	eh.res.confirmar.cuerpo	Customer: {0}\nExperience: {1}\nDate and time: {2}\nSpots: {3}\nReservation No. {4}\n\nCurrent status: {5} → the reservation will be confirmed.\n\nConfirm the operation?
+RU	eh.res.confirmar.cuerpo	Клиент: {0}\nВпечатление: {1}\nДата и время: {2}\nМеста: {3}\nБронь № {4}\n\nТекущий статус: {5} → бронь будет подтверждена.\n\nПодтвердить операцию?
+PT	eh.res.confirmar.cuerpo	Cliente: {0}\nExperiência: {1}\nData e horário: {2}\nLugares: {3}\nReserva N° {4}\n\nEstado atual: {5} → a reserva será confirmada.\n\nConfirma a operação?
+ES	eh.res.verpdf.titulo	Confirmación de reserva
+EN	eh.res.verpdf.titulo	Reservation confirmation
+RU	eh.res.verpdf.titulo	Подтверждение брони
+PT	eh.res.verpdf.titulo	Confirmação de reserva
+ES	eh.res.verpdf.cuerpo	¿Ver la confirmación de la reserva en PDF?
+EN	eh.res.verpdf.cuerpo	View the reservation confirmation as PDF?
+RU	eh.res.verpdf.cuerpo	Открыть подтверждение брони в PDF?
+PT	eh.res.verpdf.cuerpo	Ver a confirmação da reserva em PDF?
+ES	eh.res.pdf.soloconfirmada	Solo las reservas confirmadas tienen confirmación en PDF.
+EN	eh.res.pdf.soloconfirmada	Only confirmed reservations have a PDF confirmation.
+RU	eh.res.pdf.soloconfirmada	Подтверждение в PDF есть только у подтверждённых броней.
+PT	eh.res.pdf.soloconfirmada	Apenas reservas confirmadas têm confirmação em PDF.
+ES	eh.btn.confpdf	Confirmación (PDF)
+EN	eh.btn.confpdf	Confirmation (PDF)
+RU	eh.btn.confpdf	Подтверждение (PDF)
+PT	eh.btn.confpdf	Confirmação (PDF)
+ES	eh.doc.reserva.tit	Confirmación de reserva
+EN	eh.doc.reserva.tit	Reservation confirmation
+RU	eh.doc.reserva.tit	Подтверждение брони
+PT	eh.doc.reserva.tit	Confirmação de reserva
+ES	eh.doc.reserva.minutos	{0} min
+EN	eh.doc.reserva.minutos	{0} min
+RU	eh.doc.reserva.minutos	{0} мин
+PT	eh.doc.reserva.minutos	{0} min
+ES	eh.doc.reserva.lugares	{0} (1 titular + {1} invitado/s)
+EN	eh.doc.reserva.lugares	{0} (1 holder + {1} guest/s)
+RU	eh.doc.reserva.lugares	{0} (1 основной + {1} гость/ей)
+PT	eh.doc.reserva.lugares	{0} (1 titular + {1} convidado/s)
+ES	eh.doc.reserva	CONFIRMACIÓN DE RESERVA\n\nN° {0}\nFecha de emisión: {1}\n\nCliente: {2}\nExperiencia: {3}\nLugar: {9}\nFecha y horario: {4}\nDuración: {5}\nLugares reservados: {6}\nEstado: {7}\nFecha de la reserva: {8}\n\nPresentá esta confirmación al llegar a la experiencia.\nComprobante interno de ExperienceHub.
+EN	eh.doc.reserva	RESERVATION CONFIRMATION\n\nNo. {0}\nIssue date: {1}\n\nCustomer: {2}\nExperience: {3}\nPlace: {9}\nDate and time: {4}\nDuration: {5}\nSpots reserved: {6}\nStatus: {7}\nReservation date: {8}\n\nPresent this confirmation when you arrive at the experience.\nInternal ExperienceHub receipt.
+RU	eh.doc.reserva	ПОДТВЕРЖДЕНИЕ БРОНИ\n\n№ {0}\nДата выдачи: {1}\n\nКлиент: {2}\nВпечатление: {3}\nМесто: {9}\nДата и время: {4}\nДлительность: {5}\nЗабронировано мест: {6}\nСтатус: {7}\nДата брони: {8}\n\nПредъявите это подтверждение при посещении впечатления.\nВнутренний чек ExperienceHub.
+PT	eh.doc.reserva	CONFIRMAÇÃO DE RESERVA\n\nN° {0}\nData de emissão: {1}\n\nCliente: {2}\nExperiência: {3}\nLocal: {9}\nData e horário: {4}\nDuração: {5}\nLugares reservados: {6}\nEstado: {7}\nData da reserva: {8}\n\nApresente esta confirmação ao chegar à experiência.\nComprovante interno do ExperienceHub.
+ES	eh.le.err.selentrada	Seleccioná una entrada de la lista.
+EN	eh.le.err.selentrada	Select an entry from the list.
+RU	eh.le.err.selentrada	Выберите запись из списка.
+PT	eh.le.err.selentrada	Selecione uma entrada da lista.
+ES	eh.le.err.seloferta	Seleccioná la entrada con la oferta vigente.
+EN	eh.le.err.seloferta	Select the entry with the active offer.
+RU	eh.le.err.seloferta	Выберите запись с активным предложением.
+PT	eh.le.err.seloferta	Selecione a entrada com a oferta vigente.
+ES	eh.le.ok.confirmada.titulo	¡Cupo confirmado!
+EN	eh.le.ok.confirmada.titulo	Spot confirmed!
+RU	eh.le.ok.confirmada.titulo	Место подтверждено!
+PT	eh.le.ok.confirmada.titulo	Vaga confirmada!
+ES	eh.le.ok.confirmada.cuerpo	Se creó la reserva #{0} desde la lista de espera (queda Pendiente de confirmación).
+EN	eh.le.ok.confirmada.cuerpo	Reservation #{0} was created from the waiting list (it remains Pending confirmation).
+RU	eh.le.ok.confirmada.cuerpo	Из листа ожидания создана бронь №{0} (ожидает подтверждения).
+PT	eh.le.ok.confirmada.cuerpo	A reserva #{0} foi criada a partir da lista de espera (fica Pendente de confirmação).
+ES	eh.le.ok.rechazada	Oferta rechazada. El cupo se ofreció al siguiente de la fila (si había).
+EN	eh.le.ok.rechazada	Offer rejected. The spot was offered to the next in line (if any).
+RU	eh.le.ok.rechazada	Предложение отклонено. Место предложено следующему в очереди (если есть).
+PT	eh.le.ok.rechazada	Oferta recusada. A vaga foi oferecida ao próximo da fila (se houver).
+ES	eh.res.sec.existentes	Reservas existentes
+EN	eh.res.sec.existentes	Existing reservations
+RU	eh.res.sec.existentes	Существующие брони
+PT	eh.res.sec.existentes	Reservas existentes
+ES	eh.res.btn.reservar	Reservar y confirmar
+EN	eh.res.btn.reservar	Book and confirm
+RU	eh.res.btn.reservar	Забронировать и подтвердить
+PT	eh.res.btn.reservar	Reservar e confirmar
+ES	eh.res.reservar.titulo	Reservar y confirmar
+EN	eh.res.reservar.titulo	Book and confirm
+RU	eh.res.reservar.titulo	Бронирование и подтверждение
+PT	eh.res.reservar.titulo	Reservar e confirmar
+ES	eh.res.reservar.cuerpo	Cliente: {0}
+Experiencia: {1}
+Fecha y horario: {2}
+Lugares: {3}
+
+Se creará y confirmará la reserva.
+
+¿Confirmás la operación?
+EN	eh.res.reservar.cuerpo	Customer: {0}
+Experience: {1}
+Date and time: {2}
+Spots: {3}
+
+The reservation will be created and confirmed.
+
+Confirm the operation?
+RU	eh.res.reservar.cuerpo	Клиент: {0}
+Впечатление: {1}
+Дата и время: {2}
+Места: {3}
+
+Бронь будет создана и подтверждена.
+
+Подтвердить операцию?
+PT	eh.res.reservar.cuerpo	Cliente: {0}
+Experiência: {1}
+Data e horário: {2}
+Lugares: {3}
+
+A reserva será criada e confirmada.
+
+Confirma a operação?
+ES	eh.res.ok.reservada	Reserva #{0} creada y confirmada.
+EN	eh.res.ok.reservada	Reservation #{0} created and confirmed.
+RU	eh.res.ok.reservada	Бронь №{0} создана и подтверждена.
+PT	eh.res.ok.reservada	Reserva #{0} criada e confirmada.
+ES	eh.res.ok.creadapend	Reserva #{0} creada (Pendiente).
+EN	eh.res.ok.creadapend	Reservation #{0} created (Pending).
+RU	eh.res.ok.creadapend	Бронь №{0} создана (ожидает).
+PT	eh.res.ok.creadapend	Reserva #{0} criada (Pendente).
+ES	eh.res.buscar	Buscar (cliente o experiencia)
+EN	eh.res.buscar	Search (customer or experience)
+RU	eh.res.buscar	Поиск (клиент или впечатление)
+PT	eh.res.buscar	Buscar (cliente ou experiência)
+ES	eh.res.filtro.todoscli	Todos los clientes
+EN	eh.res.filtro.todoscli	All customers
+RU	eh.res.filtro.todoscli	Все клиенты
+PT	eh.res.filtro.todoscli	Todos os clientes
+ES	eh.res.filtro.todasexp	Todas las experiencias
+EN	eh.res.filtro.todasexp	All experiences
+RU	eh.res.filtro.todasexp	Все впечатления
+PT	eh.res.filtro.todasexp	Todas as experiências
+ES	eh.res.mostrar	Mostrar
+EN	eh.res.mostrar	Show
+RU	eh.res.mostrar	Показать
+PT	eh.res.mostrar	Mostrar
+ES	eh.res.cli.pueden	Solo los que pueden reservar
+EN	eh.res.cli.pueden	Only those who can book
+RU	eh.res.cli.pueden	Только те, кто может бронировать
+PT	eh.res.cli.pueden	Apenas quem pode reservar
+ES	eh.res.tab.nueva	Nueva reserva
+EN	eh.res.tab.nueva	New reservation
+RU	eh.res.tab.nueva	Новая бронь
+PT	eh.res.tab.nueva	Nova reserva
+ES	eh.res.tab.existentes	Reservas existentes
+EN	eh.res.tab.existentes	Existing reservations
+RU	eh.res.tab.existentes	Существующие брони
+PT	eh.res.tab.existentes	Reservas existentes
+ES	eh.res.cli.empty	Buscá un cliente por nombre o DNI.
+EN	eh.res.cli.empty	Search a customer by name or ID.
+RU	eh.res.cli.empty	Найдите клиента по имени или удостоверению.
+PT	eh.res.cli.empty	Busque um cliente por nome ou documento.
+ES	eh.res.btn.otra	Iniciar otra reserva
+EN	eh.res.btn.otra	Start another reservation
+RU	eh.res.btn.otra	Создать ещё одну бронь
+PT	eh.res.btn.otra	Iniciar outra reserva
+ES	eh.res.exp.empty	No hay experiencias para ofrecer.
+EN	eh.res.exp.empty	There are no experiences to offer.
+RU	eh.res.exp.empty	Нет впечатлений для предложения.
+PT	eh.res.exp.empty	Não há experiências para oferecer.
+ES	eh.res.exp.listado	Experiencias para el cliente
+EN	eh.res.exp.listado	Experiences for the customer
+RU	eh.res.exp.listado	Впечатления для клиента
+PT	eh.res.exp.listado	Experiências para o cliente
+ES	eh.res.exp.sec	Detalle de la experiencia
+EN	eh.res.exp.sec	Experience details
+RU	eh.res.exp.sec	Детали впечатления
+PT	eh.res.exp.sec	Detalhe da experiência
+ES	eh.res.exp.ninguna	Elegí una experiencia
+EN	eh.res.exp.ninguna	Choose an experience
+RU	eh.res.exp.ninguna	Выберите впечатление
+PT	eh.res.exp.ninguna	Escolha uma experiência
+ES	eh.res.btn.listaespera	Ingresar a lista de espera
+EN	eh.res.btn.listaespera	Join the waiting list
+RU	eh.res.btn.listaespera	Встать в лист ожидания
+PT	eh.res.btn.listaespera	Entrar na lista de espera
+ES	eh.res.err.clienteno	Este cliente no puede reservar. Revisá su suscripción o su reserva pendiente.
+EN	eh.res.err.clienteno	This customer cannot book. Check their subscription or pending reservation.
+RU	eh.res.err.clienteno	Этот клиент не может бронировать. Проверьте подписку или незавершённую бронь.
+PT	eh.res.err.clienteno	Este cliente não pode reservar. Verifique a assinatura ou a reserva pendente.
+ES	eh.res.err.expno	Elegí una experiencia disponible para continuar.
+EN	eh.res.err.expno	Choose an available experience to continue.
+RU	eh.res.err.expno	Выберите доступное впечатление, чтобы продолжить.
+PT	eh.res.err.expno	Escolha uma experiência disponível para continuar.
+ES	eh.res.conf.aviso	Al confirmar, la reserva queda registrada y confirmada. Se podrá imprimir su comprobante.
+EN	eh.res.conf.aviso	On confirming, the reservation is registered and confirmed. Its receipt can be printed.
+RU	eh.res.conf.aviso	После подтверждения бронь регистрируется и подтверждается. Можно распечатать чек.
+PT	eh.res.conf.aviso	Ao confirmar, a reserva fica registrada e confirmada. Poderá imprimir o comprovante.
+ES	eh.res.compat.disponible	Disponible
+EN	eh.res.compat.disponible	Available
+RU	eh.res.compat.disponible	Доступно
+PT	eh.res.compat.disponible	Disponível
+ES	eh.res.compat.sinlugar	Quedan {0} lugar(es)
+EN	eh.res.compat.sinlugar	{0} spot(s) left
+RU	eh.res.compat.sinlugar	Осталось мест: {0}
+PT	eh.res.compat.sinlugar	Restam {0} lugar(es)
+ES	eh.res.compat.completa	Completa — lista de espera
+EN	eh.res.compat.completa	Full — waiting list
+RU	eh.res.compat.completa	Заполнено — лист ожидания
+PT	eh.res.compat.completa	Lotada — lista de espera
+ES	eh.res.compat.sinoferta	Completa (sin tiempo para oferta)
+EN	eh.res.compat.sinoferta	Full (no time for an offer)
+RU	eh.res.compat.sinoferta	Заполнено (нет времени для предложения)
+PT	eh.res.compat.sinoferta	Lotada (sem tempo para oferta)
+ES	eh.res.compat.yaencola	Ya está en lista de espera
+EN	eh.res.compat.yaencola	Already on the waiting list
+RU	eh.res.compat.yaencola	Уже в листе ожидания
+PT	eh.res.compat.yaencola	Já está na lista de espera
+ES	eh.res.sugeridapara	Sugerida para {0}: {1}
+EN	eh.res.sugeridapara	Suggested for {0}: {1}
+RU	eh.res.sugeridapara	Рекомендовано для {0}: {1}
+PT	eh.res.sugeridapara	Sugerida para {0}: {1}
+ES	eh.res.alerta.novigente	⚠ La suscripción no está vigente. No puede reservar hasta renovarla.
+EN	eh.res.alerta.novigente	⚠ The subscription is not active. Cannot book until renewed.
+RU	eh.res.alerta.novigente	⚠ Подписка недействительна. Бронь невозможна до продления.
+PT	eh.res.alerta.novigente	⚠ A assinatura não está vigente. Não pode reservar até renová-la.
+ES	eh.res.result.titulo	Reserva confirmada
+EN	eh.res.result.titulo	Reservation confirmed
+RU	eh.res.result.titulo	Бронь подтверждена
+PT	eh.res.result.titulo	Reserva confirmada
+ES	eh.res.result.pendtitulo	Reserva creada
+EN	eh.res.result.pendtitulo	Reservation created
+RU	eh.res.result.pendtitulo	Бронь создана
+PT	eh.res.result.pendtitulo	Reserva criada
+ES	eh.res.btn.contratar	Ir a contratación
+EN	eh.res.btn.contratar	Go to contracting
+RU	eh.res.btn.contratar	Перейти к оформлению
+PT	eh.res.btn.contratar	Ir à contratação
+ES	eh.res.puede	✓ Puede reservar
+EN	eh.res.puede	✓ Can book
+RU	eh.res.puede	✓ Может бронировать
+PT	eh.res.puede	✓ Pode reservar
+ES	eh.res.nopuede	✗ No puede reservar
+EN	eh.res.nopuede	✗ Cannot book
+RU	eh.res.nopuede	✗ Не может бронировать
+PT	eh.res.nopuede	✗ Não pode reservar
+ES	eh.res.alerta.sinsus	Sin suscripción. Contratá un plan para poder reservar.
+EN	eh.res.alerta.sinsus	No subscription. Contract a plan to be able to book.
+RU	eh.res.alerta.sinsus	Нет подписки. Оформите план, чтобы бронировать.
+PT	eh.res.alerta.sinsus	Sem assinatura. Contrate um plano para poder reservar.
+ES	eh.res.alerta.vencida	Suscripción vencida. Renovala para poder reservar.
+EN	eh.res.alerta.vencida	Subscription expired. Renew it to be able to book.
+RU	eh.res.alerta.vencida	Подписка истекла. Продлите её, чтобы бронировать.
+PT	eh.res.alerta.vencida	Assinatura vencida. Renove-a para poder reservar.
+ES	eh.res.alerta.suspendida	Suscripción suspendida. Reactivala desde Clientes.
+EN	eh.res.alerta.suspendida	Subscription suspended. Reactivate it from Customers.
+RU	eh.res.alerta.suspendida	Подписка приостановлена. Возобновите её в разделе «Клиенты».
+PT	eh.res.alerta.suspendida	Assinatura suspensa. Reative-a em Clientes.
+ES	eh.le.filtro.activa	Cola activa
+EN	eh.le.filtro.activa	Active queue
+RU	eh.le.filtro.activa	Активная очередь
+PT	eh.le.filtro.activa	Fila ativa
+ES	eh.le.filtro.todos	Todos
+EN	eh.le.filtro.todos	All
+RU	eh.le.filtro.todos	Все
+PT	eh.le.filtro.todos	Todos
+ES	eh.le.estado.esperando	Esperando
+EN	eh.le.estado.esperando	Waiting
+RU	eh.le.estado.esperando	Ожидает
+PT	eh.le.estado.esperando	Aguardando
+ES	eh.le.estado.ofrecido	Ofrecido
+EN	eh.le.estado.ofrecido	Offered
+RU	eh.le.estado.ofrecido	Предложено
+PT	eh.le.estado.ofrecido	Oferecido
+ES	eh.le.estado.confirmado	Confirmado
+EN	eh.le.estado.confirmado	Confirmed
+RU	eh.le.estado.confirmado	Подтверждено
+PT	eh.le.estado.confirmado	Confirmado
+ES	eh.le.estado.retirado	Retirado
+EN	eh.le.estado.retirado	Withdrawn
+RU	eh.le.estado.retirado	Снят
+PT	eh.le.estado.retirado	Retirado
+ES	eh.le.col.posicion	Posición
+EN	eh.le.col.posicion	Position
+RU	eh.le.col.posicion	Позиция
+PT	eh.le.col.posicion	Posição
+ES	eh.le.col.cliente	Cliente
+EN	eh.le.col.cliente	Customer
+RU	eh.le.col.cliente	Клиент
+PT	eh.le.col.cliente	Cliente
+ES	eh.le.col.estado	Estado
+EN	eh.le.col.estado	Status
+RU	eh.le.col.estado	Статус
+PT	eh.le.col.estado	Estado
+ES	eh.le.col.ingreso	Ingresó
+EN	eh.le.col.ingreso	Joined
+RU	eh.le.col.ingreso	Вступил
+PT	eh.le.col.ingreso	Entrou
+ES	eh.le.col.oferta	Ofrecida
+EN	eh.le.col.oferta	Offered on
+RU	eh.le.col.oferta	Предложено
+PT	eh.le.col.oferta	Oferecida
+ES	eh.le.empty.sinexp	Elegí una experiencia para ver su lista de espera.
+EN	eh.le.empty.sinexp	Choose an experience to see its waiting list.
+RU	eh.le.empty.sinexp	Выберите впечатление, чтобы увидеть лист ожидания.
+PT	eh.le.empty.sinexp	Escolha uma experiência para ver sua lista de espera.
+ES	eh.le.empty.sincola	No hay nadie en lista de espera para esta experiencia.
+La fila se forma cuando la experiencia está completa.
+EN	eh.le.empty.sincola	No one is on the waiting list for this experience.
+The queue forms when the experience is full.
+RU	eh.le.empty.sincola	Для этого впечатления нет никого в листе ожидания.
+Очередь образуется, когда впечатление заполнено.
+PT	eh.le.empty.sincola	Não há ninguém na lista de espera desta experiência.
+A fila se forma quando a experiência está lotada.
+ES	eh.le.empty.sinfiltro	No hay entradas en el estado elegido. Probá con «Todos».
+EN	eh.le.empty.sinfiltro	No entries in the selected status. Try «All».
+RU	eh.le.empty.sinfiltro	Нет записей в выбранном статусе. Попробуйте «Все».
+PT	eh.le.empty.sinfiltro	Não há entradas no estado escolhido. Tente «Todos».
+ES	eh.le.exp.ninguna	Elegí una experiencia para ver su lista de espera.
+EN	eh.le.exp.ninguna	Choose an experience to see its waiting list.
+RU	eh.le.exp.ninguna	Выберите впечатление, чтобы увидеть лист ожидания.
+PT	eh.le.exp.ninguna	Escolha uma experiência para ver sua lista de espera.
+ES	eh.le.info.exp	{0} · {1} · {2}/{3} cupos · {4}
+EN	eh.le.info.exp	{0} · {1} · {2}/{3} spots · {4}
+RU	eh.le.info.exp	{0} · {1} · {2}/{3} мест · {4}
+PT	eh.le.info.exp	{0} · {1} · {2}/{3} vagas · {4}
+ES	eh.le.info.oferta	{0} en espera · Oferta vigente para {1}{2}
+EN	eh.le.info.oferta	{0} waiting · Active offer for {1}{2}
+RU	eh.le.info.oferta	{0} в ожидании · Активное предложение для {1}{2}
+PT	eh.le.info.oferta	{0} aguardando · Oferta vigente para {1}{2}
+ES	eh.le.info.espera	{0} en espera · Sin oferta vigente
+EN	eh.le.info.espera	{0} waiting · No active offer
+RU	eh.le.info.espera	{0} в ожидании · Нет активного предложения
+PT	eh.le.info.espera	{0} aguardando · Sem oferta vigente
+ES	eh.le.info.vence	 (vence {0})
+EN	eh.le.info.vence	 (expires {0})
+RU	eh.le.info.vence	 (истекает {0})
+PT	eh.le.info.vence	 (vence {0})
+ES	eh.le.completa	Completa
+EN	eh.le.completa	Full
+RU	eh.le.completa	Заполнено
+PT	eh.le.completa	Lotada
+ES	eh.le.detalle	Seleccionada: {0} · posición {1} · {2}
+EN	eh.le.detalle	Selected: {0} · position {1} · {2}
+RU	eh.le.detalle	Выбрано: {0} · позиция {1} · {2}
+PT	eh.le.detalle	Selecionada: {0} · posição {1} · {2}
+ES	eh.le.confirmar.titulo	Confirmar oferta
+EN	eh.le.confirmar.titulo	Confirm offer
+RU	eh.le.confirmar.titulo	Подтвердить предложение
+PT	eh.le.confirmar.titulo	Confirmar oferta
+ES	eh.le.confirmar.cuerpo	¿Confirmar la oferta de «{0}» para {1}?
+
+Se creará la reserva (quedará Pendiente de confirmación).
+EN	eh.le.confirmar.cuerpo	Confirm the offer of «{0}» for {1}?
+
+The reservation will be created (it will remain Pending confirmation).
+RU	eh.le.confirmar.cuerpo	Подтвердить предложение «{0}» для {1}?
+
+Будет создана бронь (останется ожидающей подтверждения).
+PT	eh.le.confirmar.cuerpo	Confirmar a oferta de «{0}» para {1}?
+
+A reserva será criada (ficará Pendente de confirmação).
+ES	eh.le.rechazar.titulo	Rechazar oferta
+EN	eh.le.rechazar.titulo	Reject offer
+RU	eh.le.rechazar.titulo	Отклонить предложение
+PT	eh.le.rechazar.titulo	Recusar oferta
+ES	eh.le.rechazar.cuerpo	¿Rechazar la oferta de {0}?
+
+El cupo se ofrecerá al siguiente de la fila (si hay).
+EN	eh.le.rechazar.cuerpo	Reject the offer for {0}?
+
+The spot will be offered to the next in line (if any).
+RU	eh.le.rechazar.cuerpo	Отклонить предложение для {0}?
+
+Место будет предложено следующему в очереди (если есть).
+PT	eh.le.rechazar.cuerpo	Recusar a oferta de {0}?
+
+A vaga será oferecida ao próximo da fila (se houver).
+ES	eh.le.tit.atencion	Requiere atención
+EN	eh.le.tit.atencion	Needs attention
+RU	eh.le.tit.atencion	Требует внимания
+PT	eh.le.tit.atencion	Requer atenção
+ES	eh.le.atencion.vacia	No hay ofertas pendientes de atención.
+EN	eh.le.atencion.vacia	No offers pending attention.
+RU	eh.le.atencion.vacia	Нет предложений, требующих внимания.
+PT	eh.le.atencion.vacia	Não há ofertas pendentes de atenção.
+ES	eh.le.ver.experiencia	Ver experiencia
+EN	eh.le.ver.experiencia	View experience
+RU	eh.le.ver.experiencia	Смотреть впечатление
+PT	eh.le.ver.experiencia	Ver experiência
+ES	eh.le.btn.verofertas	Ver ofertas pendientes
+EN	eh.le.btn.verofertas	View pending offers
+RU	eh.le.btn.verofertas	Смотреть ожидающие предложения
+PT	eh.le.btn.verofertas	Ver ofertas pendentes
+ES	eh.le.chips	Ofertas pendientes: {0}   ·   En espera: {1}   (global)
+EN	eh.le.chips	Pending offers: {0}   ·   Waiting: {1}   (global)
+RU	eh.le.chips	Ожидающие предложения: {0}   ·   В ожидании: {1}   (всего)
+PT	eh.le.chips	Ofertas pendentes: {0}   ·   Aguardando: {1}   (global)
+ES	eh.le.col.vence	Vence
+EN	eh.le.col.vence	Expires
+RU	eh.le.col.vence	Истекает
+PT	eh.le.col.vence	Vence
+ES	eh.le.combo.conactividad	 — {0} esperando · {1} ofrecida(s)
+EN	eh.le.combo.conactividad	 — {0} waiting · {1} offered
+RU	eh.le.combo.conactividad	 — {0} в ожидании · {1} предложено
+PT	eh.le.combo.conactividad	 — {0} aguardando · {1} oferecida(s)
+ES	eh.le.empty.sinactividad	No hay actividad en lista de espera.
+Elegí una experiencia para consultarla.
+EN	eh.le.empty.sinactividad	No waiting-list activity.
+Choose an experience to review it.
+RU	eh.le.empty.sinactividad	Нет активности в листе ожидания.
+Выберите впечатление для просмотра.
+PT	eh.le.empty.sinactividad	Não há atividade na lista de espera.
+Escolha uma experiência para consultá-la.
+ES	eh.le.empty.finalizada	Experiencia finalizada. No tiene lista de espera activa.
+EN	eh.le.empty.finalizada	Experience finished. It has no active waiting list.
+RU	eh.le.empty.finalizada	Впечатление завершено. Нет активного листа ожидания.
+PT	eh.le.empty.finalizada	Experiência finalizada. Não tem lista de espera ativa.
+ES	eh.le.sinofertas	No hay ofertas pendientes.
+EN	eh.le.sinofertas	No pending offers.
+RU	eh.le.sinofertas	Нет ожидающих предложений.
+PT	eh.le.sinofertas	Não há ofertas pendentes.
+ES	eh.le.gtitulo	Gestión de lista de espera
+EN	eh.le.gtitulo	Waiting list management
+RU	eh.le.gtitulo	Управление листом ожидания
+PT	eh.le.gtitulo	Gestão da lista de espera
+ES	eh.le.gsub	Consultá las listas y gestioná las ofertas disponibles.
+EN	eh.le.gsub	Review the lists and manage available offers.
+RU	eh.le.gsub	Просматривайте списки и управляйте доступными предложениями.
+PT	eh.le.gsub	Consulte as listas e gerencie as ofertas disponíveis.
+ES	eh.le.ind.espera.lbl	Clientes en espera (global)
+EN	eh.le.ind.espera.lbl	Customers waiting (global)
+RU	eh.le.ind.espera.lbl	Клиенты в ожидании (всего)
+PT	eh.le.ind.espera.lbl	Clientes aguardando (global)
+ES	eh.le.ind.espera.desc	Inscripciones activas en listas de espera
+EN	eh.le.ind.espera.desc	Active waiting-list entries
+RU	eh.le.ind.espera.desc	Активные записи в листах ожидания
+PT	eh.le.ind.espera.desc	Inscrições ativas em listas de espera
+ES	eh.le.ind.ofertas.lbl	Ofertas pendientes (global)
+EN	eh.le.ind.ofertas.lbl	Pending offers (global)
+RU	eh.le.ind.ofertas.lbl	Ожидающие предложения (всего)
+PT	eh.le.ind.ofertas.lbl	Ofertas pendentes (global)
+ES	eh.le.ind.ofertas.desc	Ofertas vigentes que requieren atención
+EN	eh.le.ind.ofertas.desc	Active offers that need attention
+RU	eh.le.ind.ofertas.desc	Активные предложения, требующие внимания
+PT	eh.le.ind.ofertas.desc	Ofertas vigentes que requerem atenção
+ES	eh.le.tab.activas	Activas y próximas
+EN	eh.le.tab.activas	Active and upcoming
+RU	eh.le.tab.activas	Активные и предстоящие
+PT	eh.le.tab.activas	Ativas e próximas
+ES	eh.le.tab.historial	Anteriores e historial
+EN	eh.le.tab.historial	Past and history
+RU	eh.le.tab.historial	Прошедшие и история
+PT	eh.le.tab.historial	Anteriores e histórico
+ES	eh.le.vacio.titulo	No hay experiencias con listas de espera activas
+EN	eh.le.vacio.titulo	No experiences with active waiting lists
+RU	eh.le.vacio.titulo	Нет впечатлений с активными листами ожидания
+PT	eh.le.vacio.titulo	Não há experiências com listas de espera ativas
+ES	eh.le.vacio.desc	Actualmente no hay experiencias con clientes en espera ni ofertas pendientes.
+EN	eh.le.vacio.desc	There are currently no experiences with waiting customers or pending offers.
+RU	eh.le.vacio.desc	Сейчас нет впечатлений с клиентами в ожидании или ожидающими предложениями.
+PT	eh.le.vacio.desc	Atualmente não há experiências com clientes aguardando nem ofertas pendentes.
+ES	eh.le.vacio.hist	Podés consultar experiencias anteriores desde Historial.
+EN	eh.le.vacio.hist	You can review past experiences from History.
+RU	eh.le.vacio.hist	Прошедшие впечатления можно посмотреть в разделе «История».
+PT	eh.le.vacio.hist	Você pode consultar experiências anteriores no Histórico.
+ES	eh.le.exp.activas	Experiencias con lista activa ({0})
+EN	eh.le.exp.activas	Experiences with an active list ({0})
+RU	eh.le.exp.activas	Впечатления с активным списком ({0})
+PT	eh.le.exp.activas	Experiências com lista ativa ({0})
+ES	eh.le.ordenar.proximas	Próximas
+EN	eh.le.ordenar.proximas	Upcoming
+RU	eh.le.ordenar.proximas	Предстоящие
+PT	eh.le.ordenar.proximas	Próximas
+ES	eh.le.ordenar.masclientes	Más clientes en espera
+EN	eh.le.ordenar.masclientes	Most customers waiting
+RU	eh.le.ordenar.masclientes	Больше клиентов в ожидании
+PT	eh.le.ordenar.masclientes	Mais clientes aguardando
+ES	eh.le.card.enespera	{0} en espera
+EN	eh.le.card.enespera	{0} waiting
+RU	eh.le.card.enespera	{0} в ожидании
+PT	eh.le.card.enespera	{0} aguardando
+ES	eh.le.card.cupos	{0}/{1} cupos
+EN	eh.le.card.cupos	{0}/{1} spots
+RU	eh.le.card.cupos	{0}/{1} мест
+PT	eh.le.card.cupos	{0}/{1} vagas
+ES	eh.le.atencion.n	Requieren atención ({0})
+EN	eh.le.atencion.n	Need attention ({0})
+RU	eh.le.atencion.n	Требуют внимания ({0})
+PT	eh.le.atencion.n	Requerem atenção ({0})
+ES	eh.le.otras	Otras experiencias con lista activa
+EN	eh.le.otras	Other experiences with an active list
+RU	eh.le.otras	Другие впечатления с активным списком
+PT	eh.le.otras	Outras experiências com lista ativa
+ES	eh.le.card.oferta	Oferta pendiente
+EN	eh.le.card.oferta	Pending offer
+RU	eh.le.card.oferta	Ожидающее предложение
+PT	eh.le.card.oferta	Oferta pendente
+ES	eh.le.card.vence	Vence {0}
+EN	eh.le.card.vence	Expires {0}
+RU	eh.le.card.vence	Истекает {0}
+PT	eh.le.card.vence	Vence {0}
+ES	eh.le.detalle.clientes	Clientes en espera ({0})
+EN	eh.le.detalle.clientes	Customers waiting ({0})
+RU	eh.le.detalle.clientes	Клиенты в ожидании ({0})
+PT	eh.le.detalle.clientes	Clientes aguardando ({0})
+ES	eh.le.nota.fifo	Cuando se libere un cupo, el sistema ofrecerá el lugar al primer cliente de la lista, según las reglas vigentes.
+EN	eh.le.nota.fifo	When a spot opens up, the system will offer it to the first customer on the list, per the current rules.
+RU	eh.le.nota.fifo	Когда освободится место, система предложит его первому клиенту в списке по действующим правилам.
+PT	eh.le.nota.fifo	Quando uma vaga for liberada, o sistema oferecerá o lugar ao primeiro cliente da lista, conforme as regras vigentes.
+ES	eh.le.oferta.card.titulo	Oferta vigente
+EN	eh.le.oferta.card.titulo	Active offer
+RU	eh.le.oferta.card.titulo	Активное предложение
+PT	eh.le.oferta.card.titulo	Oferta vigente
+ES	eh.le.oferta.cliente	Cliente: {0}
+EN	eh.le.oferta.cliente	Customer: {0}
+RU	eh.le.oferta.cliente	Клиент: {0}
+PT	eh.le.oferta.cliente	Cliente: {0}
+ES	eh.le.oferta.posicion	Posición: {0}
+EN	eh.le.oferta.posicion	Position: {0}
+RU	eh.le.oferta.posicion	Позиция: {0}
+PT	eh.le.oferta.posicion	Posição: {0}
+ES	eh.le.oferta.ofrecida	Ofrecida el: {0}
+EN	eh.le.oferta.ofrecida	Offered on: {0}
+RU	eh.le.oferta.ofrecida	Предложено: {0}
+PT	eh.le.oferta.ofrecida	Oferecida em: {0}
+ES	eh.le.oferta.vence	Vence el: {0}
+EN	eh.le.oferta.vence	Expires on: {0}
+RU	eh.le.oferta.vence	Истекает: {0}
+PT	eh.le.oferta.vence	Vence em: {0}
+ES	eh.le.hist.titulo	Consultar historial
+EN	eh.le.hist.titulo	Browse history
+RU	eh.le.hist.titulo	Просмотр истории
+PT	eh.le.hist.titulo	Consultar histórico
+ES	eh.le.expestado.programada	Programada
+EN	eh.le.expestado.programada	Scheduled
+RU	eh.le.expestado.programada	Запланировано
+PT	eh.le.expestado.programada	Programada
+ES	eh.le.expestado.completa	Completa
+EN	eh.le.expestado.completa	Full
+RU	eh.le.expestado.completa	Заполнено
+PT	eh.le.expestado.completa	Lotada
+ES	eh.le.expestado.encurso	En curso
+EN	eh.le.expestado.encurso	In progress
+RU	eh.le.expestado.encurso	В процессе
+PT	eh.le.expestado.encurso	Em andamento
+ES	eh.le.expestado.finalizada	Finalizada
+EN	eh.le.expestado.finalizada	Finished
+RU	eh.le.expestado.finalizada	Завершено
+PT	eh.le.expestado.finalizada	Finalizada
+ES	eh.le.expestado.cancelada	Cancelada
+EN	eh.le.expestado.cancelada	Cancelled
+RU	eh.le.expestado.cancelada	Отменено
+PT	eh.le.expestado.cancelada	Cancelada
+ES	mnu.seed.sembrar	Sembrar datos de prueba (DEV)
+EN	mnu.seed.sembrar	Seed test data (DEV)
+RU	mnu.seed.sembrar	Заполнить тестовыми данными (DEV)
+PT	mnu.seed.sembrar	Semear dados de teste (DEV)
+ES	mnu.seed.limpiar	Limpiar datos de prueba (DEV)
+EN	mnu.seed.limpiar	Clear test data (DEV)
+RU	mnu.seed.limpiar	Очистить тестовые данные (DEV)
+PT	mnu.seed.limpiar	Limpar dados de teste (DEV)
+ES	eh.seed.titulo	Datos de prueba (DEV)
+EN	eh.seed.titulo	Test data (DEV)
+RU	eh.seed.titulo	Тестовые данные (DEV)
+PT	eh.seed.titulo	Dados de teste (DEV)
+ES	eh.seed.sembrar.cuerpo	Se crearán experiencias, clientes y ofertas de PRUEBA (marcados [SEED]) por los flujos de negocio. ¿Continuar?
+EN	eh.seed.sembrar.cuerpo	Test experiences, customers and offers (tagged [SEED]) will be created via the business flows. Continue?
+RU	eh.seed.sembrar.cuerpo	Будут созданы тестовые впечатления, клиенты и предложения (с меткой [SEED]) через бизнес-процессы. Продолжить?
+PT	eh.seed.sembrar.cuerpo	Serão criadas experiências, clientes e ofertas de TESTE (marcados [SEED]) pelos fluxos de negócio. Continuar?
+ES	eh.seed.limpiar.cuerpo	Se eliminarán SOLO los datos marcados [SEED]. ¿Continuar?
+EN	eh.seed.limpiar.cuerpo	ONLY the data tagged [SEED] will be removed. Continue?
+RU	eh.seed.limpiar.cuerpo	Будут удалены ТОЛЬКО данные с меткой [SEED]. Продолжить?
+PT	eh.seed.limpiar.cuerpo	Serão removidos APENAS os dados marcados [SEED]. Continuar?
+ES	eh.res.tab.gestionar	Gestionar reservas
+EN	eh.res.tab.gestionar	Manage reservations
+RU	eh.res.tab.gestionar	Управление бронями
+PT	eh.res.tab.gestionar	Gerenciar reservas
+ES	eh.res.tab.asistencia	Asistencia y valoración
+EN	eh.res.tab.asistencia	Attendance and rating
+RU	eh.res.tab.asistencia	Посещение и оценка
+PT	eh.res.tab.asistencia	Presença e avaliação
+ES	eh.asis.empty	No hay reservas para gestionar acá.
+EN	eh.asis.empty	No reservations to manage here.
+RU	eh.asis.empty	Нет броней для управления здесь.
+PT	eh.asis.empty	Não há reservas para gerenciar aqui.
+ES	eh.asis.ver	Ver
+EN	eh.asis.ver	View
+RU	eh.asis.ver	Вид
+PT	eh.asis.ver	Ver
+ES	eh.asis.vista.pendientes	Pendientes
+EN	eh.asis.vista.pendientes	Pending
+RU	eh.asis.vista.pendientes	Ожидающие
+PT	eh.asis.vista.pendientes	Pendentes
+ES	eh.asis.vista.pendasistencia	Pendientes de asistencia
+EN	eh.asis.vista.pendasistencia	Pending attendance
+RU	eh.asis.vista.pendasistencia	Ожидают отметки присутствия
+PT	eh.asis.vista.pendasistencia	Pendentes de presença
+ES	eh.asis.vista.pendcalificar	Pendientes de calificar
+EN	eh.asis.vista.pendcalificar	Pending rating
+RU	eh.asis.vista.pendcalificar	Ожидают оценки
+PT	eh.asis.vista.pendcalificar	Pendentes de avaliação
+ES	eh.asis.vista.calificadas	Calificadas
+EN	eh.asis.vista.calificadas	Rated
+RU	eh.asis.vista.calificadas	Оценённые
+PT	eh.asis.vista.calificadas	Avaliadas
+ES	eh.asis.ind.asistencia	Pendientes de asistencia: {0}
+EN	eh.asis.ind.asistencia	Pending attendance: {0}
+RU	eh.asis.ind.asistencia	Ожидают присутствия: {0}
+PT	eh.asis.ind.asistencia	Pendentes de presença: {0}
+ES	eh.asis.ind.calificar	Pendientes de calificar: {0}
+EN	eh.asis.ind.calificar	Pending rating: {0}
+RU	eh.asis.ind.calificar	Ожидают оценки: {0}
+PT	eh.asis.ind.calificar	Pendentes de avaliação: {0}
+ES	eh.asis.col.fechaexp	Fecha de la experiencia
+EN	eh.asis.col.fechaexp	Experience date
+RU	eh.asis.col.fechaexp	Дата впечатления
+PT	eh.asis.col.fechaexp	Data da experiência
+ES	eh.asis.col.punt	Calificación
+EN	eh.asis.col.punt	Rating
+RU	eh.asis.col.punt	Оценка
+PT	eh.asis.col.punt	Avaliação
+ES	eh.asis.detalle.sec	Registro seleccionado
+EN	eh.asis.detalle.sec	Selected record
+RU	eh.asis.detalle.sec	Выбранная запись
+PT	eh.asis.detalle.sec	Registro selecionado
+ES	eh.asis.detalle.vacio	Elegí un registro para ver su detalle.
+EN	eh.asis.detalle.vacio	Choose a record to see its details.
+RU	eh.asis.detalle.vacio	Выберите запись, чтобы увидеть детали.
+PT	eh.asis.detalle.vacio	Escolha um registro para ver o detalhe.
+ES	eh.asis.finaliza	Finaliza
+EN	eh.asis.finaliza	Ends
+RU	eh.asis.finaliza	Завершается
+PT	eh.asis.finaliza	Termina
+ES	eh.asis.clasif.pendasis	Pendiente de registrar asistencia
+EN	eh.asis.clasif.pendasis	Pending attendance registration
+RU	eh.asis.clasif.pendasis	Ожидает отметки присутствия
+PT	eh.asis.clasif.pendasis	Pendente de registrar presença
+ES	eh.asis.clasif.proxima	Experiencia aún no finalizada
+EN	eh.asis.clasif.proxima	Experience not finished yet
+RU	eh.asis.clasif.proxima	Впечатление ещё не завершено
+PT	eh.asis.clasif.proxima	Experiência ainda não finalizada
+ES	eh.asis.clasif.pendcal	Asistió · pendiente de calificar
+EN	eh.asis.clasif.pendcal	Attended · pending rating
+RU	eh.asis.clasif.pendcal	Посетил · ожидает оценки
+PT	eh.asis.clasif.pendcal	Compareceu · pendente de avaliação
+ES	eh.asis.clasif.calificada	Asistió · calificada
+EN	eh.asis.clasif.calificada	Attended · rated
+RU	eh.asis.clasif.calificada	Посетил · оценено
+PT	eh.asis.clasif.calificada	Compareceu · avaliada
+ES	eh.asis.clasif.noasis	No asistió
+EN	eh.asis.clasif.noasis	No-show
+RU	eh.asis.clasif.noasis	Не явился
+PT	eh.asis.clasif.noasis	Não compareceu
+ES	eh.asis.err.estado	Solo se registra la asistencia de reservas confirmadas.
+EN	eh.asis.err.estado	Attendance can only be registered for confirmed reservations.
+RU	eh.asis.err.estado	Присутствие отмечается только для подтверждённых броней.
+PT	eh.asis.err.estado	Só é possível registrar presença de reservas confirmadas.
+ES	eh.asis.err.futura	La experiencia todavía no finalizó.
+EN	eh.asis.err.futura	The experience has not finished yet.
+RU	eh.asis.err.futura	Впечатление ещё не завершилось.
+PT	eh.asis.err.futura	A experiência ainda não terminou.
+ES	eh.asis.err.calif	Solo se califica una reserva con asistencia registrada.
+EN	eh.asis.err.calif	Only a reservation with registered attendance can be rated.
+RU	eh.asis.err.calif	Оценить можно только бронь с отмеченным присутствием.
+PT	eh.asis.err.calif	Só é possível avaliar uma reserva com presença registrada.
+ES	eh.asis.ok.asistio	Asistencia registrada.
+EN	eh.asis.ok.asistio	Attendance registered.
+RU	eh.asis.ok.asistio	Присутствие отмечено.
+PT	eh.asis.ok.asistio	Presença registrada.
+ES	eh.asis.ok.noasistio	Inasistencia registrada.
+EN	eh.asis.ok.noasistio	Non-attendance registered.
+RU	eh.asis.ok.noasistio	Отсутствие отмечено.
+PT	eh.asis.ok.noasistio	Ausência registrada.
+ES	eh.asis.grac.titulo	¡Gracias por calificar!
+EN	eh.asis.grac.titulo	Thanks for rating!
+RU	eh.asis.grac.titulo	Спасибо за оценку!
+PT	eh.asis.grac.titulo	Obrigado por avaliar!
+ES	eh.asis.grac.cuerpo	Tu opinión ayuda a mejorar las recomendaciones.
+EN	eh.asis.grac.cuerpo	Your feedback helps improve recommendations.
+RU	eh.asis.grac.cuerpo	Ваш отзыв помогает улучшить рекомендации.
+PT	eh.asis.grac.cuerpo	Sua opinião ajuda a melhorar as recomendações.
+ES	eh.asis.calif.titulo	Calificar experiencia
+EN	eh.asis.calif.titulo	Rate experience
+RU	eh.asis.calif.titulo	Оценить впечатление
+PT	eh.asis.calif.titulo	Avaliar experiência
+ES	eh.asis.calif.punt	Puntaje (1 a 5) *
+EN	eh.asis.calif.punt	Score (1 to 5) *
+RU	eh.asis.calif.punt	Оценка (1–5) *
+PT	eh.asis.calif.punt	Pontuação (1 a 5) *
+ES	eh.asis.calif.coment	Comentario (opcional)
+EN	eh.asis.calif.coment	Comment (optional)
+RU	eh.asis.calif.coment	Комментарий (необязательно)
+PT	eh.asis.calif.coment	Comentário (opcional)

@@ -66,6 +66,7 @@
     <Compile Include="RecomendacionTests.cs" />
     <Compile Include="CupoReservaTests.cs" />
     <Compile Include="CancelacionPN03Tests.cs" />
+    <Compile Include="RenovacionPN01Tests.cs" />
     <Compile Include="IntegridadDVTests.cs" />
     <None Include="App.config" />
     <Compile Include="ReporteTendenciaTests.cs" />

@@ -23,7 +23,7 @@ namespace DAL
         //   PN03   — columna IdSuscripcion, Parametro, patentes, mapeos, backfill, re-sellado.
         //   Legacy — elimina tablas/patentes/DV heredados de WardrobeFlow (limpia un backup viejo).
         private static readonly string[] Recursos =
-            { "DAL.Migracion.PN03.sql", "DAL.Migracion.Legacy.sql" };
+            { "DAL.Migracion.PN03.sql", "DAL.Migracion.Legacy.sql", "DAL.Migracion.Renovacion.sql" };
 
         /// <summary>
         /// Ejecuta los scripts de migración (PN03 + limpieza legacy) lote por lote. Devuelve la

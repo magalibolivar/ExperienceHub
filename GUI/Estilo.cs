@@ -26,6 +26,11 @@ namespace GUI
         public static readonly Color Lienzo       = Hex("#F8F9FF"); // fondo del área de trabajo (MDI)
         public static readonly Color Gris100      = Hex("#F1F5F9");
         public static readonly Color Gris200      = Hex("#E2E8F0"); // bordes (outline-variant)
+        public static readonly Color AzulClaro    = Hex("#D6E4F5"); // selección neutra de grilla (no es alerta)
+        public static readonly Color AzulDeSeleccion  = Hex("#2680EB"); // acento de selección/navegación
+        public static readonly Color AzulDeFondo      = Hex("#F3F7FC"); // fondo azul muy claro (tarjeta seleccionada)
+        public static readonly Color OfertaPendiente  = Hex("#FFF4DC"); // fondo de oferta que requiere atención
+        public static readonly Color BordeAdvertencia = Hex("#F2BD60"); // borde/acento de advertencia
         public static readonly Color Gris400      = Hex("#94A3B8");
         public static readonly Color Gris700      = Hex("#475569");
         public static readonly Color Verde        = Hex("#2E9E5B"); // acciones positivas
@@ -350,8 +355,8 @@ namespace GUI
             g.DefaultCellStyle.BackColor = Color.White;
             g.DefaultCellStyle.ForeColor = AzulOscuro;
             g.DefaultCellStyle.Font = Normal(9.5f);
-            g.DefaultCellStyle.SelectionBackColor = Coral;            // selección coral (Stitch)
-            g.DefaultCellStyle.SelectionForeColor = Color.White;
+            g.DefaultCellStyle.SelectionBackColor = AzulClaro;        // selección NEUTRA (azul claro); el coral queda reservado para acciones/alertas
+            g.DefaultCellStyle.SelectionForeColor = AzulOscuro;
             g.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
             g.AlternatingRowsDefaultCellStyle.BackColor = Color.White; // filas blancas (sin alternado)
 

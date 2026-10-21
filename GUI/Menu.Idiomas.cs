@@ -76,8 +76,10 @@ namespace GUI
             Aplicar(_miOrganizadores,  t);
             Aplicar(_miCategorias,     t);
             Aplicar(_miCiudades,       t);
-            Aplicar(_miMembresia,      t);
             Aplicar(_miListaEspera,    t);
+            // PN01 — los textos de Nueva contratación / Para formalizar (N) / Cobros pendientes (N)
+            // los fija ActualizarContadoresComercializacion (incluye el contador), para no pisar el (N).
+            ActualizarContadoresComercializacion();
 
             // Menú "Catálogos" (construido por código): traducir el grupo y sus ítems por Tag.
             if (_catalogosMenu != null)

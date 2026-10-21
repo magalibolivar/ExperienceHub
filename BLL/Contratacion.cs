@@ -18,6 +18,7 @@ namespace BLL
         private readonly DAL.Contratacion   dal        = new DAL.Contratacion();
         private readonly DAL.Cliente         dalCliente = new DAL.Cliente();
         private readonly DAL.PlanSuscripcion dalPlan    = new DAL.PlanSuscripcion();
+        private readonly DAL.Suscripcion     dalSus     = new DAL.Suscripcion();
         private readonly Servicios.Bitacora  bitacora   = new Servicios.Bitacora();
 
         // ── Parámetros de negocio configurables ────────────────────────────────
@@ -28,6 +29,8 @@ namespace BLL
 
         // ── Consultas ───────────────────────────────────────────────────────────
         public List<BE.Contratacion> ObtenerPendientes()   => dal.ObtenerPendientes();
+        /// <summary>Cola de formalización (Venta): contrataciones Pagadas sin formalizar.</summary>
+        public List<BE.Contratacion> ObtenerPagadas()      => dal.ObtenerPagadas();
         /// <summary>Cola para la pantalla de Caja: contrataciones Pendientes o Pagadas (sin formalizar aún).</summary>
         public List<BE.Contratacion> ObtenerActivas()      => dal.ObtenerActivas();
         public BE.Contratacion       ObtenerPorId(int id)  => dal.ObtenerPorId(id);
@@ -63,6 +66,60 @@ namespace BLL
 
             bitacora.Registrar(modulo,
                 $"Contratación #{id} creada (pendiente de pago) — {cliente.NombreCompleto} — plan {plan.Nombre} — ${plan.Precio:0.00}",
+                BE.Criticidad.Media);
+            return id;
+        }
+
+        // ── CU01-VTA (renovación) — Venta registra la renovación cobrada ─────────
+        /// <summary>
+        /// Crea una contratación de tipo Renovación (Pendiente de pago) para extender la suscripción
+        /// del cliente. Requiere que el cliente tenga una suscripción Activa o Vencida (una Suspendida
+        /// se reactiva, no se renueva) y que no tenga otra contratación en proceso. El plan puede ser
+        /// el mismo o uno distinto (upgrade/downgrade); el importe es el del plan elegido.
+        /// </summary>
+        public int CrearRenovacion(string modulo, int idCliente, int idPlan)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ContratacionVenta, BE.Patentes.ContratacionVenta);
+
+            var cliente = dalCliente.ObtenerPorId(idCliente)
+                ?? throw new BE.AppException("err.bll.contratacion.cliente_inexistente",
+                    "El cliente seleccionado no existe.");
+
+            var plan = dalPlan.ObtenerPorId(idPlan);
+            if (plan == null || !plan.Estado)
+                throw new BE.AppException("err.bll.contratacion.plan_inactivo",
+                    "El plan seleccionado no existe o no está activo.");
+
+            var sus = dalSus.ObtenerVigentePorCliente(idCliente);
+            if (sus == null)
+                throw new BE.AppException("err.bll.contratacion.sin_suscripcion",
+                    "El cliente no tiene una suscripción para renovar. Usá una contratación de alta.");
+            // Solo se renueva una Activa o Vencida; una Suspendida se reactiva manualmente.
+            var estadoReal = sus.EstadoVigenciaCalculado(DateTime.Today);
+            if (estadoReal == BE.EstadoSuscripcion.Suspendida)
+                throw new BE.AppException("err.bll.contratacion.suspendida",
+                    "La suscripción está suspendida. Reactivala antes de renovar.");
+
+            // Una contratación en proceso (Pendiente o Pagada) bloquea otra (alta o renovación).
+            if (dal.ObtenerActivas().Exists(c => c.IdCliente == idCliente))
+                throw new BE.AppException("err.bll.contratacion.en_proceso",
+                    "El cliente ya tiene una contratación en proceso. Resolvela antes de crear otra.");
+
+            var renov = new BE.Contratacion
+            {
+                IdCliente             = idCliente,
+                IdPlan                = idPlan,
+                Importe               = plan.Precio,
+                Estado                = BE.EstadoContratacion.PendienteDePago,
+                IntentosPago          = 0,
+                FechaAlta             = DateTime.Now,
+                Tipo                  = BE.TipoContratacion.Renovacion,
+                IdSuscripcionRenovada = sus.IdSuscripcion
+            };
+            int id = dal.Alta(renov);
+
+            bitacora.Registrar(modulo,
+                $"Renovación #{id} creada (pendiente de pago) — {cliente.NombreCompleto} — plan {plan.Nombre} — ${plan.Precio:0.00} — extiende suscripción #{sus.IdSuscripcion}",
                 BE.Criticidad.Media);
             return id;
         }
@@ -142,6 +199,29 @@ namespace BLL
                 throw new BE.AppException("err.bll.contratacion.no_pagada",
                     "Solo se formalizan contrataciones pagadas (estado '{0}').", c.Estado);
 
+            // Renovación: NO crea suscripción nueva; extiende la existente un mes desde su
+            // vencimiento actual (si sigue vigente) o desde hoy (si ya venció).
+            if (c.Tipo == BE.TipoContratacion.Renovacion && c.IdSuscripcionRenovada.HasValue)
+            {
+                var susActual = dalSus.ObtenerPorId(c.IdSuscripcionRenovada.Value)
+                    ?? throw new BE.AppException("err.bll.contratacion.sus_inexistente",
+                        "La suscripción a renovar ya no existe.");
+
+                DateTime baseCalc = (susActual.FechaVencimiento.HasValue && susActual.FechaVencimiento.Value.Date >= DateTime.Today)
+                    ? susActual.FechaVencimiento.Value.Date
+                    : DateTime.Today;
+                DateTime nuevoVenc = baseCalc.AddMonths(MESES_VIGENCIA);
+
+                dal.FormalizarRenovacion(idContratacion, susActual.IdSuscripcion, nuevoVenc,
+                    BE.Suscripcion.InicioDeMes(DateTime.Today));
+
+                bitacora.Registrar(modulo,
+                    $"Renovación formalizada desde contratación #{idContratacion} — suscripción #{susActual.IdSuscripcion} extendida hasta {nuevoVenc:dd/MM/yyyy}.",
+                    BE.Criticidad.Media);
+                return susActual.IdSuscripcion;
+            }
+
+            // Alta: crea la suscripción vigente nueva.
             DateTime inicio = DateTime.Today;
             DateTime vencimiento = inicio.AddMonths(MESES_VIGENCIA);
 

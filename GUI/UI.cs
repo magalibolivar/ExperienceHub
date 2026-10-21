@@ -348,6 +348,13 @@ namespace GUI
             public override string ToString() => _texto;
         }
 
+        /// <summary>Etiqueta i18n del tipo de contratación (Alta / Renovación), compartida por las
+        /// pantallas de Cobros y Formalización para no duplicar el texto.</summary>
+        public static string EtiquetaTipoContratacion(BE.TipoContratacion tipo)
+            => tipo == BE.TipoContratacion.Renovacion
+                ? I18n.T("eh.tipo.renovacion", "Renovación")
+                : I18n.T("eh.tipo.alta", "Alta");
+
         /// <summary>Label para el contador "Mostrando X de Y" al pie de la barra de filtros.</summary>
         public static Label Contador()
             => new Label { AutoSize = false, Width = 160, Height = 26, Dock = DockStyle.Bottom,

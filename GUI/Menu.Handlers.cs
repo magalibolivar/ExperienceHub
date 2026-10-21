@@ -121,7 +121,10 @@ namespace GUI
             {
                 if (hijo is Clientes) { hijo.BringToFront(); return; }
             }
-            new Clientes { MdiParent = this }.Show();
+            var f = new Clientes { MdiParent = this };
+            // "Renovar" desde la ficha del cliente abre Nueva contratación (modo renovación) con ese cliente.
+            f.SolicitaRenovar += idCli => AbrirNuevaContratacionPara(idCli);
+            f.Show();
         }
 
         /// <summary>
@@ -145,20 +148,51 @@ namespace GUI
             {
                 if (hijo is Reservas) { hijo.BringToFront(); return; }
             }
-            new Reservas { MdiParent = this }.Show();
+            var f = new Reservas { MdiParent = this };
+            // Continuidad comercial: «Ir a contratación» desde Reservas abre PN01 con el cliente cargado.
+            f.SolicitaContratar += idCli => AbrirNuevaContratacionPara(idCli);
+            f.Show();
         }
 
         /// <summary>
-        /// Abre el módulo de Pedidos Realizados como hijo MDI.
-        /// Accesible para OperadorDeInventario (mnuPedidosRealizados).
+        /// COMPATIBILIDAD: "Reservas realizadas" se unificó dentro del módulo «Reservas» como la pestaña
+        /// "Asistencia y valoración". El ítem ya no figura en el menú, pero el handler se conserva
+        /// (sigue suscrito desde el Designer) redirigiendo al form unificado para no dejar un click muerto.
         /// </summary>
         private void reservasRealizadasToolStripMenuItem_Click(object sender, EventArgs e)
+            => reservasToolStripMenuItem_Click(sender, e);
+
+        // Datos de prueba (DEV) — solo-admin. Siembran/limpian vía los flujos de negocio (marca [SEED]).
+        private void SeedSembrar_Click(object sender, EventArgs e)
         {
-            foreach (Form hijo in this.MdiChildren)
+            if (!Estilo.Confirmar(this,
+                    I18n.T("eh.seed.titulo", "Datos de prueba (DEV)"),
+                    I18n.T("eh.seed.sembrar.cuerpo", "Se crearán experiencias, clientes y ofertas de PRUEBA (marcados [SEED]) por los flujos de negocio. ¿Continuar?")))
+                return;
+            try
             {
-                if (hijo is ReservasRealizadas) { hijo.BringToFront(); return; }
+                Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                string r = BLL.SeedDesarrollo.Sembrar();
+                Estilo.Info(this, I18n.T("eh.seed.titulo", "Datos de prueba (DEV)"), r);
             }
-            new ReservasRealizadas { MdiParent = this }.Show();
+            catch (Exception ex) { Estilo.Error(this, I18n.T("msg.error.titulo", "Algo salió mal"), ex.Message); }
+            finally { Cursor = System.Windows.Forms.Cursors.Default; }
+        }
+
+        private void SeedLimpiar_Click(object sender, EventArgs e)
+        {
+            if (!Estilo.Confirmar(this,
+                    I18n.T("eh.seed.titulo", "Datos de prueba (DEV)"),
+                    I18n.T("eh.seed.limpiar.cuerpo", "Se eliminarán SOLO los datos marcados [SEED]. ¿Continuar?")))
+                return;
+            try
+            {
+                Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                string r = BLL.SeedDesarrollo.Limpiar();
+                Estilo.Info(this, I18n.T("eh.seed.titulo", "Datos de prueba (DEV)"), r);
+            }
+            catch (Exception ex) { Estilo.Error(this, I18n.T("msg.error.titulo", "Algo salió mal"), ex.Message); }
+            finally { Cursor = System.Windows.Forms.Cursors.Default; }
         }
 
         private void integridadToolStripMenuItem_Click(object sender, EventArgs e)

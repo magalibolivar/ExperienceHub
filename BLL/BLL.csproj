@@ -63,6 +63,7 @@
     <Compile Include="Recomendacion.cs" />
     <Compile Include="Interes.cs" />
     <Compile Include="ListaEspera.cs" />
+    <Compile Include="SeedDesarrollo.cs" />
     <Compile Include="Calificacion.cs" />
     <Compile Include="PlanSuscripcion.cs" />
     <Compile Include="Preferencia.cs" />

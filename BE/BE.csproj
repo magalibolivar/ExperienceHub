@@ -65,6 +65,8 @@
     <Compile Include="EstadoListaEspera.cs" />
     <Compile Include="Experiencia.cs" />
     <Compile Include="Reserva.cs" />
+    <Compile Include="CompatibilidadReserva.cs" />
+    <Compile Include="ResumenListaEspera.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="Organizador.cs" />
     <Compile Include="Categoria.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="ResultadoDisponibilidad.cs" />
     <Compile Include="SituacionCliente.cs" />
     <Compile Include="EstadoContratacion.cs" />
+    <Compile Include="TipoContratacion.cs" />
     <Compile Include="MedioPago.cs" />
     <Compile Include="Contratacion.cs" />
     <Compile Include="NivelFidelidad.cs" />

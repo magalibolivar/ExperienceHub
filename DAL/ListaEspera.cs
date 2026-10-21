@@ -85,6 +85,25 @@ namespace DAL
             return lista;
         }
 
+        /// <summary>
+        /// IdExperiencia de todas las experiencias en las que el cliente está en la cola (Esperando u
+        /// Ofrecido). Carga por lotes para evaluar compatibilidad sin un COUNT por experiencia.
+        /// </summary>
+        public System.Collections.Generic.HashSet<int> ObtenerIdExperienciasEnCola(int idCliente)
+        {
+            var set = new System.Collections.Generic.HashSet<int>();
+            var dt = acceso.Leer(
+                "SELECT DISTINCT IdExperiencia FROM ListaEspera WHERE IdCliente=@Id AND Estado IN (@Esp,@Ofr)",
+                new[]
+                {
+                    new SqlParameter("@Id", idCliente),
+                    new SqlParameter("@Esp", (object)(int)BE.EstadoListaEspera.Esperando),
+                    new SqlParameter("@Ofr", (object)(int)BE.EstadoListaEspera.Ofrecido)
+                });
+            foreach (DataRow row in dt.Rows) set.Add(Convert.ToInt32(row["IdExperiencia"]));
+            return set;
+        }
+
         public bool YaEstaEnCola(int idExperiencia, int idCliente)
         {
             var dt = acceso.Leer(
@@ -119,6 +138,54 @@ namespace DAL
         {
             acceso.Escribir("UPDATE ListaEspera SET Estado=@Estado WHERE IdListaEspera=@Id",
                 new[] { new SqlParameter("@Estado", (int)estado), new SqlParameter("@Id", idListaEspera) });
+        }
+
+        /// <summary>
+        /// Todas las ofertas vigentes (entradas en estado Ofrecido), de cualquier experiencia, ordenadas
+        /// por fecha de oferta. SELECT de solo lectura — insumo de la vista orientada a tareas (PN02).
+        /// </summary>
+        public List<BE.ListaEspera> ObtenerOfertasVigentes()
+        {
+            var lista = new List<BE.ListaEspera>();
+            DataTable t = acceso.Leer(
+                SELECT_BASE + "WHERE le.Estado = @Ofrecido ORDER BY le.FechaOferta",
+                new[] { new SqlParameter("@Ofrecido", (object)(int)BE.EstadoListaEspera.Ofrecido) });
+            foreach (DataRow row in t.Rows) lista.Add(Mapear(row));
+            return lista;
+        }
+
+        /// <summary>
+        /// Resumen de actividad por experiencia: por cada experiencia con entradas Esperando u Ofrecido,
+        /// cuántas hay de cada tipo. SELECT agregado de solo lectura (no consulta por experiencia).
+        /// </summary>
+        public List<BE.ResumenListaEspera> ObtenerResumenActivo()
+        {
+            var lista = new List<BE.ResumenListaEspera>();
+            DataTable t = acceso.Leer(
+                "SELECT le.IdExperiencia, e.Nombre AS NombreExperiencia, " +
+                "       (CAST(e.Fecha AS DATETIME) + CAST(e.HoraInicio AS DATETIME)) AS FechaHoraExperiencia, " +
+                "       SUM(CASE WHEN le.Estado = @Esp THEN 1 ELSE 0 END) AS EnEspera, " +
+                "       SUM(CASE WHEN le.Estado = @Ofr THEN 1 ELSE 0 END) AS Ofrecidas " +
+                "FROM ListaEspera le " +
+                "JOIN Experiencia e ON e.IdExperiencia = le.IdExperiencia " +
+                "WHERE le.Estado IN (@Esp, @Ofr) " +
+                "GROUP BY le.IdExperiencia, e.Nombre, e.Fecha, e.HoraInicio " +
+                "ORDER BY FechaHoraExperiencia",
+                new[]
+                {
+                    new SqlParameter("@Esp", (object)(int)BE.EstadoListaEspera.Esperando),
+                    new SqlParameter("@Ofr", (object)(int)BE.EstadoListaEspera.Ofrecido)
+                });
+            foreach (DataRow row in t.Rows)
+                lista.Add(new BE.ResumenListaEspera
+                {
+                    IdExperiencia        = Convert.ToInt32(row["IdExperiencia"]),
+                    NombreExperiencia    = row["NombreExperiencia"] != DBNull.Value ? row["NombreExperiencia"].ToString() : null,
+                    FechaHoraExperiencia = row["FechaHoraExperiencia"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(row["FechaHoraExperiencia"]) : null,
+                    EnEspera             = Convert.ToInt32(row["EnEspera"]),
+                    Ofrecidas            = Convert.ToInt32(row["Ofrecidas"])
+                });
+            return lista;
         }
 
         /// <summary>IdExperiencia de todas las experiencias que hoy tienen una oferta vigente (Ofrecido).

@@ -19,6 +19,7 @@ namespace DAL
             "SELECT ct.IdContratacion, ct.IdCliente, ct.IdPlan, ct.Importe, ct.Estado, ct.IntentosPago, " +
             "       ct.MedioPago, ct.FechaPago, ct.NumeroComprobante, ct.FechaComprobante, " +
             "       ct.Cuotas, ct.RecargoPorcentaje, ct.ImporteTotal, " +
+            "       ct.Tipo, ct.IdSuscripcionRenovada, " +
             "       ct.IdSuscripcion, ct.FechaAlta, " +
             "       c.Nombre + ' ' + c.Apellido AS NombreCliente, p.Nombre AS NombrePlan " +
             "FROM Contratacion ct " +
@@ -43,6 +44,17 @@ namespace DAL
             return lista;
         }
 
+        /// <summary>Cola de formalización (Venta): contrataciones Pagadas sin formalizar, por fecha de pago.</summary>
+        public List<BE.Contratacion> ObtenerPagadas()
+        {
+            var lista = new List<BE.Contratacion>();
+            DataTable t = acceso.Leer(
+                SELECT_BASE + "WHERE ct.Estado = @Pag ORDER BY ct.FechaPago",
+                new[] { new SqlParameter("@Pag", (object)(int)BE.EstadoContratacion.Pagada) });
+            foreach (DataRow row in t.Rows) lista.Add(Mapear(row));
+            return lista;
+        }
+
         /// <summary>Contrataciones "en proceso" (Pendiente de pago o Pagada sin formalizar), más antiguas primero.</summary>
         public List<BE.Contratacion> ObtenerActivas()
         {
@@ -61,8 +73,8 @@ namespace DAL
         public int Alta(BE.Contratacion c)
         {
             DataTable t = acceso.Leer(
-                "INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta) " +
-                "VALUES (@IdCliente, @IdPlan, @Importe, @Estado, 0, @FechaAlta); " +
+                "INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta, Tipo, IdSuscripcionRenovada) " +
+                "VALUES (@IdCliente, @IdPlan, @Importe, @Estado, 0, @FechaAlta, @Tipo, @IdSusRenov); " +
                 "SELECT CAST(SCOPE_IDENTITY() AS INT) AS IdNuevo",
                 new[]
                 {
@@ -70,7 +82,9 @@ namespace DAL
                     new SqlParameter("@IdPlan", c.IdPlan),
                     new SqlParameter("@Importe", c.Importe),
                     new SqlParameter("@Estado", (object)(int)BE.EstadoContratacion.PendienteDePago),
-                    new SqlParameter("@FechaAlta", c.FechaAlta)
+                    new SqlParameter("@FechaAlta", c.FechaAlta),
+                    new SqlParameter("@Tipo", (object)(int)c.Tipo),
+                    new SqlParameter("@IdSusRenov", (object)c.IdSuscripcionRenovada ?? DBNull.Value)
                 });
             return t.Rows.Count > 0 ? Convert.ToInt32(t.Rows[0]["IdNuevo"]) : 0;
         }
@@ -163,6 +177,40 @@ namespace DAL
             return idSus;
         }
 
+        /// <summary>
+        /// Formaliza una RENOVACIÓN: extiende la suscripción existente (nuevo vencimiento, Activa,
+        /// reinicia el consumo del período) y marca la contratación Formalizada, en la MISMA
+        /// transacción. No crea una suscripción nueva. Revalida que la contratación siga Pagada.
+        /// </summary>
+        public void FormalizarRenovacion(int idContratacion, int idSuscripcion, DateTime nuevoVencimiento, DateTime periodoConsumo)
+        {
+            acceso.EjecutarTransaccion((conn, tx) =>
+            {
+                using (var sus = new SqlCommand(
+                    "UPDATE Suscripcion SET FechaVencimiento=@Vto, Estado=@Activa, " +
+                    "ReservasConsumidasMes=0, PeriodoConsumo=@Periodo WHERE IdSuscripcion=@IdSus", conn, tx))
+                {
+                    sus.Parameters.AddWithValue("@Vto", nuevoVencimiento.Date);
+                    sus.Parameters.AddWithValue("@Activa", (int)BE.EstadoSuscripcion.Activa);
+                    sus.Parameters.AddWithValue("@Periodo", periodoConsumo.Date);
+                    sus.Parameters.AddWithValue("@IdSus", idSuscripcion);
+                    sus.ExecuteNonQuery();
+                }
+                using (var upd = new SqlCommand(
+                    "UPDATE Contratacion SET Estado=@Form, IdSuscripcion=@IdSus " +
+                    "WHERE IdContratacion=@Id AND Estado=@Pagada", conn, tx))
+                {
+                    upd.Parameters.AddWithValue("@Form", (int)BE.EstadoContratacion.Formalizada);
+                    upd.Parameters.AddWithValue("@IdSus", idSuscripcion);
+                    upd.Parameters.AddWithValue("@Id", idContratacion);
+                    upd.Parameters.AddWithValue("@Pagada", (int)BE.EstadoContratacion.Pagada);
+                    if (upd.ExecuteNonQuery() == 0)
+                        throw new BE.AppException("err.dal.contratacion.no_pagada",
+                            "La contratación ya no está en estado Pagada; no se puede formalizar.");
+                }
+            });
+        }
+
         private BE.Contratacion Mapear(DataRow row) => new BE.Contratacion
         {
             IdContratacion    = Convert.ToInt32(row["IdContratacion"]),
@@ -178,6 +226,10 @@ namespace DAL
             Cuotas            = row["Cuotas"]            != DBNull.Value ? Convert.ToInt32(row["Cuotas"]) : 1,
             RecargoPorcentaje = row["RecargoPorcentaje"] != DBNull.Value ? Convert.ToDecimal(row["RecargoPorcentaje"]) : 0m,
             ImporteTotal      = row["ImporteTotal"]      != DBNull.Value ? Convert.ToDecimal(row["ImporteTotal"]) : Convert.ToDecimal(row["Importe"]),
+            Tipo              = row.Table.Columns.Contains("Tipo") && row["Tipo"] != DBNull.Value
+                                    ? (BE.TipoContratacion)Convert.ToInt32(row["Tipo"]) : BE.TipoContratacion.Alta,
+            IdSuscripcionRenovada = row.Table.Columns.Contains("IdSuscripcionRenovada") && row["IdSuscripcionRenovada"] != DBNull.Value
+                                    ? (int?)Convert.ToInt32(row["IdSuscripcionRenovada"]) : null,
             IdSuscripcion     = row["IdSuscripcion"] != DBNull.Value ? (int?)Convert.ToInt32(row["IdSuscripcion"]) : null,
             FechaAlta         = Convert.ToDateTime(row["FechaAlta"]),
             NombreCliente     = row["NombreCliente"] != DBNull.Value ? row["NombreCliente"].ToString() : null,
