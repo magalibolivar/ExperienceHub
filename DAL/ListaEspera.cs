@@ -134,10 +134,17 @@ namespace DAL
             return t.Rows.Count > 0 ? Convert.ToInt32(t.Rows[0]["Posicion"]) : 0;
         }
 
-        public void CambiarEstado(int idListaEspera, BE.EstadoListaEspera estado)
+        // motivoRetiro (opcional): al pasar a Retirado, registra por qué (Vencida/Rechazada/NoRevalido/
+        // CierreExperiencia) para los KPIs de demanda insatisfecha de PN03. Null = no se toca la columna.
+        public void CambiarEstado(int idListaEspera, BE.EstadoListaEspera estado, string motivoRetiro = null)
         {
-            acceso.Escribir("UPDATE ListaEspera SET Estado=@Estado WHERE IdListaEspera=@Id",
-                new[] { new SqlParameter("@Estado", (int)estado), new SqlParameter("@Id", idListaEspera) });
+            acceso.Escribir(
+                "UPDATE ListaEspera SET Estado=@Estado" +
+                (motivoRetiro != null ? ", MotivoRetiro=@Motivo" : "") +
+                " WHERE IdListaEspera=@Id",
+                motivoRetiro != null
+                    ? new[] { new SqlParameter("@Estado", (int)estado), new SqlParameter("@Motivo", motivoRetiro), new SqlParameter("@Id", idListaEspera) }
+                    : new[] { new SqlParameter("@Estado", (int)estado), new SqlParameter("@Id", idListaEspera) });
         }
 
         /// <summary>

@@ -54,6 +54,39 @@ namespace BLL
         }
 
         // Modifica datos descriptivos (no toca el cupo disponible, lo gestionan las reservas).
+        // ── PN03 — acciones de recomendaciones (reutilizadas por el plan de acción) ──
+        /// <summary>Programa una NUEVA EDICIÓN de la experiencia: copia sus datos con otra fecha/hora y
+        /// la da de alta como Programada (cupo nuevo = CupoMaximo). Devuelve el Id de la edición creada.</summary>
+        public int ProgramarEdicion(string modulo, int idExperienciaBase, DateTime nuevaFecha, TimeSpan nuevaHora)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ExperienciasEditar, BE.Patentes.Experiencias);
+            var b = dalExp.ObtenerPorId(idExperienciaBase)
+                ?? throw new BE.AppException("err.bll.experiencia.inexistente", "La experiencia base no existe.");
+            var nueva = new BE.Experiencia
+            {
+                Nombre = b.Nombre, Descripcion = b.Descripcion, IdCategoria = b.IdCategoria,
+                IdCiudad = b.IdCiudad, IdOrganizador = b.IdOrganizador, Ubicacion = b.Ubicacion,
+                Fecha = nuevaFecha.Date, HoraInicio = nuevaHora, DuracionMinutos = b.DuracionMinutos,
+                CupoMaximo = b.CupoMaximo, EdadMinima = b.EdadMinima, Premium = b.Premium
+            };
+            Alta(modulo, nueva);   // valida, setea Programada y CupoDisponible = CupoMaximo
+            bitacoraNeg.Registrar(BE.TipoEventoNegocio.AltaExperiencia,
+                $"Nueva edición de '{b.Nombre}' programada para {nuevaFecha:dd/MM/yyyy} {nuevaHora:hh\\:mm} (PN03)",
+                idExperiencia: nueva.IdExperiencia);
+            return nueva.IdExperiencia;
+        }
+
+        /// <summary>Amplía el cupo de una experiencia en <paramref name="cantidad"/> lugares (PN03).</summary>
+        public void AmpliarCupo(string modulo, int idExperiencia, int cantidad)
+        {
+            PermisosAccion.Exigir(BE.Patentes.ExperienciasEditar, BE.Patentes.Experiencias);
+            if (cantidad <= 0) throw new BE.AppException("err.bll.experiencia.cupo_invalido", "La ampliación de cupo debe ser mayor que cero.");
+            dalExp.AmpliarCupo(idExperiencia, cantidad);
+            bitacora.Registrar(modulo, $"Ampliar cupo Experiencia ID {idExperiencia} en {cantidad} lugar(es)", BE.Criticidad.Media);
+            bitacoraNeg.Registrar(BE.TipoEventoNegocio.ModificacionExperiencia,
+                $"Cupo ampliado en {cantidad} de la experiencia ID {idExperiencia} (PN03)", idExperiencia: idExperiencia);
+        }
+
         public void Modificar(string modulo, BE.Experiencia experiencia)
         {
             PermisosAccion.Exigir(BE.Patentes.ExperienciasEditar, BE.Patentes.Experiencias);

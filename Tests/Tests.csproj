@@ -60,6 +60,7 @@
     <Compile Include="ReglasNegocioTests.cs" />
     <Compile Include="IntegracionReservaTests.cs" />
     <Compile Include="ReservaPN02Tests.cs" />
+    <Compile Include="MotorRecomendacionesTests.cs" />
     <Compile Include="ContratacionPN01Tests.cs" />
     <Compile Include="ListaEsperaReglasTests.cs" />
     <Compile Include="SuscripcionCicloVidaTests.cs" />

@@ -150,6 +150,32 @@ namespace DAL
 
         public void RecalcularDVPublico() => RecalcularDV();
 
+        /// <summary>PN03 — Amplía el cupo: suma al CupoMaximo y al CupoDisponible la misma cantidad
+        /// (los lugares nuevos quedan libres). Si estaba Completa y ahora hay cupo, vuelve a Programada.</summary>
+        public void AmpliarCupo(int idExperiencia, int cantidad)
+        {
+            acceso.EjecutarTransaccion((conn, tx) =>
+            {
+                using (var up = new SqlCommand(
+                    "UPDATE Experiencia SET CupoMaximo = CupoMaximo + @N, CupoDisponible = CupoDisponible + @N " +
+                    "WHERE IdExperiencia=@Id", conn, tx))
+                {
+                    up.Parameters.AddWithValue("@N", cantidad);
+                    up.Parameters.AddWithValue("@Id", idExperiencia);
+                    up.ExecuteNonQuery();
+                }
+                using (var est = new SqlCommand(
+                    "UPDATE Experiencia SET Estado=@Prog WHERE IdExperiencia=@Id AND Estado=@Comp AND CupoDisponible > 0", conn, tx))
+                {
+                    est.Parameters.AddWithValue("@Prog", (int)BE.EstadoExperiencia.Programada);
+                    est.Parameters.AddWithValue("@Comp", (int)BE.EstadoExperiencia.Completa);
+                    est.Parameters.AddWithValue("@Id", idExperiencia);
+                    est.ExecuteNonQuery();
+                }
+            });
+            RecalcularDV();
+        }
+
         /// <summary>
         /// CU01-COO — Cancela una experiencia EN CASCADA, todo en UNA transacción atómica:
         ///   1. cancela cada reserva activa (Estado=Cancelada, fecha + motivo);
@@ -195,9 +221,11 @@ namespace DAL
                         ReservaHistorial.InsertarEnTransaccion(conn, tx, r.Historial);
                 }
 
-                // Cerrar la lista de espera: las entradas activas (Esperando/Ofrecido) pasan a Retirado.
+                // Cerrar la lista de espera: las entradas activas (Esperando/Ofrecido) pasan a Retirado,
+                // con MotivoRetiro = CierreExperiencia (KPIs de demanda insatisfecha de PN03).
                 using (var le = new SqlCommand(
-                    "UPDATE ListaEspera SET Estado=@Retirado WHERE IdExperiencia=@IdExp AND Estado IN (@Esp,@Ofr)", conn, tx))
+                    "UPDATE ListaEspera SET Estado=@Retirado, MotivoRetiro='CierreExperiencia' " +
+                    "WHERE IdExperiencia=@IdExp AND Estado IN (@Esp,@Ofr)", conn, tx))
                 {
                     le.Parameters.AddWithValue("@Retirado", (int)BE.EstadoListaEspera.Retirado);
                     le.Parameters.AddWithValue("@Esp", (int)BE.EstadoListaEspera.Esperando);

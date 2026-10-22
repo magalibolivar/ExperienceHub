@@ -72,6 +72,8 @@
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="ListaEspera.cs" />
     <Compile Include="Parametro.cs" />
+    <Compile Include="AnaliticaDAL.cs" />
+    <Compile Include="PlanAccionDAL.cs" />
     <Compile Include="Migracion.cs" />
     <EmbeddedResource Include="..\BD\16_PN03_Cancelacion.sql">
       <LogicalName>DAL.Migracion.PN03.sql</LogicalName>
@@ -81,6 +83,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\BD\20_Contratacion_Renovacion.sql">
       <LogicalName>DAL.Migracion.Renovacion.sql</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BD\21_PN03_Planificacion.sql">
+      <LogicalName>DAL.Migracion.Planificacion.sql</LogicalName>
     </EmbeddedResource>
     <Compile Include="Calificacion.cs" />
     <Compile Include="Permiso.cs" />

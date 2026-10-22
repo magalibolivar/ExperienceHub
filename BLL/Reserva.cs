@@ -299,7 +299,8 @@ namespace BLL
                 ("MotivoCancelacion", reserva.MotivoCancelacion, motivo.Trim())
             });
             dalReserva.Cancelar(reserva.IdReserva, reserva.IdExperiencia, lugares, motivo.Trim(),
-                liberarCupo: true, idSuscripcionADevolver: idSuscripcionADevolver, historial: historial);
+                liberarCupo: true, idSuscripcionADevolver: idSuscripcionADevolver, historial: historial,
+                cancelacionATiempo: aTiempo);
 
             string detalle = aTiempo ? "a tiempo (libera cupo, devuelve beneficio)" : "tardía (libera cupo, NO devuelve beneficio)";
             bitacora.Registrar(modulo,

@@ -19,6 +19,13 @@ namespace BE
         public const string Ciudades           = "mnuCiudades";
         public const string ListaEspera        = "mnuListaEspera";
 
+        // ── PN03 — Planificación de la oferta (reportería y analítica para decidir) ──
+        // Gerente de Operaciones analiza y decide; Coordinador ejecuta; Admin todo.
+        public const string Planificacion        = "mnuPlanificacion";        // ver tablero + generar recomendaciones
+        public const string PlanAccion           = "mnuPlanAccion";           // ver/crear plan de acción
+        public const string PlanAccionAprobar    = "mnuPlanAccionAprobar";    // aprobar/descartar recomendaciones (Gerente)
+        public const string PlanAccionEjecutar   = "mnuPlanAccionEjecutar";   // ejecutar tareas del plan (Coordinador)
+
         // ── PN01 Comercialización — separación de funciones Venta / Caja ─────────────
         // Dos patentes distintas para que el backend distinga quién crea/formaliza la
         // contratación (Venta) de quién la cobra/cancela por intentos (Caja), en vez de

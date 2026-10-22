@@ -55,7 +55,7 @@ namespace BLL
             if (entrada.OfertaVencida(HorasVigenciaOferta, MargenInicioHoras, System.DateTime.Now))
             {
                 // La oferta ya venció: se avanza al siguiente en vez de confirmar a destiempo.
-                CambiarYAvanzar(modulo, entrada, "La oferta venció; el cupo se ofrece al siguiente de la fila.");
+                CambiarYAvanzar(modulo, entrada, "La oferta venció; el cupo se ofrece al siguiente de la fila.", RETIRO_VENCIDA);
                 throw new BE.AppException("err.bll.espera.oferta_vencida",
                     "La oferta venció. El cupo se ofreció al siguiente cliente de la lista.");
             }
@@ -85,7 +85,7 @@ namespace BLL
                 // o solapamiento): la entrada queda Rechazada (Retirado) y el cupo —aún retenido— se
                 // ofrece automáticamente al siguiente de la fila.
                 CambiarYAvanzar(modulo, entrada,
-                    $"{entrada.NombreCliente} no cumple las condiciones de reserva; el cupo se ofrece al siguiente.");
+                    $"{entrada.NombreCliente} no cumple las condiciones de reserva; el cupo se ofrece al siguiente.", RETIRO_NOREVALIDO);
                 throw;
             }
 
@@ -106,7 +106,7 @@ namespace BLL
             if (!entrada.PuedeRechazarse())
                 throw new BE.AppException("err.bll.espera.no_ofrecido",
                     "Solo se puede rechazar una entrada a la que se le ofreció el cupo.");
-            CambiarYAvanzar(modulo, entrada, $"{entrada.NombreCliente} rechazó el cupo ofrecido.");
+            CambiarYAvanzar(modulo, entrada, $"{entrada.NombreCliente} rechazó el cupo ofrecido.", RETIRO_RECHAZADA);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace BLL
         {
             var oferta = dal.ObtenerOfertaVigente(idExperiencia);
             if (oferta != null && oferta.OfertaVencida(HorasVigenciaOferta, MargenInicioHoras, System.DateTime.Now))
-                CambiarYAvanzar("ListaEspera", oferta, "La oferta venció sin confirmarse.");
+                CambiarYAvanzar("ListaEspera", oferta, "La oferta venció sin confirmarse.", RETIRO_VENCIDA);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace BLL
                     var oferta = dal.ObtenerOfertaVigente(idExp);
                     if (oferta != null && oferta.OfertaVencida(HorasVigenciaOferta, MargenInicioHoras, System.DateTime.Now))
                     {
-                        CambiarYAvanzar("ListaEspera", oferta, "La oferta venció sin confirmarse (barrido de inicio de sesión).");
+                        CambiarYAvanzar("ListaEspera", oferta, "La oferta venció sin confirmarse (barrido de inicio de sesión).", RETIRO_VENCIDA);
                         procesadas++;
                     }
                 }
@@ -149,10 +149,18 @@ namespace BLL
             return procesadas;
         }
 
+        // Clasificación del retiro para KPIs de PN03 (demanda insatisfecha). Se persiste en
+        // ListaEspera.MotivoRetiro al pasar la entrada a Retirado.
+        public const string RETIRO_VENCIDA     = "Vencida";
+        public const string RETIRO_RECHAZADA   = "Rechazada";
+        public const string RETIRO_NOREVALIDO  = "NoRevalido";
+        public const string RETIRO_CIERREEXP   = "CierreExperiencia";
+
         // Retira la entrada ofrecida y ofrece el cupo (aún retenido) al siguiente en espera.
-        private void CambiarYAvanzar(string modulo, BE.ListaEspera entrada, string motivo)
+        // motivoRetiro distingue vencimiento de rechazo/no-revalidación para la analítica (PN03).
+        private void CambiarYAvanzar(string modulo, BE.ListaEspera entrada, string motivo, string motivoRetiro)
         {
-            dal.CambiarEstado(entrada.IdListaEspera, BE.EstadoListaEspera.Retirado);
+            dal.CambiarEstado(entrada.IdListaEspera, BE.EstadoListaEspera.Retirado, motivoRetiro);
             bitacora.Registrar(modulo,
                 $"Lista de espera — experiencia #{entrada.IdExperiencia}: {motivo}", BE.Criticidad.Baja);
             Avanzar(modulo, entrada.IdExperiencia);

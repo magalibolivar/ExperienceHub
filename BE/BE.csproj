@@ -67,6 +67,11 @@
     <Compile Include="Reserva.cs" />
     <Compile Include="CompatibilidadReserva.cs" />
     <Compile Include="ResumenListaEspera.cs" />
+    <Compile Include="PlanificacionTipos.cs" />
+    <Compile Include="KpiPlanificacion.cs" />
+    <Compile Include="PlanAccion.cs" />
+    <Compile Include="RecomendacionPlan.cs" />
+    <Compile Include="KpiSnapshot.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="Organizador.cs" />
     <Compile Include="Categoria.cs" />

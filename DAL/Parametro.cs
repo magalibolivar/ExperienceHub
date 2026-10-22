@@ -30,5 +30,24 @@ namespace DAL
             }
             return defecto;
         }
+
+        /// <summary>Valor decimal de un parámetro (cultura invariante, "." decimal), o <paramref name="defecto"/>
+        /// si no existe/no es válido/tabla sin migrar. Usado por los umbrales decimales de PN03.</summary>
+        public decimal ObtenerDecimal(string clave, decimal defecto)
+        {
+            try
+            {
+                DataTable dt = acceso.Leer("SELECT Valor FROM Parametro WHERE Clave=@C",
+                    new[] { new SqlParameter("@C", clave) });
+                if (dt.Rows.Count > 0 && decimal.TryParse(Convert.ToString(dt.Rows[0]["Valor"]),
+                        System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal v))
+                    return v;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError("[DAL.Parametro.ObtenerDecimal] " + ex.Message);
+            }
+            return defecto;
+        }
     }
 }

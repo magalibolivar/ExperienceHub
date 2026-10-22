@@ -15,9 +15,10 @@ namespace DAL
         // T07 — Dígito Verificador de esta tabla (fuente única).
         public const  string   DV_Tabla    = "Reserva";
         public const  string   DV_Pk       = "IdReserva";
-        // IdSuscripcion entra al DVH: define a qué suscripción se devuelve el beneficio al cancelar,
-        // así que manipularla en BD debe detectarse como corrupción (PN03, punto 3).
-        public static readonly string[] DV_Columnas = { "IdCliente", "IdExperiencia", "Estado", "CantidadInvitados", "IdSuscripcion" };
+        // IdSuscripcion entra al DVH (a qué suscripción se devuelve el beneficio al cancelar).
+        // CancelacionATiempo también entra al DVH: alimenta los KPIs de PN03 (cancelaciones a tiempo vs
+        // tardías), así que manipularla en BD debe detectarse como corrupción.
+        public static readonly string[] DV_Columnas = { "IdCliente", "IdExperiencia", "Estado", "CantidadInvitados", "IdSuscripcion", "CancelacionATiempo" };
 
         public void RecalcularDV()
         {
@@ -322,17 +323,20 @@ namespace DAL
         /// </summary>
         public void Cancelar(int idReserva, int idExperiencia, int lugares, string motivo,
                              bool liberarCupo, int idSuscripcionADevolver = 0,
-                             List<BE.ReservaHistorial> historial = null)
+                             List<BE.ReservaHistorial> historial = null,
+                             bool cancelacionATiempo = false)
         {
             acceso.EjecutarTransaccion((conn, tx) =>
             {
+                // CancelacionATiempo se sella acá (alimenta KPIs de PN03: a tiempo vs tardía) y entra al DVH.
                 using (var upd = new SqlCommand(
-                    "UPDATE Reserva SET Estado=@Estado, FechaCancelacion=@Fecha, MotivoCancelacion=@Motivo " +
-                    "WHERE IdReserva=@Id", conn, tx))
+                    "UPDATE Reserva SET Estado=@Estado, FechaCancelacion=@Fecha, MotivoCancelacion=@Motivo, " +
+                    "CancelacionATiempo=@ATiempo WHERE IdReserva=@Id", conn, tx))
                 {
                     upd.Parameters.AddWithValue("@Estado", (int)BE.EstadoReserva.Cancelada);
                     upd.Parameters.AddWithValue("@Fecha", DateTime.Now);
                     upd.Parameters.AddWithValue("@Motivo", (object)motivo ?? DBNull.Value);
+                    upd.Parameters.AddWithValue("@ATiempo", cancelacionATiempo);
                     upd.Parameters.AddWithValue("@Id", idReserva);
                     upd.ExecuteNonQuery();
                 }
