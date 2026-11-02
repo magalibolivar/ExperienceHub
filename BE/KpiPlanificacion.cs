@@ -39,6 +39,24 @@ namespace BE
                ? System.Math.Round(100m * Inasistencias / (Asistencias + Inasistencias), 1) : 0m;
     }
 
+    /// <summary>PN03 — Reservas de un mes del período (serie temporal para "evolución mensual").
+    /// Cuenta las reservas efectivas (estados 1 Confirmada / 3 Asistió / 4 No asistió) por mes de la
+    /// fecha de la experiencia. POCO puro: la etiqueta legible la arma la GUI según el idioma.</summary>
+    public class KpiMes
+    {
+        public int Anio { get; set; }
+        public int Mes  { get; set; }   // 1..12
+        public int Reservas { get; set; }
+    }
+
+    /// <summary>PN03 — Cantidad de reservas de un estado dentro del período ("distribución por estado").
+    /// Estado: 1 Confirmada, 2 Cancelada, 3 Asistió, 4 No asistió. La etiqueta legible la arma la GUI.</summary>
+    public class KpiEstadoReserva
+    {
+        public int Estado   { get; set; }
+        public int Cantidad { get; set; }
+    }
+
     /// <summary>KPI de uso de un plan (reservas usadas vs permitidas en el período).</summary>
     public class KpiPlan
     {
@@ -64,6 +82,10 @@ namespace BE
         public List<KpiExperiencia> Experiencias { get; set; } = new List<KpiExperiencia>();
         public List<KpiOrganizador> Organizadores { get; set; } = new List<KpiOrganizador>();
         public List<KpiPlan>        Planes       { get; set; } = new List<KpiPlan>();
+
+        // Series para las visualizaciones del Resumen ejecutivo (solo lectura, agregadas por el DAL).
+        public List<KpiMes>           ReservasMensuales { get; set; } = new List<KpiMes>();
+        public List<KpiEstadoReserva> ReservasPorEstado { get; set; } = new List<KpiEstadoReserva>();
 
         // Globales / demanda insatisfecha / cancelaciones / asistencia.
         public int EnEsperaTotal      { get; set; }

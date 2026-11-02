@@ -70,8 +70,10 @@
     <Compile Include="PlanificacionTipos.cs" />
     <Compile Include="KpiPlanificacion.cs" />
     <Compile Include="PlanAccion.cs" />
+    <Compile Include="ReglasFecha.cs" />
     <Compile Include="RecomendacionPlan.cs" />
     <Compile Include="KpiSnapshot.cs" />
+    <Compile Include="ConfiguracionInforme.cs" />
     <Compile Include="ReservaHistorial.cs" />
     <Compile Include="Organizador.cs" />
     <Compile Include="Categoria.cs" />

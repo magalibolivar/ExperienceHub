@@ -72,7 +72,7 @@ namespace GUI
 
             var header = UI.Encabezado("Para formalizar",
                 "Contrataciones ya cobradas. Formalizá la suscripción para dejarla vigente.",
-                "eh.form.titulo", "eh.form.header.desc");
+                "eh.form.titulo", "eh.form.header.desc", "pn01.formalizacion");
 
             Controls.Add(cardGrid);
             Controls.Add(panel);

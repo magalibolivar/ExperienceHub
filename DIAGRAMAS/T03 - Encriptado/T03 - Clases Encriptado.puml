@@ -1,4 +1,24 @@
 @startuml T03 - Clases Encriptado
+skinparam class {
+  BackgroundColor #FDEEE0-#F6C9A0
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+  ArrowColor #8B4A2B
+}
+skinparam enum {
+  BackgroundColor #FDEEE0-#F6C9A0
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+}
+skinparam note {
+  BackgroundColor #FFF3C4
+  BorderColor #D9A441
+}
+skinparam package {
+  BackgroundColor #FFFCF7
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+}
 title T03 - Gestion de Encriptado (clase estatica Encriptador, principio Open/Closed)
 skinparam classAttributeIconSize 0
 
@@ -24,4 +44,24 @@ class "DAL.Cliente" as DC
 
 BU ..> Encriptador : Hash / VerificarContrasena
 DC ..> Encriptador : Encriptar / TryDesencriptar (DNI)
+
+class DiagnosticoCifrado <<static>> {
+  + Clasificar(valor : string, clavesDisponibles : IReadOnlyList<byte[]>) : EstadoDni
+  + Huella(clave : byte[]) : string
+  + RecuperarClave(rutaKeyDat : string) : byte[]
+}
+enum EstadoDni {
+  Legible
+  CifradoConClaveActual
+  CifradoConClaveVieja
+  Irrecuperable
+}
+DiagnosticoCifrado ..> EstadoDni
+note right of DiagnosticoCifrado
+  Utilidad de diagnostico: clasifica un DNI cifrado
+  segun con que clave fue encriptado, para detectar
+  un key.dat desalineado con los datos. [VERIFICAR]:
+  solo tiene tests propios (DiagnosticoCifradoTests);
+  no esta invocada desde ninguna pantalla todavia.
+end note
 @enduml

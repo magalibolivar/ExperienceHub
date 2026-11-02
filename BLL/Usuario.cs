@@ -45,7 +45,10 @@ namespace BLL
         //   expirado    = el bloqueo TEMPORAL ya venció → se puede reactivar y continuar.
         //   permanente  = no auto-expira (bloqueo manual del admin, sin fecha, o escala agotada).
         //   minutosRest = minutos que faltan si todavía no expiró.
-        private static (bool expirado, bool permanente, int minutosRestantes) EvaluarBloqueo(BE.Usuario u)
+        // Función PURA (recibe "ahora" como parámetro) — testeable con cualquier fecha sin depender
+        // del reloj del sistema operativo. El único caller productivo le pasa DateTime.Now (el borde
+        // real); pública para que los tests puedan ejercitarla con fechas controladas.
+        public static (bool expirado, bool permanente, int minutosRestantes) EvaluarBloqueo(BE.Usuario u, DateTime ahora)
         {
             // Sin fecha de bloqueo (bloqueo manual del admin o BD sin migrar) → no auto-expira.
             if (!u.FechaBloqueo.HasValue) return (false, true, 0);
@@ -54,7 +57,7 @@ namespace BLL
                 return (false, true, 0);
 
             int minutos = _minutosBloqueo[u.CantidadBloqueos - 1];
-            double transcurridos = (DateTime.Now - u.FechaBloqueo.Value).TotalMinutes;
+            double transcurridos = (ahora - u.FechaBloqueo.Value).TotalMinutes;
             if (transcurridos >= minutos) return (true, false, 0);
             return (false, false, (int)Math.Ceiling(minutos - transcurridos));
         }
@@ -108,7 +111,7 @@ namespace BLL
 
             if (usuario.Bloqueado)
             {
-                var (expirado, permanente, minutos) = EvaluarBloqueo(usuario);
+                var (expirado, permanente, minutos) = EvaluarBloqueo(usuario, DateTime.Now);
                 if (permanente)
                     throw new BE.LoginException(BE.LoginException.TipoError.CuentaBloqueada,
                         $"La cuenta '{username}' está bloqueada.\n" +
@@ -380,7 +383,7 @@ namespace BLL
                 if (fechaNacimiento.Value.Date > DateTime.Today)
                     throw new BE.AppException("err.bll.usuario.fechanac_futura",
                         "La fecha de nacimiento no puede ser futura.");
-                if (fechaNacimiento.Value.Date > DateTime.Today.AddYears(-18))
+                if (!BE.ReglasFecha.EsMayorDeEdad(fechaNacimiento.Value, DateTime.Today))
                     throw new BE.AppException("err.bll.usuario.fechanac_menor",
                         "El usuario debe ser mayor de edad (18 años).");
             }

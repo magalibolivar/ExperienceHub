@@ -1,0 +1,92 @@
+@startuml
+title CU04-AG-GESTIONAR LISTA DE ESPERA
+actor "Cliente" as Cli
+actor "Agente de Reservas" as Ag
+participant ":ListaEsperaForm" as F
+participant ":BLL.ListaEspera" as BLL
+participant ":BLL.Reserva" as BLLR
+participant ":DAL.ListaEspera" as DAL
+database "BD" as DB
+
+autonumber
+Ag -> Cli : informar que no hay cupo disponible
+
+alt 2.1 el cliente no desea ingresar a la lista de espera
+  Cli --> Ag : no ingresa
+else el cliente ingresa a la lista de espera
+  Cli -> Ag : ingresar a la lista de espera
+  Ag -> F : anotar al cliente
+  F -> BLL : Ingresar(modulo, idExperiencia, idCliente)
+  BLL -> BLL : experiencia.EstaCompleta()
+
+  alt la experiencia todavía tiene cupos
+    BLL --> F : AppException("no corresponde lista de espera")
+    F --> Ag : informar el error
+  else 3.1 el cliente ya está en la cola
+    BLL --> F : AppException("El cliente ya está en la lista de espera")
+    F --> Ag : informar el error
+  else experiencia completa y cliente no está en la cola
+    BLL -> DAL : Agregar(idExperiencia, idCliente)
+    DAL -> DB : INSERT ListaEspera (Esperando, posición siguiente)
+    BLL --> F : posición asignada
+    F --> Cli : posición en la fila
+
+    ... al retirarse una entrada (rechazo, vencimiento o cierre de experiencia) ...
+
+    BLL -> DAL : ObtenerPrimeroEnEspera(idExperiencia)
+    DAL --> BLL : siguiente en la fila (o ninguno)
+
+    alt 6.1 falta menos del margen de horas para el inicio
+      BLL -> BLL : no se ofrece: el cupo queda libre para reserva directa
+    else hay margen suficiente
+      BLL -> DAL : Ofrecer(idEntrada, ahora)
+      note right
+        El cupo queda RETENIDO para este
+        cliente: mientras la oferta esté
+        vigente, nadie más puede tomarlo.
+      end note
+      BLL -> F : ofrecer el cupo al cliente
+      F -> Cli : oferta de cupo
+
+      alt el cliente confirma
+        Cli -> F : confirmar oferta
+        F -> BLL : ConfirmarOferta(modulo, entrada)
+        BLL -> BLL : entrada.OfertaVencida(vigencia, margen, ahora)
+
+        alt 7.1 la oferta ya venció
+          BLL -> BLL : retirar entrada (MotivoRetiro=Vencida) y ofrecer al siguiente
+          BLL --> F : AppException("La oferta venció")
+          F --> Cli : informar que venció
+        else oferta vigente
+          BLL -> BLLR : CrearReserva(modulo, idCliente, idExperiencia, 0,\nidListaEsperaAConfirmar=idEntrada)
+          note right
+            Mismo camino atómico que una
+            reserva nueva: revalida TODAS
+            las reglas de PN02 (suscripción,
+            cupo del plan, premium, edad,
+            ciudad, solapamiento) y marca
+            la entrada Confirmada en la
+            misma transacción.
+          end note
+
+          alt 8.1 el cliente ya no cumple las condiciones
+            BLLR --> BLL : AppException (regla de PN02 incumplida)
+            BLL -> BLL : retirar entrada (MotivoRetiro=NoRevalido) y ofrecer al siguiente
+            BLL --> F : no se pudo confirmar
+            F --> Cli : informar el motivo
+          else cumple las condiciones
+            BLLR --> BLL : idReserva
+            BLL --> F : reserva confirmada
+            F --> Cli : "Reserva confirmada"
+          end
+        end
+      else el cliente rechaza la oferta
+        Cli -> F : rechazar oferta
+        F -> BLL : RechazarOferta(modulo, entrada)
+        BLL -> BLL : retirar entrada (MotivoRetiro=Rechazada) y ofrecer al siguiente
+        BLL --> F : oferta rechazada
+      end
+    end
+  end
+end
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+title CU01-CAJ-GESTIONAR COBRO
+actor "Caja" as Ca
+participant ":CobrosPendientesForm" as F
+participant ":BLL.Contratacion" as BLL
+participant ":DAL.Contratacion" as DAL
+database "BD" as DB
+
+autonumber
+Ca -> F : acceder a la contratación pendiente de pago
+F --> Ca : muestra el importe correspondiente a la suscripción
+Ca -> F : seleccionar el medio de pago (efectivo, tarjeta o transferencia)
+
+alt 3.1 no se selecciona un medio de pago
+  F --> Ca : "Debe indicar un medio de pago"
+else medio seleccionado
+  Ca -> F : confirmar el cobro
+  F -> BLL : RegistrarCobro(modulo, idContratacion, medio, cuotas, pagoConcretado=true)
+  BLL -> BLL : CuotasValidas(medio, cuotas)
+  BLL -> DAL : ObtenerPorId(idContratacion)
+  DAL --> BLL : contratación (PendienteDePago)
+
+  alt 6.1 el pago no se concreta
+    F -> BLL : RegistrarCobro(..., pagoConcretado=false)
+    BLL -> BLL : EstadoTrasIntentoFallido(intentosPrevios, 3)
+    BLL -> DAL : RegistrarIntentoFallido(idContratacion, estado)
+    DAL -> DB : UPDATE Contratacion SET IntentosPago = IntentosPago + 1
+
+    alt aún no se alcanzaron los tres intentos
+      BLL --> F : intento fallido registrado
+      F --> Ca : informar la situación; habilita un nuevo intento
+    else 6.2 máximo de tres intentos alcanzado
+      ref over BLL
+        CU03-CAJ-CANCELAR CONTRATACIÓN
+      end ref
+    end
+  else 6.3 no se puede procesar el pago
+    DB --> DAL : error de acceso a datos
+    DAL --> BLL : excepción
+    BLL --> F : no se pudo completar la operación
+    F --> Ca : permitir reintentar el cobro
+  else el pago se concreta
+    BLL -> BLL : GenerarNumeroComprobante(idContratacion, fecha)
+    BLL -> DAL : RegistrarPago(idContratacion, medio, numero, fecha, cuotas, recargo, total)
+    DAL -> DB : UPDATE Contratacion (Estado=Pagada, MedioPago, NumeroComprobante, ImporteTotal)
+    DB --> DAL : ok
+    DAL --> BLL : pago registrado
+    ref over BLL
+      CU02-CAJ-EMITIR COMPROBANTE
+    end ref
+    BLL --> F : pago registrado correctamente
+    F --> Ca : "Pago registrado correctamente"
+  end
+end
+@enduml

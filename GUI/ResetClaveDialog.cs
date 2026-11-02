@@ -18,7 +18,7 @@ namespace GUI
     ///           usuarioBLL.ResetearClave(this, idUsuario, dialog.NuevaClave);
     ///   }
     /// </summary>
-    public partial class ResetClaveDialog : Form
+    public partial class ResetClaveDialog : FormBase
     {
         // ── Controles ─────────────────────────────────────────────────────────
         private TextBox txtNuevaClave;
@@ -39,8 +39,7 @@ namespace GUI
         public ResetClaveDialog(string username)
         {
             InitializeComponent();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico); } catch { }
+            // Ícono, identidad visual SUNSET y preferencias de UI: los aplica FormBase.OnLoad.
 
             // ── Traducciones ──────────────────────────────────────────────────
             var t = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);

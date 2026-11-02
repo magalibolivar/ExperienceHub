@@ -1,0 +1,40 @@
+@startuml
+title CU03-CAJ-CANCELAR CONTRATACIÓN
+actor "Caja" as Ca
+participant ":CobrosPendientesForm" as F
+participant ":BLL.Contratacion" as BLL
+participant ":DAL.Contratacion" as DAL
+participant ":Servicios.Bitacora" as BIT
+participant ":GUI.Exportacion.\nDocumentosContratacion" as DOC
+database "BD" as DB
+
+autonumber
+note over BLL
+  Se alcanza dentro de RegistrarCobro
+  cuando el tercer intento de pago
+  resulta fallido (ver CU01-CAJ).
+end note
+BLL -> BLL : EstadoTrasIntentoFallido(IntentosPago=2, max=3) = Cancelada
+BLL --> F : se alcanzó el máximo de intentos
+F --> Ca : informar que no es posible continuar con el cobro
+Ca -> F : confirmar la cancelación
+F -> BLL : RegistrarCobro(..., pagoConcretado=false)
+BLL -> DAL : RegistrarIntentoFallido(idContratacion, Cancelada)
+DAL -> DB : UPDATE Contratacion SET Estado = Cancelada
+
+alt 4.1 no se puede registrar la cancelación
+  DB --> DAL : error
+  DAL --> BLL : excepción
+  BLL --> F : no se pudo completar la cancelación
+  F --> Ca : permitir reintentar
+else cancelación exitosa
+  DB --> DAL : ok
+  DAL --> BLL : confirmación
+  BLL -> BIT : Registrar("Contratación CANCELADA tras 3 intentos de pago fallidos")
+  BLL --> F : contratación cancelada
+  Ca -> F : solicitar ver la constancia de cancelación
+  F -> DOC : ConstanciaCancelacion(contratacion, maxIntentos)
+  DOC --> F : documento (PDF) de la constancia
+  F --> Ca : "Contratación cancelada correctamente"
+end
+@enduml

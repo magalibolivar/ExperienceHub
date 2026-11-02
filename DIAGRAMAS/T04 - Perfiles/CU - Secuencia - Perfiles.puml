@@ -36,10 +36,10 @@ database "SQL Server" as DB
 
 A -> GUI : Administrar -> Perfiles y Permisos
 GUI -> BF : ObtenerArbol()
-BF -> DP : ObtenerComponentes + ObtenerRelaciones
+BF -> DP : ObtenerArbol()
 DP -> DB : SELECT Permiso / PermisoRelacion
 DB --> DP : nodos + aristas
-DP --> BF : datos
+DP --> BF : List<Componente>
 BF --> GUI : arbol Composite (roles + patentes)
 
 A -> GUI : selecciona un rol y agrega/quita componentes

@@ -1,0 +1,42 @@
+@startuml CU - Caso de Uso - Backup
+skinparam backgroundColor #FFFFFF
+skinparam shadowing true
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #2B2B40
+skinparam usecase {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam actor {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam arrow {
+  Color #2B2B40
+}
+skinparam frame {
+  BackgroundColor #FFFFFF
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+left to right direction
+actor Administrador as A
+frame "Gestión de Backup y Restauración" {
+  usecase "CU011-ADM - Generar backup" as CU1
+  usecase "CU012-ADM - Restaurar backup" as CU2
+  usecase "CU013-ADM - Eliminar backup" as CU3
+  usecase "Verificar integridad\n(DVH/DVV)" as INC1
+  usecase "Cifrar / descifrar\narchivo (.ehbak)" as INC2
+}
+A -- CU1
+A -- CU2
+A -- CU3
+CU1 ..> INC1 : <<include>>
+CU1 ..> INC2 : <<include>>
+CU2 ..> INC2 : <<include>>
+@enduml

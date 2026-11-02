@@ -1,0 +1,49 @@
+@startuml
+title CU04-CO-EJECUTAR RECOMENDACIÓN APROBADA
+actor "Coordinador de Experiencias" as Co
+participant ":PlanesAccionForm" as F
+participant ":BLL.PlanAccionService" as BLL
+participant ":BLL.Experiencia" as BLLE
+participant ":BLL.Organizador" as BLLO
+participant ":Servicios.Bitacora" as BIT
+database "BD" as DB
+
+autonumber
+Co -> F : seleccionar una recomendación aprobada y ejecutarla
+F -> BLL : EjecutarRecomendacion(rec, nuevaFecha, nuevaHora, cupoExtra)
+BLL -> BLL : rec.PuedeEjecutar()
+
+alt rec.PuedeEjecutar() = false
+  BLL --> F : AppException("La recomendación no está aprobada o ya fue ejecutada")
+  F --> Co : informar el error
+else recomendación aprobada y no ejecutada
+  alt AccionSugerida = ProgramarEdicion
+    BLL -> BLLE : ProgramarEdicion(modulo, idEntidad, nuevaFecha, nuevaHora)
+    BLLE -> DB : INSERT Experiencia (nueva edición programada)
+  else AccionSugerida = AmpliarCupo
+    BLL -> BLLE : AmpliarCupo(modulo, idEntidad, cupoExtra)
+    BLLE -> DB : UPDATE Experiencia (CupoMaximo, CupoDisponible)
+  else AccionSugerida = CancelarExperiencia
+    BLL -> BLLE : ObtenerPorId(idEntidad)
+    BLLE --> BLL : experiencia
+    BLL -> BLLE : CancelarExperiencia(modulo, experiencia, motivo)
+    ref over BLLE
+      CU06-CO-CANCELAR EXPERIENCIA
+    end ref
+  else AccionSugerida = SuspenderOrganizador
+    BLL -> BLLO : Baja(modulo, idEntidad)
+    BLLO -> DB : UPDATE Organizador (Estado = 0)
+  else AccionSugerida = RevisarPlan / NoReprogramar
+    note right of BLL
+      Tareas de decisión sin efecto en
+      el catálogo: se marcan ejecutadas
+      al registrarlas, sin acción adicional.
+    end note
+  end
+
+  BLL -> DB : UPDATE RecomendacionPlan (Ejecutada = true)
+  BLL -> BIT : Registrar("Recomendación ejecutada (" + AccionSugerida + ")")
+  BLL --> F : recomendación ejecutada
+  F --> Co : "Recomendación ejecutada correctamente"
+end
+@enduml

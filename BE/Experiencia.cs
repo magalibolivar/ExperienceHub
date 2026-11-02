@@ -53,6 +53,12 @@ namespace BE
         /// <summary>Momento exacto de fin (inicio + duración).</summary>
         public DateTime FechaHoraFin => FechaHoraInicio.AddMinutes(DuracionMinutos);
 
+        /// <summary>¿Cancelar esta experiencia en el momento <paramref name="ahora"/> cuenta como
+        /// "a tiempo" (con al menos <paramref name="horasAnticipacion"/> horas de anticipación)? Función
+        /// PURA (recibe el reloj como parámetro) — testeable sin depender de la hora real del sistema.</summary>
+        public bool CancelacionATiempo(DateTime ahora, int horasAnticipacion)
+            => (FechaHoraInicio - ahora).TotalHours >= horasAnticipacion;
+
         /// <summary>Descripción para grillas: "Cata de vinos — 12 cupos — Programada".</summary>
         public string ResumenEstado =>
             $"{Nombre} — {CupoDisponible}/{CupoMaximo} cupos — {Estado}";

@@ -1,0 +1,66 @@
+@startuml PN01 - Diagrama de Clases
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+skinparam package {
+  BackgroundColor #FFFCF7
+  BorderColor #142A4D
+  FontColor #142A4D
+}
+title PN01 - Comercialización de la suscripción
+
+package "GUI" {
+  class NuevaContratacionForm
+  class FormalizacionForm
+  class CobrosPendientesForm
+}
+package "BLL" {
+  class "BLL.Contratacion" as BC {
+    +{static} MAX_INTENTOS_PAGO : int = 3
+    +ObtenerPendientes() : List<Contratacion>
+    +CrearContratacion(modulo, idCliente, idPlan) : int
+    +CrearRenovacion(modulo, idCliente, idPlan) : int
+    +RegistrarCobro(modulo, idContratacion, medio, cuotas, pagoConcretado) : Contratacion
+    +Formalizar(modulo, idContratacion) : int
+  }
+  class "BLL.Cliente" as BCli
+  class "BLL.PlanSuscripcion" as BP
+}
+package "DAL" {
+  class "DAL.Contratacion" as DC
+}
+package "BE" {
+  class "BE.Contratacion" as BECont {
+    +Estado : EstadoContratacion
+    +Tipo : TipoContratacion
+    +IntentosPago : int
+    +{static} CuotasPermitidas(medio) : int[]
+    +{static} RecargoPorCuotas(cuotas) : decimal
+    +PuedeFormalizarse() : bool
+  }
+  class "BE.Cliente" as BECli
+  class "BE.Suscripcion" as BESus
+  class "BE.PlanSuscripcion" as BEPlan
+  enum EstadoContratacion {
+    PendienteDePago
+    Pagada
+    Cancelada
+    Formalizada
+  }
+}
+
+NuevaContratacionForm ..> BC : CrearContratacion
+CobrosPendientesForm ..> BC : RegistrarCobro
+FormalizacionForm ..> BC : Formalizar
+BC --> DC
+BC ..> BECont
+BC ..> BCli
+BC ..> BP
+BECont --> EstadoContratacion
+BC ..> BESus : genera/renueva al pagarse
+@enduml

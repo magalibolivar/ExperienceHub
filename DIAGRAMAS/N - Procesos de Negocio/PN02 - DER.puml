@@ -1,0 +1,70 @@
+@startuml PN02 - DER
+skinparam linetype ortho
+hide circle
+title PN02 - DER (Reserva de experiencias)
+
+entity "Cliente" as C {
+  * IdCliente : int <<PK>>
+  --
+  Nombre / Apellido / DNI
+  IdCiudad : int <<FK>>
+}
+entity "Experiencia" as E {
+  * IdExperiencia : int <<PK>>
+  --
+  Nombre : nvarchar
+  Descripcion : nvarchar «null»
+  IdCategoria : int <<FK>>
+  IdCiudad : int <<FK>>
+  Fecha : date
+  HoraInicio : time
+  DuracionMinutos : int
+  IdOrganizador : int <<FK>>
+  CupoMaximo / CupoDisponible : int
+  EdadMinima : int
+  Premium : bit
+  Estado : int «enum»
+  DVH : int
+}
+entity "Reserva" as R {
+  * IdReserva : int <<PK>>
+  --
+  IdCliente : int <<FK>>
+  IdExperiencia : int <<FK>>
+  IdEmpleado : int <<FK, null>>
+  IdSuscripcion : int <<FK, null>>
+  Estado : int «enum»
+  FechaReserva : datetime
+  CantidadInvitados : int
+  FechaCancelacion : datetime «null»
+  MotivoCancelacion : nvarchar «null»
+  CancelacionATiempo : bit «null»
+  DVH : int
+}
+entity "ListaEspera" as LE {
+  * IdListaEspera : int <<PK>>
+  --
+  IdExperiencia : int <<FK>>
+  IdCliente : int <<FK>>
+  Posicion : int
+  Estado : int «enum»
+  FechaIngreso : datetime
+  FechaOferta : datetime «null»
+  MotivoRetiro : nvarchar «null»
+}
+entity "Organizador" as O {
+  * IdOrganizador : int <<PK>>
+  --
+  Estado : bit
+}
+entity "Suscripcion" as Sus {
+  * IdSuscripcion : int <<PK>>
+}
+
+C ||--o{ R : realiza
+E ||--o{ R : sobre
+Sus |o--o{ R : consume cupo de
+C ||--o{ LE : espera en
+E ||--o{ LE : gestiona
+O ||--o{ E : provee
+@enduml

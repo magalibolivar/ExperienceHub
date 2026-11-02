@@ -1,0 +1,86 @@
+@startuml PN03 - Diagrama de Clases
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+skinparam package {
+  BackgroundColor #FFFCF7
+  BorderColor #142A4D
+  FontColor #142A4D
+}
+title PN03 - Planificación de la oferta
+
+package "GUI" {
+  class DecisionesRecomendacionesForm
+  class PlanesAccionForm
+}
+package "BLL" {
+  class "BLL.Analitica" as BA {
+    +CalcularTablero(desde, hasta, filtros) : TableroPeriodo
+    +CargarUmbrales() : UmbralesRecomendacion
+    +Recomendar(tablero) : List<RecomendacionGenerada>
+  }
+  class "BLL.PlanAccionService" as BPS {
+    +Decidir(idRecomendacion, aprobar, motivo)
+    +AprobarPlan(idPlan)
+    +MarcarEnEjecucion(idPlan)
+    +EjecutarRecomendacion(rec, nuevaFecha)
+    +CerrarPlan(idPlan)
+  }
+}
+package "DAL" {
+  class "DAL.AnaliticaDAL" as DA
+  class "DAL.PlanAccionDAL" as DP
+}
+package "BE" {
+  class "BE.PlanAccion" as BEPA {
+    +Estado : EstadoPlanAccion
+    +PuedeAprobar() : bool
+    +PuedeEjecutar() : bool
+    +PuedeCerrar() : bool
+    +PeriodoObservacionCumplido(ahora) : bool
+  }
+  class "BE.RecomendacionPlan" as BERP {
+    +Decision : DecisionRecomendacion
+    +Ejecutada : bool
+    +PuedeDecidir() : bool
+    +PuedeEjecutar() : bool
+  }
+  class "BE.KpiSnapshot" as BEKS
+  enum EstadoPlanAccion {
+    Borrador
+    Aprobado
+    EnEjecucion
+    Cerrado
+  }
+  enum DecisionRecomendacion {
+    Pendiente
+    Aprobada
+    Descartada
+  }
+  enum AccionSugerida {
+    ProgramarEdicion
+    AmpliarCupo
+    CancelarExperiencia
+    NoReprogramar
+    SuspenderOrganizador
+    RevisarPlan
+  }
+}
+
+DecisionesRecomendacionesForm ..> BA : CalcularTablero / Recomendar
+DecisionesRecomendacionesForm ..> BPS : Decidir
+PlanesAccionForm ..> BPS : AprobarPlan / MarcarEnEjecucion /\nEjecutarRecomendacion / CerrarPlan
+BA --> DA
+BPS --> DP
+BPS ..> BEPA
+BPS ..> BERP
+BEPA --> EstadoPlanAccion
+BERP --> DecisionRecomendacion
+BERP --> AccionSugerida
+BPS ..> BEKS : snapshot Antes/Después
+@enduml

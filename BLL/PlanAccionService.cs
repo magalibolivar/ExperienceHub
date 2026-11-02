@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BLL
 {
@@ -7,8 +8,14 @@ namespace BLL
     /// PN03 — Ciclo de vida del Plan de acción (Borrador → Aprobado → En ejecución → Cerrado).
     /// El Gerente crea el plan con las recomendaciones generadas, aprueba/descarta cada una con motivo,
     /// y el Coordinador ejecuta las aprobadas reutilizando la BLL existente (Experiencia/Organizador).
-    /// Al cerrar compara los KPIs "Antes" (período analizado) con "Después" (período de igual duración
-    /// desde la fecha de ejecución), vía KpiSnapshot.
+    ///
+    /// Antes/Después (KpiSnapshot): "Antes" se congela al CREAR el plan (línea base real del período
+    /// analizado). "Después" NO se captura al cerrar — cerrar solo marca el fin de la ejecución
+    /// operativa. El "Después" se evalúa en un paso EXPLÍCITO (<see cref="EvaluarResultados"/>) una vez
+    /// que transcurrió una ventana de observación de igual duración que el período Antes, contada desde
+    /// el cierre (<see cref="BE.PlanAccion.PeriodoObservacionCumplido"/>): así el "Después" mide un
+    /// período REAL ya ocurrido, nunca uno futuro sin datos. No se agregan estados nuevos al enum: el
+    /// plan sigue Cerrado; "evaluado" se determina por la existencia del snapshot (<see cref="TieneEvaluacion"/>).
     /// </summary>
     public class PlanAccionService
     {
@@ -106,23 +113,48 @@ namespace BLL
             _dal.CambiarEstadoPlan(idPlan, BE.EstadoPlanAccion.EnEjecucion);
         }
 
-        // ── Cierre + informe comparativo ─────────────────────────────────────────
-        /// <summary>Cierra el plan y guarda el snapshot "Después": KPIs de un período de IGUAL duración
-        /// que el analizado, contado desde HOY (fecha de cierre/ejecución de las acciones).</summary>
+        // ── Cierre (fin de la ejecución operativa — NO evalúa resultados todavía) ──
         public void CerrarPlan(int idPlan)
         {
             PermisosAccion.Exigir(BE.Patentes.PlanAccionAprobar);
             var p = _dal.ObtenerPlan(idPlan);
             if (p == null || !p.PuedeCerrar()) throw new BE.AppException("err.bll.plan.estado", "El plan no está En ejecución.");
 
-            int dias = Math.Max(1, (int)(p.PeriodoHasta.Date - p.PeriodoDesde.Date).TotalDays);
-            var despDesde = DateTime.Today;
-            var despHasta = DateTime.Today.AddDays(dias);
-            var tableroDespues = _analitica.CalcularTablero(despDesde, despHasta, p.FiltroCiudad, p.FiltroCategoria, p.FiltroOrganizador);
-            GuardarSnapshotTablero(idPlan, BE.MomentoKpi.Despues, tableroDespues);
-
             _dal.CambiarEstadoPlan(idPlan, BE.EstadoPlanAccion.Cerrado, cerrar: true);
-            _bitacora.Registrar(MODULO, $"Plan de acción #{idPlan} cerrado (informe antes/después generado)", BE.Criticidad.Media);
+            _bitacora.Registrar(MODULO, $"Plan de acción #{idPlan} cerrado. Resultados evaluables tras el período de observación.", BE.Criticidad.Media);
+        }
+
+        /// <summary>¿Ya existe el snapshot "Después" de este plan? (criterio de "evaluado", sin estado nuevo).</summary>
+        public bool TieneEvaluacion(int idPlan)
+        {
+            PermisosAccion.Exigir(BE.Patentes.PlanAccion);
+            return _dal.ObtenerSnapshots(idPlan).Any(s => s.Momento == BE.MomentoKpi.Despues);
+        }
+
+        /// <summary>
+        /// Evalúa los resultados del plan: captura el snapshot "Después" con los KPIs del período de
+        /// observación REAL (ya transcurrido: desde la fecha de cierre, igual duración que el Antes).
+        /// Requiere que el plan esté Cerrado, que haya transcurrido la ventana de observación completa,
+        /// y que no se haya evaluado antes (idempotente — no duplica el snapshot).
+        /// </summary>
+        public void EvaluarResultados(int idPlan)
+        {
+            PermisosAccion.Exigir(BE.Patentes.PlanAccionAprobar);
+            var p = _dal.ObtenerPlan(idPlan);
+            if (p == null || p.Estado != BE.EstadoPlanAccion.Cerrado)
+                throw new BE.AppException("err.bll.plan.no_cerrado", "El plan debe estar Cerrado para evaluar sus resultados.");
+            if (!p.PeriodoObservacionCumplido(DateTime.Now))
+                throw new BE.AppException("err.bll.plan.periodo_pendiente",
+                    "Todavía no transcurrió el período de observación. Evaluable a partir del {0}.",
+                    p.FechaEvaluacionPrevista.Value.ToString("dd/MM/yyyy"));
+            if (TieneEvaluacion(idPlan))
+                throw new BE.AppException("err.bll.plan.ya_evaluado", "Este plan ya fue evaluado.");
+
+            var desde = p.FechaCierre.Value.Date;
+            var hasta = desde.AddDays(p.DuracionPeriodoDias);
+            var tableroDespues = _analitica.CalcularTablero(desde, hasta, p.FiltroCiudad, p.FiltroCategoria, p.FiltroOrganizador);
+            GuardarSnapshotTablero(idPlan, BE.MomentoKpi.Despues, tableroDespues);
+            _bitacora.Registrar(MODULO, $"Plan de acción #{idPlan} evaluado (comparativo antes/después generado)", BE.Criticidad.Media);
         }
 
         public List<BE.KpiSnapshot> ObtenerComparativo(int idPlan)

@@ -23,6 +23,12 @@ namespace BLL
         public List<BE.Cliente> ObtenerTodos()      => dalCliente.ObtenerTodos();
         public BE.Cliente ObtenerPorId(int id)      => dalCliente.ObtenerPorId(id);
 
+        // Busca un cliente activo por DNI exacto, para orientar al usuario cuando el DNI que está
+        // cargando ya pertenece a otro cliente (UX del alta: no implica reutilización automática,
+        // solo permite mostrarle a quién corresponde el DNI y dónde buscarlo).
+        public BE.Cliente BuscarPorDNI(string dni)
+            => string.IsNullOrWhiteSpace(dni) ? null : dalCliente.ObtenerTodos().Find(c => c.DNI == dni);
+
         // Alta de cliente: registra la ficha y, si trae Intereses, los persiste en ClienteInteres.
         // IMPORTANTE (PN01): el alta NO crea la suscripción. La suscripción Activa nace únicamente al
         // formalizar una contratación pagada (BLL.Contratacion.Formalizar), tras el cobro en Caja.
@@ -142,7 +148,7 @@ namespace BLL
                 throw new BE.AppException("err.bll.cliente.ciudad_requerida", "Debe seleccionar una ciudad.");
             if (!cliente.FechaNacimiento.HasValue)
                 throw new BE.AppException("err.bll.cliente.fechanac_requerida", "La fecha de nacimiento es obligatoria.");
-            if (cliente.FechaNacimiento.Value.Date > DateTime.Today.AddYears(-18))
+            if (!BE.ReglasFecha.EsMayorDeEdad(cliente.FechaNacimiento.Value, DateTime.Today))
                 throw new BE.AppException("err.bll.cliente.menor_edad", "El cliente debe ser mayor de 18 años.");
             // El plan es opcional en el alta: la suscripción Activa se obtiene recién al formalizar
             // una contratación pagada (PN01), no al registrar al cliente.

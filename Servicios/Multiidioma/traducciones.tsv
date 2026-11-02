@@ -5660,3 +5660,1607 @@ ES	eh.asis.calif.coment	Comentario (opcional)
 EN	eh.asis.calif.coment	Comment (optional)
 RU	eh.asis.calif.coment	Комментарий (необязательно)
 PT	eh.asis.calif.coment	Comentário (opcional)
+ES	mnu.blq.planificacion	Planificación
+EN	mnu.blq.planificacion	Planning
+PT	mnu.blq.planificacion	Planejamento
+RU	mnu.blq.planificacion	Планирование
+ES	mnu.pln.tablero	Tablero de planificación
+EN	mnu.pln.tablero	Planning dashboard
+PT	mnu.pln.tablero	Painel de planejamento
+RU	mnu.pln.tablero	Панель планирования
+ES	mnu.pln.planes	Planes de acción
+EN	mnu.pln.planes	Action plans
+PT	mnu.pln.planes	Planos de ação
+RU	mnu.pln.planes	Планы действий
+ES	eh.pln.titulo	Planificación y análisis
+EN	eh.pln.titulo	Planning & analysis
+PT	eh.pln.titulo	Planejamento e análise
+RU	eh.pln.titulo	Планирование и анализ
+ES	eh.pln.sub	Analizá indicadores, identificá oportunidades y planificá acciones.
+EN	eh.pln.sub	Analyze indicators, spot opportunities and plan actions.
+PT	eh.pln.sub	Analise indicadores, identifique oportunidades e planeje ações.
+RU	eh.pln.sub	Анализируйте показатели, находите возможности и планируйте действия.
+ES	eh.pln.desde	Desde
+EN	eh.pln.desde	From
+PT	eh.pln.desde	De
+RU	eh.pln.desde	С
+ES	eh.pln.hasta	Hasta
+EN	eh.pln.hasta	To
+PT	eh.pln.hasta	Até
+RU	eh.pln.hasta	По
+ES	eh.pln.ciudad	Ciudad
+EN	eh.pln.ciudad	City
+PT	eh.pln.ciudad	Cidade
+RU	eh.pln.ciudad	Город
+ES	eh.pln.categoria	Categoría
+EN	eh.pln.categoria	Category
+PT	eh.pln.categoria	Categoria
+RU	eh.pln.categoria	Категория
+ES	eh.pln.organizador	Organizador
+EN	eh.pln.organizador	Organizer
+PT	eh.pln.organizador	Organizador
+RU	eh.pln.organizador	Организатор
+ES	eh.pln.todas	Todas
+EN	eh.pln.todas	All
+PT	eh.pln.todas	Todas
+RU	eh.pln.todas	Все
+ES	eh.pln.todos	Todos
+EN	eh.pln.todos	All
+PT	eh.pln.todos	Todos
+RU	eh.pln.todos	Все
+ES	eh.btn.aplicar	Aplicar
+EN	eh.btn.aplicar	Apply
+PT	eh.btn.aplicar	Aplicar
+RU	eh.btn.aplicar	Применить
+ES	eh.btn.generarrec	Generar recomendaciones
+EN	eh.btn.generarrec	Generate recommendations
+PT	eh.btn.generarrec	Gerar recomendações
+RU	eh.btn.generarrec	Сформировать рекомендации
+ES	eh.btn.crearplan	Crear plan de acción
+EN	eh.btn.crearplan	Create action plan
+PT	eh.btn.crearplan	Criar plano de ação
+RU	eh.btn.crearplan	Создать план действий
+ES	eh.btn.exportarpdf	Exportar PDF
+EN	eh.btn.exportarpdf	Export PDF
+PT	eh.btn.exportarpdf	Exportar PDF
+RU	eh.btn.exportarpdf	Экспорт в PDF
+ES	eh.btn.guardarvista	Guardar vista
+EN	eh.btn.guardarvista	Save view
+PT	eh.btn.guardarvista	Salvar vista
+RU	eh.btn.guardarvista	Сохранить представление
+ES	eh.btn.abrirvista	Abrir vista
+EN	eh.btn.abrirvista	Open view
+PT	eh.btn.abrirvista	Abrir vista
+RU	eh.btn.abrirvista	Открыть представление
+ES	eh.pln.kpi.espera	En lista de espera
+EN	eh.pln.kpi.espera	On waiting list
+PT	eh.pln.kpi.espera	Na lista de espera
+RU	eh.pln.kpi.espera	В списке ожидания
+ES	eh.pln.kpi.cancatiempo	Cancel. a tiempo
+EN	eh.pln.kpi.cancatiempo	Cancel. on time
+PT	eh.pln.kpi.cancatiempo	Cancel. a tempo
+RU	eh.pln.kpi.cancatiempo	Отмены вовремя
+ES	eh.pln.kpi.canctardias	Cancel. tardías
+EN	eh.pln.kpi.canctardias	Late cancel.
+PT	eh.pln.kpi.canctardias	Cancel. tardias
+RU	eh.pln.kpi.canctardias	Поздние отмены
+ES	eh.pln.kpi.inasist	Inasistencias
+EN	eh.pln.kpi.inasist	No-shows
+PT	eh.pln.kpi.inasist	Faltas
+RU	eh.pln.kpi.inasist	Неявки
+ES	eh.pln.kpi.altas	Altas
+EN	eh.pln.kpi.altas	New subscriptions
+PT	eh.pln.kpi.altas	Novas assinaturas
+RU	eh.pln.kpi.altas	Новые подписки
+ES	eh.pln.kpi.ingresos	Ingresos
+EN	eh.pln.kpi.ingresos	Revenue
+PT	eh.pln.kpi.ingresos	Receita
+RU	eh.pln.kpi.ingresos	Доход
+ES	eh.pln.g.ocup	Ocupación por experiencia (%)
+EN	eh.pln.g.ocup	Occupancy by experience (%)
+PT	eh.pln.g.ocup	Ocupação por experiência (%)
+RU	eh.pln.g.ocup	Заполняемость по впечатлениям (%)
+ES	eh.pln.g.espera	Lista de espera por experiencia
+EN	eh.pln.g.espera	Waiting list by experience
+PT	eh.pln.g.espera	Lista de espera por experiência
+RU	eh.pln.g.espera	Список ожидания по впечатлениям
+ES	eh.pln.g.planes	Uso de planes (%)
+EN	eh.pln.g.planes	Plan usage (%)
+PT	eh.pln.g.planes	Uso de planos (%)
+RU	eh.pln.g.planes	Использование планов (%)
+ES	eh.pln.g.org	Calificación por organizador
+EN	eh.pln.g.org	Rating by organizer
+PT	eh.pln.g.org	Avaliação por organizador
+RU	eh.pln.g.org	Оценка по организаторам
+ES	eh.pln.g.distrib	Cancelaciones, inasistencias y espera
+EN	eh.pln.g.distrib	Cancellations, no-shows and waiting
+PT	eh.pln.g.distrib	Cancelamentos, faltas e espera
+RU	eh.pln.g.distrib	Отмены, неявки и ожидание
+ES	eh.pln.rec.titulo	Recomendaciones del período
+EN	eh.pln.rec.titulo	Recommendations for the period
+PT	eh.pln.rec.titulo	Recomendações do período
+RU	eh.pln.rec.titulo	Рекомендации за период
+ES	eh.pln.rec.vacio	Generá las recomendaciones para ver sugerencias con su evidencia.
+EN	eh.pln.rec.vacio	Generate the recommendations to see suggestions with their evidence.
+PT	eh.pln.rec.vacio	Gere as recomendações para ver sugestões com sua evidência.
+RU	eh.pln.rec.vacio	Сформируйте рекомендации, чтобы увидеть предложения с обоснованием.
+ES	eh.pln.rec.cuenta	Se generaron {0} recomendación(es).
+EN	eh.pln.rec.cuenta	{0} recommendation(s) generated.
+PT	eh.pln.rec.cuenta	{0} recomendação(ões) gerada(s).
+RU	eh.pln.rec.cuenta	Сформировано рекомендаций: {0}.
+ES	eh.pln.crearplan	Crear plan de acción
+EN	eh.pln.crearplan	Create action plan
+PT	eh.pln.crearplan	Criar plano de ação
+RU	eh.pln.crearplan	Создать план действий
+ES	eh.pln.sinrec	No hay recomendaciones para incluir en un plan en este período.
+EN	eh.pln.sinrec	There are no recommendations to include in a plan for this period.
+PT	eh.pln.sinrec	Não há recomendações para incluir em um plano neste período.
+RU	eh.pln.sinrec	Нет рекомендаций для включения в план за этот период.
+ES	eh.pln.tituloplan	Nombre del plan de acción:
+EN	eh.pln.tituloplan	Action plan name:
+PT	eh.pln.tituloplan	Nome do plano de ação:
+RU	eh.pln.tituloplan	Название плана действий:
+ES	eh.pln.creado	Plan #{0} creado en Borrador.
+EN	eh.pln.creado	Plan #{0} created as Draft.
+PT	eh.pln.creado	Plano #{0} criado como Rascunho.
+RU	eh.pln.creado	План #{0} создан как черновик.
+ES	eh.pln.sinfiltros	Sin filtros (todo el catálogo)
+EN	eh.pln.sinfiltros	No filters (whole catalog)
+PT	eh.pln.sinfiltros	Sem filtros (todo o catálogo)
+RU	eh.pln.sinfiltros	Без фильтров (весь каталог)
+ES	eh.pln.nombrevista	Nombre de la vista de análisis:
+EN	eh.pln.nombrevista	Analysis view name:
+PT	eh.pln.nombrevista	Nome da vista de análise:
+RU	eh.pln.nombrevista	Название представления анализа:
+ES	eh.pln.vistaguardada	Vista guardada en: {0}
+EN	eh.pln.vistaguardada	View saved to: {0}
+PT	eh.pln.vistaguardada	Vista salva em: {0}
+RU	eh.pln.vistaguardada	Представление сохранено в: {0}
+ES	eh.pln.sinvistas	Todavía no hay vistas de análisis guardadas.
+EN	eh.pln.sinvistas	There are no saved analysis views yet.
+PT	eh.pln.sinvistas	Ainda não há vistas de análise salvas.
+RU	eh.pln.sinvistas	Пока нет сохранённых представлений анализа.
+ES	eh.pln.elegirvista	Escribí el nombre de la vista a abrir. Disponibles: {0}
+EN	eh.pln.elegirvista	Type the name of the view to open. Available: {0}
+PT	eh.pln.elegirvista	Digite o nome da vista a abrir. Disponíveis: {0}
+RU	eh.pln.elegirvista	Введите название представления для открытия. Доступные: {0}
+ES	eh.plan.titulo	Planes de acción
+EN	eh.plan.titulo	Action plans
+PT	eh.plan.titulo	Planos de ação
+RU	eh.plan.titulo	Планы действий
+ES	eh.plan.sub	Decidí sobre las recomendaciones y seguí la ejecución del plan.
+EN	eh.plan.sub	Decide on the recommendations and track the plan's execution.
+PT	eh.plan.sub	Decida sobre as recomendações e acompanhe a execução do plano.
+RU	eh.plan.sub	Примите решения по рекомендациям и отслеживайте выполнение плана.
+ES	eh.plan.lista	Planes
+EN	eh.plan.lista	Plans
+PT	eh.plan.lista	Planos
+RU	eh.plan.lista	Планы
+ES	eh.plan.recs	Recomendaciones del plan
+EN	eh.plan.recs	Plan recommendations
+PT	eh.plan.recs	Recomendações do plano
+RU	eh.plan.recs	Рекомендации плана
+ES	eh.plan.recvacio	Seleccioná un plan para ver sus recomendaciones.
+EN	eh.plan.recvacio	Select a plan to see its recommendations.
+PT	eh.plan.recvacio	Selecione um plano para ver suas recomendações.
+RU	eh.plan.recvacio	Выберите план, чтобы увидеть его рекомендации.
+ES	eh.plan.vacio	Todavía no hay planes. Creá uno desde el Tablero de planificación.
+EN	eh.plan.vacio	There are no plans yet. Create one from the Planning dashboard.
+PT	eh.plan.vacio	Ainda não há planos. Crie um no Painel de planejamento.
+RU	eh.plan.vacio	Планов пока нет. Создайте план на панели планирования.
+ES	eh.plan.aprobado	Plan aprobado.
+EN	eh.plan.aprobado	Plan approved.
+PT	eh.plan.aprobado	Plano aprovado.
+RU	eh.plan.aprobado	План утверждён.
+ES	eh.plan.enejec	Plan marcado en ejecución.
+EN	eh.plan.enejec	Plan marked in progress.
+PT	eh.plan.enejec	Plano marcado em execução.
+RU	eh.plan.enejec	План отмечен как выполняется.
+ES	eh.plan.cerrarconfirm	El plan deja de ejecutarse. Los resultados se evaluarán más adelante, cuando transcurra el período de observación. ¿Continuar?
+EN	eh.plan.cerrarconfirm	The plan stops executing. Results will be evaluated later, once the observation period elapses. Continue?
+PT	eh.plan.cerrarconfirm	O plano deixa de ser executado. Os resultados serão avaliados mais tarde, quando o período de observação transcorrer. Continuar?
+RU	eh.plan.cerrarconfirm	План перестаёт выполняться. Результаты будут оценены позже, после завершения периода наблюдения. Продолжить?
+ES	eh.plan.cerrado	Plan cerrado. Los resultados podrán evaluarse cuando transcurra el período de observación.
+EN	eh.plan.cerrado	Plan closed. Results can be evaluated once the observation period elapses.
+PT	eh.plan.cerrado	Plano fechado. Os resultados poderão ser avaliados quando o período de observação transcorrer.
+RU	eh.plan.cerrado	План закрыт. Результаты можно будет оценить после завершения периода наблюдения.
+ES	eh.plan.motivo	Motivo de la decisión:
+EN	eh.plan.motivo	Reason for the decision:
+PT	eh.plan.motivo	Motivo da decisão:
+RU	eh.plan.motivo	Причина решения:
+ES	eh.plan.ejecconfirm	Se ejecutará: {0} sobre '{1}'. ¿Continuar?
+EN	eh.plan.ejecconfirm	This will execute: {0} on '{1}'. Continue?
+PT	eh.plan.ejecconfirm	Será executado: {0} sobre '{1}'. Continuar?
+RU	eh.plan.ejecconfirm	Будет выполнено: {0} для «{1}». Продолжить?
+ES	eh.plan.ejecutada	Tarea ejecutada.
+EN	eh.plan.ejecutada	Task executed.
+PT	eh.plan.ejecutada	Tarefa executada.
+RU	eh.plan.ejecutada	Задача выполнена.
+ES	eh.btn.aprobarplan	Aprobar plan
+EN	eh.btn.aprobarplan	Approve plan
+PT	eh.btn.aprobarplan	Aprovar plano
+RU	eh.btn.aprobarplan	Утвердить план
+ES	eh.btn.enejecucion	Marcar en ejecución
+EN	eh.btn.enejecucion	Mark in progress
+PT	eh.btn.enejecucion	Marcar em execução
+RU	eh.btn.enejecucion	Отметить как выполняется
+ES	eh.btn.cerrarplan	Cerrar plan
+EN	eh.btn.cerrarplan	Close plan
+PT	eh.btn.cerrarplan	Fechar plano
+RU	eh.btn.cerrarplan	Закрыть план
+ES	eh.btn.aprobar	Aprobar
+EN	eh.btn.aprobar	Approve
+PT	eh.btn.aprobar	Aprovar
+RU	eh.btn.aprobar	Утвердить
+ES	eh.btn.descartar	Descartar
+EN	eh.btn.descartar	Discard
+PT	eh.btn.descartar	Descartar
+RU	eh.btn.descartar	Отклонить
+ES	eh.btn.ejecutar	Ejecutar tarea
+EN	eh.btn.ejecutar	Execute task
+PT	eh.btn.ejecutar	Executar tarefa
+RU	eh.btn.ejecutar	Выполнить задачу
+ES	eh.graf.sindatos	Sin datos en el período
+EN	eh.graf.sindatos	No data for the period
+PT	eh.graf.sindatos	Sem dados no período
+RU	eh.graf.sindatos	Нет данных за период
+ES	eh.pln.tab.resumen	Resumen ejecutivo
+EN	eh.pln.tab.resumen	Executive summary
+PT	eh.pln.tab.resumen	Resumo executivo
+RU	eh.pln.tab.resumen	Сводка
+ES	eh.pln.tab.demanda	Demanda y capacidad
+EN	eh.pln.tab.demanda	Demand & capacity
+PT	eh.pln.tab.demanda	Demanda e capacidade
+RU	eh.pln.tab.demanda	Спрос и ёмкость
+ES	eh.pln.tab.desempeno	Desempeño y calidad
+EN	eh.pln.tab.desempeno	Performance & quality
+PT	eh.pln.tab.desempeno	Desempenho e qualidade
+RU	eh.pln.tab.desempeno	Эффективность и качество
+ES	eh.pln.tab.decisiones	Decisiones y seguimiento
+EN	eh.pln.tab.decisiones	Decisions & tracking
+PT	eh.pln.tab.decisiones	Decisões e acompanhamento
+RU	eh.pln.tab.decisiones	Решения и контроль
+ES	eh.pln.sec.interpret	Lectura del período
+EN	eh.pln.sec.interpret	Period readout
+PT	eh.pln.sec.interpret	Leitura do período
+RU	eh.pln.sec.interpret	Итоги периода
+ES	eh.pln.sec.capacidad	Capacidad y disponibilidad
+EN	eh.pln.sec.capacidad	Capacity & availability
+PT	eh.pln.sec.capacidad	Capacidade e disponibilidade
+RU	eh.pln.sec.capacidad	Ёмкость и доступность
+ES	eh.pln.sec.recomperiodo	Recomendaciones del período
+EN	eh.pln.sec.recomperiodo	Period recommendations
+PT	eh.pln.sec.recomperiodo	Recomendações do período
+RU	eh.pln.sec.recomperiodo	Рекомендации за период
+ES	eh.pln.sec.planes	Planes de acción
+EN	eh.pln.sec.planes	Action plans
+PT	eh.pln.sec.planes	Planos de ação
+RU	eh.pln.sec.planes	Планы действий
+ES	eh.pln.sec.recplan	Recomendaciones del plan
+EN	eh.pln.sec.recplan	Plan recommendations
+PT	eh.pln.sec.recplan	Recomendações do plano
+RU	eh.pln.sec.recplan	Рекомендации плана
+ES	eh.pln.sec.seguimiento	Seguimiento: Antes / Después
+EN	eh.pln.sec.seguimiento	Tracking: Before / After
+PT	eh.pln.sec.seguimiento	Acompanhamento: Antes / Depois
+RU	eh.pln.sec.seguimiento	Контроль: до / после
+ES	eh.pln.vacio.recs	Generá las recomendaciones del período para verlas con su evidencia.
+EN	eh.pln.vacio.recs	Generate the period recommendations to see them with their evidence.
+PT	eh.pln.vacio.recs	Gere as recomendações do período para vê-las com sua evidência.
+RU	eh.pln.vacio.recs	Сформируйте рекомендации за период, чтобы увидеть их с обоснованием.
+ES	eh.pln.vacio.capacidad	Aplicá un período para ver la capacidad por experiencia.
+EN	eh.pln.vacio.capacidad	Apply a period to see capacity by experience.
+PT	eh.pln.vacio.capacidad	Aplique um período para ver a capacidade por experiência.
+RU	eh.pln.vacio.capacidad	Выберите период, чтобы увидеть ёмкость по впечатлениям.
+ES	eh.pln.vacio.planes	Todavía no hay planes. Creá uno a partir de las recomendaciones del período.
+EN	eh.pln.vacio.planes	No action plans yet. Create one from the period recommendations.
+PT	eh.pln.vacio.planes	Ainda não há planos. Crie um a partir das recomendações do período.
+RU	eh.pln.vacio.planes	Планов пока нет. Создайте план на основе рекомендаций за период.
+ES	eh.pln.vacio.recplan	Este plan no tiene recomendaciones asociadas.
+EN	eh.pln.vacio.recplan	This plan has no linked recommendations.
+PT	eh.pln.vacio.recplan	Este plano não tem recomendações associadas.
+RU	eh.pln.vacio.recplan	У этого плана нет связанных рекомендаций.
+ES	eh.pln.sinpermiso	No tenés permiso para ver la analítica del período.
+EN	eh.pln.sinpermiso	You don't have permission to view the period analytics.
+PT	eh.pln.sinpermiso	Você não tem permissão para ver a analítica do período.
+RU	eh.pln.sinpermiso	У вас нет прав на просмотр аналитики периода.
+ES	eh.pln.sinpermiso.planes	No tenés permiso para gestionar planes de acción.
+EN	eh.pln.sinpermiso.planes	You don't have permission to manage action plans.
+PT	eh.pln.sinpermiso.planes	Você não tem permissão para gerenciar planos de ação.
+RU	eh.pln.sinpermiso.planes	У вас нет прав на управление планами действий.
+ES	eh.pln.kpi.vencidas	Ofertas vencidas
+EN	eh.pln.kpi.vencidas	Expired offers
+PT	eh.pln.kpi.vencidas	Ofertas vencidas
+RU	eh.pln.kpi.vencidas	Истёкшие предложения
+ES	eh.pln.kpi.ocupprom	Ocupación promedio
+EN	eh.pln.kpi.ocupprom	Average occupancy
+PT	eh.pln.kpi.ocupprom	Ocupação média
+RU	eh.pln.kpi.ocupprom	Средняя заполняемость
+ES	eh.pln.kpi.calif	Calificación promedio
+EN	eh.pln.kpi.calif	Average rating
+PT	eh.pln.kpi.calif	Avaliação média
+RU	eh.pln.kpi.calif	Средний рейтинг
+ES	eh.pln.kpi.inasistpct	% inasistencia
+EN	eh.pln.kpi.inasistpct	No-show %
+PT	eh.pln.kpi.inasistpct	% de ausência
+RU	eh.pln.kpi.inasistpct	% неявок
+ES	eh.pln.kpi.planespend	Pendientes de aprobación
+EN	eh.pln.kpi.planespend	Pending approval
+PT	eh.pln.kpi.planespend	Pendentes de aprovação
+RU	eh.pln.kpi.planespend	Ожидают утверждения
+ES	eh.pln.kpi.planesaprob	Aprobados
+EN	eh.pln.kpi.planesaprob	Approved
+PT	eh.pln.kpi.planesaprob	Aprovados
+RU	eh.pln.kpi.planesaprob	Утверждённые
+ES	eh.pln.kpi.planesejec	En ejecución
+EN	eh.pln.kpi.planesejec	In progress
+PT	eh.pln.kpi.planesejec	Em execução
+RU	eh.pln.kpi.planesejec	В исполнении
+ES	eh.pln.kpi.planescerr	Cerrados
+EN	eh.pln.kpi.planescerr	Closed
+PT	eh.pln.kpi.planescerr	Fechados
+RU	eh.pln.kpi.planescerr	Закрытые
+ES	eh.pln.kpi.renovaciones	Renovaciones
+EN	eh.pln.kpi.renovaciones	Renewals
+PT	eh.pln.kpi.renovaciones	Renovações
+RU	eh.pln.kpi.renovaciones	Продления
+ES	eh.pln.g.evolucion	Evolución mensual de reservas
+EN	eh.pln.g.evolucion	Monthly reservations trend
+PT	eh.pln.g.evolucion	Evolução mensal de reservas
+RU	eh.pln.g.evolucion	Динамика броней по месяцам
+ES	eh.pln.g.evolucion.sub	Reservas efectivas por mes (confirmadas + asistió + no asistió)
+EN	eh.pln.g.evolucion.sub	Effective reservations per month (confirmed + attended + no-show)
+PT	eh.pln.g.evolucion.sub	Reservas efetivas por mês (confirmadas + compareceu + não compareceu)
+RU	eh.pln.g.evolucion.sub	Фактические брони за месяц (подтверждённые + посетил + не явился)
+ES	eh.pln.g.estados	Distribución de reservas por estado
+EN	eh.pln.g.estados	Reservations by status
+PT	eh.pln.g.estados	Distribuição de reservas por estado
+RU	eh.pln.g.estados	Распределение броней по статусу
+ES	eh.pln.g.estados.sub	Sobre el total de reservas del período
+EN	eh.pln.g.estados.sub	Out of all reservations in the period
+PT	eh.pln.g.estados.sub	Sobre o total de reservas do período
+RU	eh.pln.g.estados.sub	От общего числа броней за период
+ES	eh.pln.g.ocup.sub	Ocupación = reservados / cupo máximo
+EN	eh.pln.g.ocup.sub	Occupancy = booked / max capacity
+PT	eh.pln.g.ocup.sub	Ocupação = reservados / vagas máximas
+RU	eh.pln.g.ocup.sub	Заполняемость = забронировано / макс. мест
+ES	eh.pln.g.espera.sub	Clientes esperando un lugar
+EN	eh.pln.g.espera.sub	Clients waiting for a spot
+PT	eh.pln.g.espera.sub	Clientes aguardando uma vaga
+RU	eh.pln.g.espera.sub	Клиенты в ожидании места
+ES	eh.pln.g.calif	Calificación por organizador
+EN	eh.pln.g.calif	Rating by organizer
+PT	eh.pln.g.calif	Avaliação por organizador
+RU	eh.pln.g.calif	Рейтинг по организатору
+ES	eh.pln.g.calif.sub	Promedio de 1 a 5
+EN	eh.pln.g.calif.sub	Average from 1 to 5
+PT	eh.pln.g.calif.sub	Média de 1 a 5
+RU	eh.pln.g.calif.sub	Среднее от 1 до 5
+ES	eh.pln.g.inasist	% de inasistencia por organizador
+EN	eh.pln.g.inasist	No-show % by organizer
+PT	eh.pln.g.inasist	% de ausência por organizador
+RU	eh.pln.g.inasist	% неявок по организатору
+ES	eh.pln.g.inasist.sub	Inasistencias / (asistencias + inasistencias)
+EN	eh.pln.g.inasist.sub	No-shows / (attended + no-shows)
+PT	eh.pln.g.inasist.sub	Ausências / (presenças + ausências)
+RU	eh.pln.g.inasist.sub	Неявки / (посещения + неявки)
+ES	eh.pln.g.planes.sub	Reservas usadas / permitidas
+EN	eh.pln.g.planes.sub	Used / allowed reservations
+PT	eh.pln.g.planes.sub	Reservas usadas / permitidas
+RU	eh.pln.g.planes.sub	Использовано / разрешено броней
+ES	eh.pln.g.antesdesp	Comparativo Antes / Después
+EN	eh.pln.g.antesdesp	Before / After comparison
+PT	eh.pln.g.antesdesp	Comparativo Antes / Depois
+RU	eh.pln.g.antesdesp	Сравнение до / после
+ES	eh.pln.g.antesdesp.sub	KPIs al crear vs. al cerrar el plan
+EN	eh.pln.g.antesdesp.sub	KPIs at plan creation vs. closing
+PT	eh.pln.g.antesdesp.sub	KPIs na criação vs. no fechamento do plano
+RU	eh.pln.g.antesdesp.sub	KPI при создании и при закрытии плана
+ES	eh.pln.col.experiencia	Experiencia
+EN	eh.pln.col.experiencia	Experience
+PT	eh.pln.col.experiencia	Experiência
+RU	eh.pln.col.experiencia	Впечатление
+ES	eh.pln.col.reservados	Reservados
+EN	eh.pln.col.reservados	Booked
+PT	eh.pln.col.reservados	Reservados
+RU	eh.pln.col.reservados	Забронировано
+ES	eh.pln.col.cupo	Cupo máx.
+EN	eh.pln.col.cupo	Max capacity
+PT	eh.pln.col.cupo	Vagas máx.
+RU	eh.pln.col.cupo	Макс. мест
+ES	eh.pln.col.espera	En espera
+EN	eh.pln.col.espera	Waiting
+PT	eh.pln.col.espera	Em espera
+RU	eh.pln.col.espera	В ожидании
+ES	eh.pln.col.ocupacion	Ocupación %
+EN	eh.pln.col.ocupacion	Occupancy %
+PT	eh.pln.col.ocupacion	Ocupação %
+RU	eh.pln.col.ocupacion	Заполняемость %
+ES	eh.pln.filtro.activos	Activos
+EN	eh.pln.filtro.activos	Active
+PT	eh.pln.filtro.activos	Ativos
+RU	eh.pln.filtro.activos	Активные
+ES	eh.pln.filtro.finalizados	Finalizados
+EN	eh.pln.filtro.finalizados	Finished
+PT	eh.pln.filtro.finalizados	Finalizados
+RU	eh.pln.filtro.finalizados	Завершённые
+ES	eh.pln.filtro.todos	Todos
+EN	eh.pln.filtro.todos	All
+PT	eh.pln.filtro.todos	Todos
+RU	eh.pln.filtro.todos	Все
+ES	eh.pln.plan.sinsel	Seleccioná un plan para ver su detalle, decidir sobre sus recomendaciones y seguir su ejecución.
+EN	eh.pln.plan.sinsel	Select a plan to see its detail, decide on its recommendations and track its execution.
+PT	eh.pln.plan.sinsel	Selecione um plano para ver seu detalhe, decidir sobre suas recomendações e acompanhar sua execução.
+RU	eh.pln.plan.sinsel	Выберите план, чтобы увидеть детали, принять решения по рекомендациям и отслеживать выполнение.
+ES	eh.pln.plan.nrec	{0} recomendaciones
+EN	eh.pln.plan.nrec	{0} recommendations
+PT	eh.pln.plan.nrec	{0} recomendações
+RU	eh.pln.plan.nrec	Рекомендаций: {0}
+ES	eh.pln.plan.progreso	{0}/{1} ejecutadas
+EN	eh.pln.plan.progreso	{0}/{1} executed
+PT	eh.pln.plan.progreso	{0}/{1} executadas
+RU	eh.pln.plan.progreso	{0}/{1} выполнено
+ES	eh.pln.plan.periodo	Período analizado
+EN	eh.pln.plan.periodo	Analyzed period
+PT	eh.pln.plan.periodo	Período analisado
+RU	eh.pln.plan.periodo	Анализируемый период
+ES	eh.pln.plan.creado	Creado
+EN	eh.pln.plan.creado	Created
+PT	eh.pln.plan.creado	Criado
+RU	eh.pln.plan.creado	Создан
+ES	eh.pln.plan.siguiente	Siguiente paso
+EN	eh.pln.plan.siguiente	Next step
+PT	eh.pln.plan.siguiente	Próximo passo
+RU	eh.pln.plan.siguiente	Следующий шаг
+ES	eh.pln.next.aprobar	Listo para aprobar el plan.
+EN	eh.pln.next.aprobar	Ready to approve the plan.
+PT	eh.pln.next.aprobar	Pronto para aprovar o plano.
+RU	eh.pln.next.aprobar	Готово к утверждению плана.
+ES	eh.pln.next.ejecutar	Listo para marcar el plan en ejecución.
+EN	eh.pln.next.ejecutar	Ready to mark the plan in progress.
+PT	eh.pln.next.ejecutar	Pronto para marcar o plano em execução.
+RU	eh.pln.next.ejecutar	Готово к отметке плана как выполняемого.
+ES	eh.pln.next.cerrar	Listo para cerrar el plan.
+EN	eh.pln.next.cerrar	Ready to close the plan.
+PT	eh.pln.next.cerrar	Pronto para fechar o plano.
+RU	eh.pln.next.cerrar	Готово к закрытию плана.
+ES	eh.pln.next.evaluarlisto	Listo para evaluar resultados.
+EN	eh.pln.next.evaluarlisto	Ready to evaluate results.
+PT	eh.pln.next.evaluarlisto	Pronto para avaliar resultados.
+RU	eh.pln.next.evaluarlisto	Готово к оценке результатов.
+ES	eh.pln.next.evaluarespera	Resultados evaluables a partir del {0}.
+EN	eh.pln.next.evaluarespera	Results can be evaluated starting {0}.
+PT	eh.pln.next.evaluarespera	Resultados avaliáveis a partir de {0}.
+RU	eh.pln.next.evaluarespera	Результаты можно оценить начиная с {0}.
+ES	eh.pln.next.ninguno	Plan finalizado.
+EN	eh.pln.next.ninguno	Plan finished.
+PT	eh.pln.next.ninguno	Plano finalizado.
+RU	eh.pln.next.ninguno	План завершён.
+ES	eh.pln.est.borrador	Borrador
+EN	eh.pln.est.borrador	Draft
+PT	eh.pln.est.borrador	Rascunho
+RU	eh.pln.est.borrador	Черновик
+ES	eh.pln.est.aprobado	Aprobado
+EN	eh.pln.est.aprobado	Approved
+PT	eh.pln.est.aprobado	Aprovado
+RU	eh.pln.est.aprobado	Утверждён
+ES	eh.pln.est.enejecucion	En ejecución
+EN	eh.pln.est.enejecucion	In progress
+PT	eh.pln.est.enejecucion	Em execução
+RU	eh.pln.est.enejecucion	В исполнении
+ES	eh.pln.est.cerrado	Cerrado
+EN	eh.pln.est.cerrado	Closed
+PT	eh.pln.est.cerrado	Fechado
+RU	eh.pln.est.cerrado	Закрыт
+ES	eh.pln.dec.aprobada	Aprobada
+EN	eh.pln.dec.aprobada	Approved
+PT	eh.pln.dec.aprobada	Aprovada
+RU	eh.pln.dec.aprobada	Утверждена
+ES	eh.pln.dec.descartada	Descartada
+EN	eh.pln.dec.descartada	Discarded
+PT	eh.pln.dec.descartada	Descartada
+RU	eh.pln.dec.descartada	Отклонена
+ES	eh.pln.dec.pendiente	Pendiente
+EN	eh.pln.dec.pendiente	Pending
+PT	eh.pln.dec.pendiente	Pendente
+RU	eh.pln.dec.pendiente	Ожидает
+ES	eh.pln.tipo.esperaalta	Lista de espera alta
+EN	eh.pln.tipo.esperaalta	High waiting list
+PT	eh.pln.tipo.esperaalta	Lista de espera alta
+RU	eh.pln.tipo.esperaalta	Большой список ожидания
+ES	eh.pln.tipo.ocupbaja	Ocupación baja
+EN	eh.pln.tipo.ocupbaja	Low occupancy
+PT	eh.pln.tipo.ocupbaja	Baixa ocupação
+RU	eh.pln.tipo.ocupbaja	Низкая заполняемость
+ES	eh.pln.tipo.orgrevisar	Revisar organizador
+EN	eh.pln.tipo.orgrevisar	Review organizer
+PT	eh.pln.tipo.orgrevisar	Revisar organizador
+RU	eh.pln.tipo.orgrevisar	Проверить организатора
+ES	eh.pln.tipo.plansubutil	Plan subutilizado
+EN	eh.pln.tipo.plansubutil	Underused plan
+PT	eh.pln.tipo.plansubutil	Plano subutilizado
+RU	eh.pln.tipo.plansubutil	Недоиспользуемый план
+ES	eh.pln.acc.programar	Programar nueva edición
+EN	eh.pln.acc.programar	Schedule new edition
+PT	eh.pln.acc.programar	Agendar nova edição
+RU	eh.pln.acc.programar	Запланировать новое проведение
+ES	eh.pln.acc.ampliar	Ampliar cupo
+EN	eh.pln.acc.ampliar	Increase capacity
+PT	eh.pln.acc.ampliar	Ampliar vagas
+RU	eh.pln.acc.ampliar	Увеличить число мест
+ES	eh.pln.acc.cancelar	Cancelar experiencia
+EN	eh.pln.acc.cancelar	Cancel experience
+PT	eh.pln.acc.cancelar	Cancelar experiência
+RU	eh.pln.acc.cancelar	Отменить впечатление
+ES	eh.pln.acc.noreprog	No reprogramar
+EN	eh.pln.acc.noreprog	Do not reschedule
+PT	eh.pln.acc.noreprog	Não reagendar
+RU	eh.pln.acc.noreprog	Не переносить
+ES	eh.pln.acc.suspender	Suspender organizador
+EN	eh.pln.acc.suspender	Suspend organizer
+PT	eh.pln.acc.suspender	Suspender organizador
+RU	eh.pln.acc.suspender	Приостановить организатора
+ES	eh.pln.acc.revisarplan	Revisar plan
+EN	eh.pln.acc.revisarplan	Review plan
+PT	eh.pln.acc.revisarplan	Revisar plano
+RU	eh.pln.acc.revisarplan	Пересмотреть план
+ES	eh.pln.estado.1	Confirmada
+EN	eh.pln.estado.1	Confirmed
+PT	eh.pln.estado.1	Confirmada
+RU	eh.pln.estado.1	Подтверждена
+ES	eh.pln.estado.2	Cancelada
+EN	eh.pln.estado.2	Cancelled
+PT	eh.pln.estado.2	Cancelada
+RU	eh.pln.estado.2	Отменена
+ES	eh.pln.estado.3	Asistió
+EN	eh.pln.estado.3	Attended
+PT	eh.pln.estado.3	Compareceu
+RU	eh.pln.estado.3	Посетил
+ES	eh.pln.estado.4	No asistió
+EN	eh.pln.estado.4	No-show
+PT	eh.pln.estado.4	Não compareceu
+RU	eh.pln.estado.4	Не явился
+ES	eh.pln.rec.accion	Acción sugerida
+EN	eh.pln.rec.accion	Suggested action
+PT	eh.pln.rec.accion	Ação sugerida
+RU	eh.pln.rec.accion	Предлагаемое действие
+ES	eh.pln.rec.evidencia	Evidencia
+EN	eh.pln.rec.evidencia	Evidence
+PT	eh.pln.rec.evidencia	Evidência
+RU	eh.pln.rec.evidencia	Обоснование
+ES	eh.pln.rec.motivo	Motivo
+EN	eh.pln.rec.motivo	Reason
+PT	eh.pln.rec.motivo	Motivo
+RU	eh.pln.rec.motivo	Причина
+ES	eh.pln.rec.ejecutada	Ejecutada
+EN	eh.pln.rec.ejecutada	Executed
+PT	eh.pln.rec.ejecutada	Executada
+RU	eh.pln.rec.ejecutada	Выполнена
+ES	eh.pln.seg.indicador	Indicador
+EN	eh.pln.seg.indicador	Indicator
+PT	eh.pln.seg.indicador	Indicador
+RU	eh.pln.seg.indicador	Показатель
+ES	eh.pln.seg.antes	Antes
+EN	eh.pln.seg.antes	Before
+PT	eh.pln.seg.antes	Antes
+RU	eh.pln.seg.antes	До
+ES	eh.pln.seg.despues	Después
+EN	eh.pln.seg.despues	After
+PT	eh.pln.seg.despues	Depois
+RU	eh.pln.seg.despues	После
+ES	eh.pln.seg.pendiente	Los resultados finales estarán disponibles cuando el plan se cierre y se genere la evaluación correspondiente.
+EN	eh.pln.seg.pendiente	Final results will be available once the plan is closed and its evaluation is generated.
+PT	eh.pln.seg.pendiente	Os resultados finais estarão disponíveis quando o plano for fechado e a avaliação for gerada.
+RU	eh.pln.seg.pendiente	Итоговые результаты появятся после закрытия плана и формирования оценки.
+ES	eh.pln.seg.aviso	Comparativo informativo: la variación puede deberse también a otros factores.
+EN	eh.pln.seg.aviso	Informational comparison: the change may also be due to other factors.
+PT	eh.pln.seg.aviso	Comparativo informativo: a variação também pode dever-se a outros fatores.
+RU	eh.pln.seg.aviso	Сравнение информационное: изменение может быть вызвано и другими факторами.
+ES	eh.pln.interp.reservas	Reservas del período: {0}.
+EN	eh.pln.interp.reservas	Reservations in the period: {0}.
+PT	eh.pln.interp.reservas	Reservas do período: {0}.
+RU	eh.pln.interp.reservas	Броней за период: {0}.
+ES	eh.pln.interp.espera	{0} cliente(s) en lista de espera (demanda insatisfecha).
+EN	eh.pln.interp.espera	{0} client(s) on the waiting list (unmet demand).
+PT	eh.pln.interp.espera	{0} cliente(s) na lista de espera (demanda não atendida).
+RU	eh.pln.interp.espera	{0} клиент(ов) в списке ожидания (неудовлетворённый спрос).
+ES	eh.pln.interp.ocupbaja	{0} experiencia(s) con ocupación por debajo del 40%.
+EN	eh.pln.interp.ocupbaja	{0} experience(s) with occupancy below 40%.
+PT	eh.pln.interp.ocupbaja	{0} experiência(s) com ocupação abaixo de 40%.
+RU	eh.pln.interp.ocupbaja	{0} впечатлени(й) с заполняемостью ниже 40%.
+ES	eh.pln.interp.inasist	Inasistencias: {0} ({1}% de las reservas).
+EN	eh.pln.interp.inasist	No-shows: {0} ({1}% of reservations).
+PT	eh.pln.interp.inasist	Ausências: {0} ({1}% das reservas).
+RU	eh.pln.interp.inasist	Неявки: {0} ({1}% броней).
+ES	eh.pln.interp.vacio	Sin datos suficientes en el período seleccionado.
+EN	eh.pln.interp.vacio	Not enough data in the selected period.
+PT	eh.pln.interp.vacio	Sem dados suficientes no período selecionado.
+RU	eh.pln.interp.vacio	Недостаточно данных за выбранный период.
+ES	mnu.pln.resumen	Resumen ejecutivo
+EN	mnu.pln.resumen	Executive summary
+PT	mnu.pln.resumen	Resumo executivo
+RU	mnu.pln.resumen	Сводка
+ES	mnu.pln.demanda	Demanda y capacidad
+EN	mnu.pln.demanda	Demand & capacity
+PT	mnu.pln.demanda	Demanda e capacidade
+RU	mnu.pln.demanda	Спрос и ёмкость
+ES	mnu.pln.desempeno	Desempeño y calidad
+EN	mnu.pln.desempeno	Performance & quality
+PT	mnu.pln.desempeno	Desempenho e qualidade
+RU	mnu.pln.desempeno	Эффективность и качество
+ES	mnu.pln.decisiones	Decisiones y recomendaciones
+EN	mnu.pln.decisiones	Decisions & recommendations
+PT	mnu.pln.decisiones	Decisões e recomendações
+RU	mnu.pln.decisiones	Решения и рекомендации
+ES	eh.pln.resumen.sub	Visión general del período: qué pasó con la oferta y la demanda.
+EN	eh.pln.resumen.sub	Period overview: what happened with supply and demand.
+PT	eh.pln.resumen.sub	Visão geral do período: o que aconteceu com oferta e demanda.
+RU	eh.pln.resumen.sub	Обзор периода: что происходило со спросом и предложением.
+ES	eh.pln.demanda.sub	Identificá experiencias con exceso o baja demanda y su disponibilidad.
+EN	eh.pln.demanda.sub	Spot experiences with excess or low demand and their availability.
+PT	eh.pln.demanda.sub	Identifique experiências com excesso ou baixa demanda e sua disponibilidade.
+RU	eh.pln.demanda.sub	Выявляйте впечатления с избыточным или низким спросом и их доступность.
+ES	eh.pln.desempeno.sub	Calidad, asistencia y utilización para decidir sobre organizadores y planes.
+EN	eh.pln.desempeno.sub	Quality, attendance and usage to decide on organizers and plans.
+PT	eh.pln.desempeno.sub	Qualidade, presença e utilização para decidir sobre organizadores e planos.
+RU	eh.pln.desempeno.sub	Качество, посещаемость и использование для решений по организаторам и планам.
+ES	eh.pln.decisiones.sub	Revisá las recomendaciones con su evidencia y armá un plan de acción.
+EN	eh.pln.decisiones.sub	Review recommendations with their evidence and build an action plan.
+PT	eh.pln.decisiones.sub	Revise as recomendações com sua evidência e monte um plano de ação.
+RU	eh.pln.decisiones.sub	Просмотрите рекомендации с обоснованием и составьте план действий.
+ES	eh.pln.planes.sub	Generá recomendaciones, decidí, ejecutá tareas y seguí los resultados.
+EN	eh.pln.planes.sub	Generate recommendations, decide, execute tasks and track results.
+PT	eh.pln.planes.sub	Gere recomendações, decida, execute tarefas e acompanhe os resultados.
+RU	eh.pln.planes.sub	Формируйте рекомендации, принимайте решения, выполняйте задачи и отслеживайте результаты.
+ES	eh.btn.nuevoplan	+ Nuevo plan
+EN	eh.btn.nuevoplan	+ New plan
+PT	eh.btn.nuevoplan	+ Novo plano
+RU	eh.btn.nuevoplan	+ Новый план
+ES	eh.pln.nuevoplan.titulo	Nuevo plan — generá recomendaciones del período
+EN	eh.pln.nuevoplan.titulo	New plan — generate recommendations for the period
+PT	eh.pln.nuevoplan.titulo	Novo plano — gere recomendações do período
+RU	eh.pln.nuevoplan.titulo	Новый план — сформируйте рекомендации за период
+ES	eh.pln.subnav.ocupacion	Ocupación
+EN	eh.pln.subnav.ocupacion	Occupancy
+PT	eh.pln.subnav.ocupacion	Ocupação
+RU	eh.pln.subnav.ocupacion	Заполняемость
+ES	eh.pln.subnav.espera	Lista de espera
+EN	eh.pln.subnav.espera	Waiting list
+PT	eh.pln.subnav.espera	Lista de espera
+RU	eh.pln.subnav.espera	Список ожидания
+ES	eh.pln.subnav.capacidad	Detalle de capacidad
+EN	eh.pln.subnav.capacidad	Capacity detail
+PT	eh.pln.subnav.capacidad	Detalhe de capacidade
+RU	eh.pln.subnav.capacidad	Детали ёмкости
+ES	eh.pln.subnav.satisfaccion	Satisfacción
+EN	eh.pln.subnav.satisfaccion	Satisfaction
+PT	eh.pln.subnav.satisfaccion	Satisfação
+RU	eh.pln.subnav.satisfaccion	Удовлетворённость
+ES	eh.pln.subnav.asistencia	Asistencia
+EN	eh.pln.subnav.asistencia	Attendance
+PT	eh.pln.subnav.asistencia	Presença
+RU	eh.pln.subnav.asistencia	Посещаемость
+ES	eh.pln.subnav.utilizacion	Utilización de planes
+EN	eh.pln.subnav.utilizacion	Plan usage
+PT	eh.pln.subnav.utilizacion	Utilização de planos
+RU	eh.pln.subnav.utilizacion	Использование планов
+ES	eh.pln.crearplansel	Crear plan con las seleccionadas
+EN	eh.pln.crearplansel	Create plan from selected
+PT	eh.pln.crearplansel	Criar plano com as selecionadas
+RU	eh.pln.crearplansel	Создать план из выбранных
+ES	eh.pln.sinseleccion	Seleccioná al menos una recomendación para el plan.
+EN	eh.pln.sinseleccion	Select at least one recommendation for the plan.
+PT	eh.pln.sinseleccion	Selecione pelo menos uma recomendação para o plano.
+RU	eh.pln.sinseleccion	Выберите хотя бы одну рекомендацию для плана.
+ES	eh.pln.decisiones.ctx	Generá las recomendaciones para analizar el período vigente.
+EN	eh.pln.decisiones.ctx	Generate recommendations to analyze the current period.
+PT	eh.pln.decisiones.ctx	Gere as recomendações para analisar o período vigente.
+RU	eh.pln.decisiones.ctx	Сформируйте рекомендации для анализа текущего периода.
+ES	eh.pln.decisiones.hallazgos	{0} recomendación(es): 
+EN	eh.pln.decisiones.hallazgos	{0} recommendation(s): 
+PT	eh.pln.decisiones.hallazgos	{0} recomendação(ões): 
+RU	eh.pln.decisiones.hallazgos	Рекомендаций {0}: 
+ES	eh.pln.decisiones.sinhallazgos	Sin hallazgos: los indicadores están dentro de los umbrales.
+EN	eh.pln.decisiones.sinhallazgos	No findings: indicators are within thresholds.
+PT	eh.pln.decisiones.sinhallazgos	Sem achados: os indicadores estão dentro dos limites.
+RU	eh.pln.decisiones.sinhallazgos	Отклонений нет: показатели в пределах порогов.
+ES	eh.pln.vistaabierta	Vista '{0}' aplicada.
+EN	eh.pln.vistaabierta	View '{0}' applied.
+PT	eh.pln.vistaabierta	Visão '{0}' aplicada.
+RU	eh.pln.vistaabierta	Представление «{0}» применено.
+ES	eh.pln.etapa.analizar	① Recomendaciones
+EN	eh.pln.etapa.analizar	① Recommendations
+PT	eh.pln.etapa.analizar	① Recomendações
+RU	eh.pln.etapa.analizar	① Рекомендации
+ES	eh.pln.etapa.ejecutar	② Tareas
+EN	eh.pln.etapa.ejecutar	② Tasks
+PT	eh.pln.etapa.ejecutar	② Tarefas
+RU	eh.pln.etapa.ejecutar	② Задачи
+ES	eh.pln.etapa.evaluar	③ Resultados
+EN	eh.pln.etapa.evaluar	③ Results
+PT	eh.pln.etapa.evaluar	③ Resultados
+RU	eh.pln.etapa.evaluar	③ Результаты
+ES	eh.pln.sel.ninguna	Ninguna recomendación seleccionada.
+EN	eh.pln.sel.ninguna	No recommendation selected.
+PT	eh.pln.sel.ninguna	Nenhuma recomendação selecionada.
+RU	eh.pln.sel.ninguna	Рекомендации не выбраны.
+ES	eh.pln.sel.cuenta	{0} seleccionada(s) para el plan.
+EN	eh.pln.sel.cuenta	{0} selected for the plan.
+PT	eh.pln.sel.cuenta	{0} selecionada(s) para o plano.
+RU	eh.pln.sel.cuenta	Выбрано для плана: {0}.
+ES	eh.pln.sec.ejecutadas	Acciones aprobadas y ejecutadas
+EN	eh.pln.sec.ejecutadas	Approved & executed actions
+PT	eh.pln.sec.ejecutadas	Ações aprovadas e executadas
+RU	eh.pln.sec.ejecutadas	Утверждённые и выполненные действия
+ES	eh.pln.evaluar.sinacciones	No se aprobaron ni ejecutaron acciones en este plan.
+EN	eh.pln.evaluar.sinacciones	No actions were approved or executed in this plan.
+PT	eh.pln.evaluar.sinacciones	Nenhuma ação foi aprovada ou executada neste plano.
+RU	eh.pln.evaluar.sinacciones	В этом плане не было утверждённых или выполненных действий.
+ES	eh.pln.evaluar.sincerrados	Todavía no hay planes finalizados para evaluar.
+EN	eh.pln.evaluar.sincerrados	There are no finished plans to evaluate yet.
+PT	eh.pln.evaluar.sincerrados	Ainda não há planos finalizados para avaliar.
+RU	eh.pln.evaluar.sincerrados	Пока нет завершённых планов для оценки.
+ES	eh.pln.resumenplanes	Resumen de todos los planes
+EN	eh.pln.resumenplanes	Summary of all plans
+PT	eh.pln.resumenplanes	Resumo de todos os planos
+RU	eh.pln.resumenplanes	Сводка по всем планам
+ES	eh.pln.plan.ejecutadas	{0} ejecutadas
+EN	eh.pln.plan.ejecutadas	{0} executed
+PT	eh.pln.plan.ejecutadas	{0} executadas
+RU	eh.pln.plan.ejecutadas	{0} выполнено
+ES	eh.pln.plan.aprobsinejec	{0} por ejecutar
+EN	eh.pln.plan.aprobsinejec	{0} to execute
+PT	eh.pln.plan.aprobsinejec	{0} a executar
+RU	eh.pln.plan.aprobsinejec	{0} к выполнению
+ES	eh.pln.plan.descartadas	{0} descartadas
+EN	eh.pln.plan.descartadas	{0} discarded
+PT	eh.pln.plan.descartadas	{0} descartadas
+RU	eh.pln.plan.descartadas	{0} отклонено
+ES	eh.pln.plan.pendientes	{0} por decidir
+EN	eh.pln.plan.pendientes	{0} to decide
+PT	eh.pln.plan.pendientes	{0} a decidir
+RU	eh.pln.plan.pendientes	{0} на решение
+ES	eh.pln.sec.decisiones	Decisiones y acciones del plan
+EN	eh.pln.sec.decisiones	Plan decisions & actions
+PT	eh.pln.sec.decisiones	Decisões e ações do plano
+RU	eh.pln.sec.decisiones	Решения и действия плана
+ES	eh.pln.seg.pend	pendiente
+EN	eh.pln.seg.pend	pending
+PT	eh.pln.seg.pend	pendente
+RU	eh.pln.seg.pend	ожидается
+ES	eh.pln.seg.periodos	Antes: {0}   ·   Después: {1}
+EN	eh.pln.seg.periodos	Before: {0}   ·   After: {1}
+PT	eh.pln.seg.periodos	Antes: {0}   ·   Depois: {1}
+RU	eh.pln.seg.periodos	До: {0}   ·   После: {1}
+ES	eh.pln.vista.decidir	Recomendaciones y decisiones
+EN	eh.pln.vista.decidir	Recommendations & decisions
+PT	eh.pln.vista.decidir	Recomendações e decisões
+RU	eh.pln.vista.decidir	Рекомендации и решения
+ES	eh.pln.vista.tareas	Tareas del plan
+EN	eh.pln.vista.tareas	Plan tasks
+PT	eh.pln.vista.tareas	Tarefas do plano
+RU	eh.pln.vista.tareas	Задачи плана
+ES	eh.pln.ejec.sintareas	No hay tareas aprobadas. Aprobá recomendaciones en «Recomendaciones».
+EN	eh.pln.ejec.sintareas	No approved tasks. Approve recommendations in “Recommendations”.
+PT	eh.pln.ejec.sintareas	Não há tarefas aprovadas. Aprove recomendações em «Recomendações».
+RU	eh.pln.ejec.sintareas	Нет утверждённых задач. Утвердите рекомендации в «Рекомендации».
+ES	eh.pln.ejec.penddecidir	Hay {0} recomendación(es) sin decidir en «Recomendaciones».
+EN	eh.pln.ejec.penddecidir	{0} recommendation(s) still undecided in “Recommendations”.
+PT	eh.pln.ejec.penddecidir	Há {0} recomendação(ões) sem decisão em «Recomendações».
+RU	eh.pln.ejec.penddecidir	{0} рекомендаций без решения в «Рекомендации».
+ES	eh.pln.franja.pend	{0} recomendación(es) todavía sin decidir. No hace falta decidirlas para aprobar el plan.
+EN	eh.pln.franja.pend	{0} recommendation(s) still undecided. You don't need to decide them to approve the plan.
+PT	eh.pln.franja.pend	{0} recomendação(ões) ainda sem decisão. Não é necessário decidi-las para aprovar o plano.
+RU	eh.pln.franja.pend	{0} рекомендаций без решения. Их не обязательно решать, чтобы утвердить план.
+ES	eh.pln.franja.aprobsinejec	Podés cerrar igual: quedan {0} tarea(s) aprobada(s) sin ejecutar (se van a poder seguir ejecutando después de cerrar).
+EN	eh.pln.franja.aprobsinejec	You can still close: {0} approved task(s) remain unexecuted (they can still be executed after closing).
+PT	eh.pln.franja.aprobsinejec	Você pode fechar de qualquer forma: restam {0} tarefa(s) aprovada(s) sem executar (poderão ser executadas depois de fechar).
+RU	eh.pln.franja.aprobsinejec	Можно закрыть и так: осталось {0} утверждённых задач(и) невыполненных (их можно будет выполнить после закрытия).
+ES	eh.plan.cerrarconfirm.pend	Quedan {0} tarea(s) aprobada(s) sin ejecutar: vas a poder seguir ejecutándolas después de cerrar, pero el período de observación para evaluar resultados empieza a contarse desde este cierre. ¿Continuar?
+EN	eh.plan.cerrarconfirm.pend	{0} approved task(s) remain unexecuted: you'll still be able to execute them after closing, but the observation period used to evaluate results starts counting from this closure. Continue?
+PT	eh.plan.cerrarconfirm.pend	Restam {0} tarefa(s) aprovada(s) sem executar: você ainda poderá executá-las depois de fechar, mas o período de observação para avaliar resultados começa a contar a partir deste fechamento. Continuar?
+RU	eh.plan.cerrarconfirm.pend	Осталось {0} утверждённых задач(и) невыполненных: их ещё можно будет выполнить после закрытия, но период наблюдения для оценки результатов начинает отсчитываться с этого закрытия. Продолжить?
+ES	eh.pln.evaluar.titulodlg	Evaluar resultados
+EN	eh.pln.evaluar.titulodlg	Evaluate results
+PT	eh.pln.evaluar.titulodlg	Avaliar resultados
+RU	eh.pln.evaluar.titulodlg	Оценить результаты
+ES	eh.pln.franja.sinpermiso	No tenés permiso para esta acción; consultá con un Administrador.
+EN	eh.pln.franja.sinpermiso	You don't have permission for this action; contact an Administrator.
+PT	eh.pln.franja.sinpermiso	Você não tem permissão para esta ação; consulte um Administrador.
+RU	eh.pln.franja.sinpermiso	У вас нет прав на это действие; обратитесь к администратору.
+ES	eh.pln.col.tipo	Tipo
+EN	eh.pln.col.tipo	Type
+PT	eh.pln.col.tipo	Tipo
+RU	eh.pln.col.tipo	Тип
+ES	eh.pln.col.entidad	Entidad
+EN	eh.pln.col.entidad	Entity
+PT	eh.pln.col.entidad	Entidade
+RU	eh.pln.col.entidad	Объект
+ES	eh.pln.col.decision	Decisión
+EN	eh.pln.col.decision	Decision
+PT	eh.pln.col.decision	Decisão
+RU	eh.pln.col.decision	Решение
+ES	eh.pln.rec.si	Sí
+EN	eh.pln.rec.si	Yes
+PT	eh.pln.rec.si	Sim
+RU	eh.pln.rec.si	Да
+ES	eh.pln.rec.sinsel	Seleccioná una recomendación de la lista para ver el detalle.
+EN	eh.pln.rec.sinsel	Select a recommendation from the list to see its detail.
+PT	eh.pln.rec.sinsel	Selecione uma recomendação da lista para ver o detalhe.
+RU	eh.pln.rec.sinsel	Выберите рекомендацию из списка, чтобы увидеть подробности.
+ES	eh.pln.rec.fechaejec	Ejecutada el
+EN	eh.pln.rec.fechaejec	Executed on
+PT	eh.pln.rec.fechaejec	Executada em
+RU	eh.pln.rec.fechaejec	Выполнено
+ES	eh.pln.seg.conclusion	Indicadores que subieron: {0} · que bajaron: {1} · sin cambios: {2}.
+EN	eh.pln.seg.conclusion	Indicators up: {0} · down: {1} · unchanged: {2}.
+PT	eh.pln.seg.conclusion	Indicadores que subiram: {0} · que baixaram: {1} · sem mudança: {2}.
+RU	eh.pln.seg.conclusion	Показатели выросли: {0} · снизились: {1} · без изменений: {2}.
+ES	eh.pln.modulo	PN03 – Planificación
+EN	eh.pln.modulo	PN03 – Planning
+PT	eh.pln.modulo	PN03 – Planejamento
+RU	eh.pln.modulo	PN03 – Планирование
+ES	eh.pdf.plan.titulo	Informe de resultados del plan de acción
+EN	eh.pdf.plan.titulo	Action plan results report
+PT	eh.pdf.plan.titulo	Relatório de resultados do plano de ação
+RU	eh.pdf.plan.titulo	Отчёт о результатах плана действий
+ES	eh.pdf.estado	Estado
+EN	eh.pdf.estado	Status
+PT	eh.pdf.estado	Estado
+RU	eh.pdf.estado	Статус
+ES	eh.pdf.sec.resumen	Resumen ejecutivo
+EN	eh.pdf.sec.resumen	Executive summary
+PT	eh.pdf.sec.resumen	Resumo executivo
+RU	eh.pdf.sec.resumen	Сводка
+ES	eh.pdf.aprobadas	Aprobadas
+EN	eh.pdf.aprobadas	Approved
+PT	eh.pdf.aprobadas	Aprovadas
+RU	eh.pdf.aprobadas	Утверждено
+ES	eh.pdf.descartadas	Descartadas
+EN	eh.pdf.descartadas	Discarded
+PT	eh.pdf.descartadas	Descartadas
+RU	eh.pdf.descartadas	Отклонено
+ES	eh.pdf.ejecutadas	Ejecutadas
+EN	eh.pdf.ejecutadas	Executed
+PT	eh.pdf.ejecutadas	Executadas
+RU	eh.pdf.ejecutadas	Выполнено
+ES	eh.pdf.pordecidir	Por decidir
+EN	eh.pdf.pordecidir	To decide
+PT	eh.pdf.pordecidir	A decidir
+RU	eh.pdf.pordecidir	На решение
+ES	eh.pdf.resumen.txt	Se ejecutaron {0} de {1} acción(es) aprobada(s). En el comparativo, {2} indicador(es) subieron, {3} bajaron y {4} se mantuvieron.
+EN	eh.pdf.resumen.txt	{0} of {1} approved action(s) were executed. In the comparison, {2} indicator(s) rose, {3} fell and {4} stayed the same.
+PT	eh.pdf.resumen.txt	Foram executadas {0} de {1} ação(ões) aprovada(s). No comparativo, {2} indicador(es) subiram, {3} baixaram e {4} se mantiveram.
+RU	eh.pdf.resumen.txt	Выполнено {0} из {1} утверждённых действий. В сравнении {2} показателей выросли, {3} снизились и {4} без изменений.
+ES	eh.pdf.resumen.sincierre	El plan aún no está cerrado: se decidieron {0} recomendación(es) y se ejecutaron {1}. La evaluación final estará disponible al cerrarlo.
+EN	eh.pdf.resumen.sincierre	The plan is not closed yet: {0} recommendation(s) decided and {1} executed. Final evaluation will be available once closed.
+PT	eh.pdf.resumen.sincierre	O plano ainda não está fechado: {0} recomendação(ões) decidida(s) e {1} executada(s). A avaliação final estará disponível ao fechá-lo.
+RU	eh.pdf.resumen.sincierre	План ещё не закрыт: решено {0} рекомендаций, выполнено {1}. Итоговая оценка появится после закрытия.
+ES	eh.pdf.sec.comparativo	Comparativo Antes / Después
+EN	eh.pdf.sec.comparativo	Before / After comparison
+PT	eh.pdf.sec.comparativo	Comparativo Antes / Depois
+RU	eh.pdf.sec.comparativo	Сравнение до / после
+ES	eh.pdf.grafico.variacion	Variación porcentual por indicador
+EN	eh.pdf.grafico.variacion	Percentage change by indicator
+PT	eh.pdf.grafico.variacion	Variação percentual por indicador
+RU	eh.pdf.grafico.variacion	Процентное изменение по показателю
+ES	eh.pdf.sec.decisiones	Decisiones y ejecución
+EN	eh.pdf.sec.decisiones	Decisions & execution
+PT	eh.pdf.sec.decisiones	Decisões e execução
+RU	eh.pdf.sec.decisiones	Решения и выполнение
+ES	eh.pdf.ejecel	Ejecutada {0}
+EN	eh.pdf.ejecel	Executed {0}
+PT	eh.pdf.ejecel	Executada {0}
+RU	eh.pdf.ejecel	Выполнено {0}
+ES	eh.pdf.noejec	No ejecutada
+EN	eh.pdf.noejec	Not executed
+PT	eh.pdf.noejec	Não executada
+RU	eh.pdf.noejec	Не выполнено
+ES	eh.pdf.col.entidad	Entidad
+EN	eh.pdf.col.entidad	Entity
+PT	eh.pdf.col.entidad	Entidade
+RU	eh.pdf.col.entidad	Объект
+ES	eh.pdf.col.problema	Problema
+EN	eh.pdf.col.problema	Issue
+PT	eh.pdf.col.problema	Problema
+RU	eh.pdf.col.problema	Проблема
+ES	eh.pdf.col.decision	Decisión
+EN	eh.pdf.col.decision	Decision
+PT	eh.pdf.col.decision	Decisão
+RU	eh.pdf.col.decision	Решение
+ES	eh.pdf.col.ejecucion	Ejecución
+EN	eh.pdf.col.ejecucion	Execution
+PT	eh.pdf.col.ejecucion	Execução
+RU	eh.pdf.col.ejecucion	Выполнение
+ES	eh.pdf.sec.evaluacion	Evaluación de resultados
+EN	eh.pdf.sec.evaluacion	Results evaluation
+PT	eh.pdf.sec.evaluacion	Avaliação de resultados
+RU	eh.pdf.sec.evaluacion	Оценка результатов
+ES	eh.pdf.sec.trazabilidad	Información de trazabilidad
+EN	eh.pdf.sec.trazabilidad	Traceability information
+PT	eh.pdf.sec.trazabilidad	Informação de rastreabilidade
+RU	eh.pdf.sec.trazabilidad	Информация о прослеживаемости
+ES	eh.pdf.idplan	Identificador del plan
+EN	eh.pdf.idplan	Plan identifier
+PT	eh.pdf.idplan	Identificador do plano
+RU	eh.pdf.idplan	Идентификатор плана
+ES	eh.pdf.cierre	Cierre
+EN	eh.pdf.cierre	Closed
+PT	eh.pdf.cierre	Fechamento
+RU	eh.pdf.cierre	Закрытие
+ES	eh.pdf.emision	Emisión
+EN	eh.pdf.emision	Issued
+PT	eh.pdf.emision	Emissão
+RU	eh.pdf.emision	Выпуск
+ES	eh.pdf.recids	Recomendaciones (IDs)
+EN	eh.pdf.recids	Recommendations (IDs)
+PT	eh.pdf.recids	Recomendações (IDs)
+RU	eh.pdf.recids	Рекомендации (ID)
+ES	eh.pdf.recomendaciones	Recomendaciones
+EN	eh.pdf.recomendaciones	Recommendations
+PT	eh.pdf.recomendaciones	Recomendações
+RU	eh.pdf.recomendaciones	Рекомендации
+ES	eh.doc.modulo.pn01	PN01 – Comercialización
+EN	eh.doc.modulo.pn01	PN01 – Sales
+PT	eh.doc.modulo.pn01	PN01 – Comercialização
+RU	eh.doc.modulo.pn01	PN01 – Продажи
+ES	eh.doc.modulo.pn02	PN02 – Reservas
+EN	eh.doc.modulo.pn02	PN02 – Reservations
+PT	eh.doc.modulo.pn02	PN02 – Reservas
+RU	eh.doc.modulo.pn02	PN02 – Брони
+ES	eh.doc.f.plan	Plan
+EN	eh.doc.f.plan	Plan
+PT	eh.doc.f.plan	Plano
+RU	eh.doc.f.plan	План
+ES	eh.doc.f.valorsusc	Valor de la suscripción
+EN	eh.doc.f.valorsusc	Subscription price
+PT	eh.doc.f.valorsusc	Valor da assinatura
+RU	eh.doc.f.valorsusc	Стоимость подписки
+ES	eh.doc.f.reservasmes	Reservas incluidas por mes
+EN	eh.doc.f.reservasmes	Reservations included per month
+PT	eh.doc.f.reservasmes	Reservas incluídas por mês
+RU	eh.doc.f.reservasmes	Броней в месяц
+ES	eh.doc.f.premium	Acceso premium
+EN	eh.doc.f.premium	Premium access
+PT	eh.doc.f.premium	Acesso premium
+RU	eh.doc.f.premium	Премиум-доступ
+ES	eh.doc.f.invitados	Invitados por reserva
+EN	eh.doc.f.invitados	Guests per reservation
+PT	eh.doc.f.invitados	Convidados por reserva
+RU	eh.doc.f.invitados	Гостей на бронь
+ES	eh.doc.f.hasta	hasta {0}
+EN	eh.doc.f.hasta	up to {0}
+PT	eh.doc.f.hasta	até {0}
+RU	eh.doc.f.hasta	до {0}
+ES	eh.doc.f.anticipacion	Anticipación máxima de reserva
+EN	eh.doc.f.anticipacion	Max booking lead time
+PT	eh.doc.f.anticipacion	Antecedência máxima de reserva
+RU	eh.doc.f.anticipacion	Макс. срок бронирования
+ES	eh.doc.f.dias	{0} días
+EN	eh.doc.f.dias	{0} days
+PT	eh.doc.f.dias	{0} dias
+RU	eh.doc.f.dias	{0} дн.
+ES	eh.doc.f.vigencia	Vigencia
+EN	eh.doc.f.vigencia	Validity
+PT	eh.doc.f.vigencia	Vigência
+RU	eh.doc.f.vigencia	Срок действия
+ES	eh.doc.condiciones.vigencia	1 mes desde la formalización, renovable.
+EN	eh.doc.condiciones.vigencia	1 month from formalization, renewable.
+PT	eh.doc.condiciones.vigencia	1 mês desde a formalização, renovável.
+RU	eh.doc.condiciones.vigencia	1 месяц с момента оформления, продлевается.
+ES	eh.doc.condiciones.particulares	Condiciones particulares
+EN	eh.doc.condiciones.particulares	Specific conditions
+PT	eh.doc.condiciones.particulares	Condições específicas
+RU	eh.doc.condiciones.particulares	Особые условия
+ES	eh.doc.condiciones.c1	La suscripción se activa una vez confirmado el pago.
+EN	eh.doc.condiciones.c1	The subscription activates once payment is confirmed.
+PT	eh.doc.condiciones.c1	A assinatura é ativada após a confirmação do pagamento.
+RU	eh.doc.condiciones.c1	Подписка активируется после подтверждения оплаты.
+ES	eh.doc.condiciones.c2	Las reservas no consumidas no se acumulan al mes siguiente.
+EN	eh.doc.condiciones.c2	Unused reservations do not carry over to the next month.
+PT	eh.doc.condiciones.c2	As reservas não usadas não acumulam para o mês seguinte.
+RU	eh.doc.condiciones.c2	Неиспользованные брони не переносятся на следующий месяц.
+ES	eh.doc.condiciones.c3	La falta de pago de la renovación hace caducar la suscripción en su fecha de vencimiento.
+EN	eh.doc.condiciones.c3	Non-payment of the renewal expires the subscription on its due date.
+PT	eh.doc.condiciones.c3	A falta de pagamento da renovação faz a assinatura expirar no vencimento.
+RU	eh.doc.condiciones.c3	Неоплата продления прекращает подписку в дату окончания.
+ES	eh.doc.f.fecha	Fecha
+EN	eh.doc.f.fecha	Date
+PT	eh.doc.f.fecha	Data
+RU	eh.doc.f.fecha	Дата
+ES	eh.doc.f.cliente	Cliente
+EN	eh.doc.f.cliente	Client
+PT	eh.doc.f.cliente	Cliente
+RU	eh.doc.f.cliente	Клиент
+ES	eh.doc.f.concepto	Concepto
+EN	eh.doc.f.concepto	Concept
+PT	eh.doc.f.concepto	Conceito
+RU	eh.doc.f.concepto	Назначение
+ES	eh.doc.f.medio	Medio de pago
+EN	eh.doc.f.medio	Payment method
+PT	eh.doc.f.medio	Meio de pagamento
+RU	eh.doc.f.medio	Способ оплаты
+ES	eh.doc.f.cuotas	Cuotas
+EN	eh.doc.f.cuotas	Installments
+PT	eh.doc.f.cuotas	Parcelas
+RU	eh.doc.f.cuotas	Платежи
+ES	eh.doc.f.cuotasval	{0} de {1}
+EN	eh.doc.f.cuotasval	{0} of {1}
+PT	eh.doc.f.cuotasval	{0} de {1}
+RU	eh.doc.f.cuotasval	{0} по {1}
+ES	eh.doc.f.recargo	Recargo financiación
+EN	eh.doc.f.recargo	Financing surcharge
+PT	eh.doc.f.recargo	Acréscimo de financiamento
+RU	eh.doc.f.recargo	Наценка за рассрочку
+ES	eh.doc.f.importebase	Importe base
+EN	eh.doc.f.importebase	Base amount
+PT	eh.doc.f.importebase	Valor base
+RU	eh.doc.f.importebase	Базовая сумма
+ES	eh.doc.f.totalcobrado	TOTAL COBRADO
+EN	eh.doc.f.totalcobrado	TOTAL CHARGED
+PT	eh.doc.f.totalcobrado	TOTAL COBRADO
+RU	eh.doc.f.totalcobrado	ИТОГО К ОПЛАТЕ
+ES	eh.doc.comprobante.nota	Comprobante interno de ExperienceHub (no válido como factura fiscal).
+EN	eh.doc.comprobante.nota	Internal ExperienceHub receipt (not valid as a tax invoice).
+PT	eh.doc.comprobante.nota	Comprovante interno do ExperienceHub (não válido como nota fiscal).
+RU	eh.doc.comprobante.nota	Внутренняя квитанция ExperienceHub (не является налоговым счётом).
+ES	eh.doc.constancia.intro	Se deja constancia de la suscripción vigente de:
+EN	eh.doc.constancia.intro	This certifies the active subscription of:
+PT	eh.doc.constancia.intro	Atesta-se a assinatura vigente de:
+RU	eh.doc.constancia.intro	Настоящим подтверждается действующая подписка:
+ES	eh.doc.f.emision	Fecha de emisión
+EN	eh.doc.f.emision	Issue date
+PT	eh.doc.f.emision	Data de emissão
+RU	eh.doc.f.emision	Дата выпуска
+ES	eh.doc.f.inicio	Inicio
+EN	eh.doc.f.inicio	Start
+PT	eh.doc.f.inicio	Início
+RU	eh.doc.f.inicio	Начало
+ES	eh.doc.f.vigentehasta	Vigente hasta
+EN	eh.doc.f.vigentehasta	Valid until
+PT	eh.doc.f.vigentehasta	Válido até
+RU	eh.doc.f.vigentehasta	Действует до
+ES	eh.doc.f.estado	Estado
+EN	eh.doc.f.estado	Status
+PT	eh.doc.f.estado	Estado
+RU	eh.doc.f.estado	Статус
+ES	eh.doc.f.compasociado	Comprobante de pago asociado
+EN	eh.doc.f.compasociado	Associated payment receipt
+PT	eh.doc.f.compasociado	Comprovante de pagamento associado
+RU	eh.doc.f.compasociado	Связанная квитанция об оплате
+ES	eh.doc.f.contratacion	Contratación N°
+EN	eh.doc.f.contratacion	Contract No.
+PT	eh.doc.f.contratacion	Contratação N°
+RU	eh.doc.f.contratacion	Договор №
+ES	eh.doc.f.importe	Importe
+EN	eh.doc.f.importe	Amount
+PT	eh.doc.f.importe	Valor
+RU	eh.doc.f.importe	Сумма
+ES	eh.doc.cancelacion.motivo	Motivo: se alcanzó el máximo de {0} intentos de pago sin concretarse.
+EN	eh.doc.cancelacion.motivo	Reason: the maximum of {0} payment attempts was reached without success.
+PT	eh.doc.cancelacion.motivo	Motivo: atingiu-se o máximo de {0} tentativas de pagamento sem sucesso.
+RU	eh.doc.cancelacion.motivo	Причина: достигнут максимум из {0} попыток оплаты без успеха.
+ES	eh.doc.f.experiencia	Experiencia
+EN	eh.doc.f.experiencia	Experience
+PT	eh.doc.f.experiencia	Experiência
+RU	eh.doc.f.experiencia	Впечатление
+ES	eh.doc.f.lugar	Lugar
+EN	eh.doc.f.lugar	Location
+PT	eh.doc.f.lugar	Local
+RU	eh.doc.f.lugar	Место
+ES	eh.doc.f.fechahorario	Fecha y horario
+EN	eh.doc.f.fechahorario	Date & time
+PT	eh.doc.f.fechahorario	Data e horário
+RU	eh.doc.f.fechahorario	Дата и время
+ES	eh.doc.f.duracion	Duración
+EN	eh.doc.f.duracion	Duration
+PT	eh.doc.f.duracion	Duração
+RU	eh.doc.f.duracion	Длительность
+ES	eh.doc.f.lugaresres	Lugares reservados
+EN	eh.doc.f.lugaresres	Reserved spots
+PT	eh.doc.f.lugaresres	Lugares reservados
+RU	eh.doc.f.lugaresres	Забронировано мест
+ES	eh.doc.f.fechareserva	Fecha de la reserva
+EN	eh.doc.f.fechareserva	Reservation date
+PT	eh.doc.f.fechareserva	Data da reserva
+RU	eh.doc.f.fechareserva	Дата брони
+ES	eh.doc.reserva.presenta	Presentá esta confirmación al llegar a la experiencia.
+EN	eh.doc.reserva.presenta	Present this confirmation when you arrive at the experience.
+PT	eh.doc.reserva.presenta	Apresente esta confirmação ao chegar à experiência.
+RU	eh.doc.reserva.presenta	Предъявите это подтверждение по прибытии.
+ES	eh.doc.reserva.nota	Comprobante interno de ExperienceHub.
+EN	eh.doc.reserva.nota	Internal ExperienceHub receipt.
+PT	eh.doc.reserva.nota	Comprovante interno do ExperienceHub.
+RU	eh.doc.reserva.nota	Внутренняя квитанция ExperienceHub.
+ES	eh.pdf.tablero.titulo	Informe de planificación del período
+EN	eh.pdf.tablero.titulo	Period planning report
+PT	eh.pdf.tablero.titulo	Relatório de planejamento do período
+RU	eh.pdf.tablero.titulo	Отчёт по планированию за период
+ES	eh.pdf.filtros	Filtros aplicados
+EN	eh.pdf.filtros	Applied filters
+PT	eh.pdf.filtros	Filtros aplicados
+RU	eh.pdf.filtros	Применённые фильтры
+ES	eh.pdf.sec.indicadores	Indicadores globales
+EN	eh.pdf.sec.indicadores	Global indicators
+PT	eh.pdf.sec.indicadores	Indicadores globais
+RU	eh.pdf.sec.indicadores	Общие показатели
+ES	eh.pdf.suscripciones	Suscripciones
+EN	eh.pdf.suscripciones	Subscriptions
+PT	eh.pdf.suscripciones	Assinaturas
+RU	eh.pdf.suscripciones	Подписки
+ES	eh.pdf.sinrecs	Ninguna: los indicadores están dentro de los umbrales configurados.
+EN	eh.pdf.sinrecs	None: indicators are within the configured thresholds.
+PT	eh.pdf.sinrecs	Nenhuma: os indicadores estão dentro dos limites configurados.
+RU	eh.pdf.sinrecs	Нет: показатели в пределах заданных порогов.
+ES	eh.pdf.guardar	Guardar PDF
+EN	eh.pdf.guardar	Save PDF
+PT	eh.pdf.guardar	Salvar PDF
+RU	eh.pdf.guardar	Сохранить PDF
+ES	eh.pdf.abrir	PDF generado en:
+{0}
+
+¿Abrirlo ahora?
+EN	eh.pdf.abrir	PDF generated at:
+{0}
+
+Open it now?
+PT	eh.pdf.abrir	PDF gerado em:
+{0}
+
+Abrir agora?
+RU	eh.pdf.abrir	PDF создан:
+{0}
+
+Открыть сейчас?
+ES	eh.pdf.err.escritura	No se pudo escribir el PDF (¿está abierto en otro programa o sin permisos?).
+{0}
+EN	eh.pdf.err.escritura	Could not write the PDF (is it open elsewhere or lacking permissions?).
+{0}
+PT	eh.pdf.err.escritura	Não foi possível gravar o PDF (está aberto em outro programa ou sem permissões?).
+{0}
+RU	eh.pdf.err.escritura	Не удалось записать PDF (открыт в другой программе или нет прав?).
+{0}
+ES	eh.pdf.err.permiso	Sin permisos para escribir en esa ubicación.
+{0}
+EN	eh.pdf.err.permiso	No permission to write in that location.
+{0}
+PT	eh.pdf.err.permiso	Sem permissão para gravar nesse local.
+{0}
+RU	eh.pdf.err.permiso	Нет прав на запись в это расположение.
+{0}
+ES	eh.pdf.paginaNM	ExperienceHub — Página {0} de {1}
+EN	eh.pdf.paginaNM	ExperienceHub — Page {0} of {1}
+PT	eh.pdf.paginaNM	ExperienceHub — Página {0} de {1}
+RU	eh.pdf.paginaNM	ExperienceHub — Страница {0} из {1}
+ES	eh.btn.evaluarresultados	Evaluar resultados
+EN	eh.btn.evaluarresultados	Evaluate results
+PT	eh.btn.evaluarresultados	Avaliar resultados
+RU	eh.btn.evaluarresultados	Оценить результаты
+ES	eh.plan.evaluarconfirm	Se registrará el comparativo Antes/Después con los indicadores reales del período de observación. ¿Continuar?
+EN	eh.plan.evaluarconfirm	The Before/After comparison will be recorded using the real indicators from the observation period. Continue?
+PT	eh.plan.evaluarconfirm	Será registrado o comparativo Antes/Depois com os indicadores reais do período de observação. Continuar?
+RU	eh.plan.evaluarconfirm	Будет зафиксировано сравнение До/После по реальным показателям периода наблюдения. Продолжить?
+ES	eh.plan.evaluado	Resultados evaluados. Ya podés exportar el comparativo a PDF.
+EN	eh.plan.evaluado	Results evaluated. You can now export the comparison to PDF.
+PT	eh.plan.evaluado	Resultados avaliados. Já pode exportar o comparativo para PDF.
+RU	eh.plan.evaluado	Результаты оценены. Теперь можно экспортировать сравнение в PDF.
+ES	eh.pln.seg.pendiente.fecha	Período de observación en curso. Resultados evaluables a partir del {0}.
+EN	eh.pln.seg.pendiente.fecha	Observation period in progress. Results will be evaluable from {0}.
+PT	eh.pln.seg.pendiente.fecha	Período de observação em curso. Resultados avaliáveis a partir de {0}.
+RU	eh.pln.seg.pendiente.fecha	Период наблюдения продолжается. Результаты можно будет оценить с {0}.
+ES	eh.pln.seg.sincerrar	El comparativo Antes/Después se habilita al cerrar el plan: ahí arranca a contarse el período de observación.
+EN	eh.pln.seg.sincerrar	The Before/After comparison becomes available when the plan is closed: that's when the observation period starts counting.
+PT	eh.pln.seg.sincerrar	O comparativo Antes/Depois é habilitado ao fechar o plano: é aí que começa a contar o período de observação.
+RU	eh.pln.seg.sincerrar	Сравнение «До/После» станет доступно после закрытия плана: именно тогда начинается отсчёт периода наблюдения.
+ES	eh.pln.seg.listo	El período de observación ya transcurrió: usá «Evaluar resultados» para generar el comparativo.
+EN	eh.pln.seg.listo	The observation period has elapsed: use “Evaluate results” to generate the comparison.
+PT	eh.pln.seg.listo	O período de observação já passou: use «Avaliar resultados» para gerar o comparativo.
+RU	eh.pln.seg.listo	Период наблюдения завершён: используйте «Оценить результаты», чтобы сформировать сравнение.
+ES	eh.pln.seg.resultado	Resultado
+EN	eh.pln.seg.resultado	Result
+PT	eh.pln.seg.resultado	Resultado
+RU	eh.pln.seg.resultado	Результат
+ES	eh.pln.seg.conclusion2	Mejoraron: {0} · empeoraron: {1} · sin cambios/informativo: {2}.
+EN	eh.pln.seg.conclusion2	Improved: {0} · worsened: {1} · unchanged/informational: {2}.
+PT	eh.pln.seg.conclusion2	Melhoraram: {0} · pioraram: {1} · sem mudança/informativo: {2}.
+RU	eh.pln.seg.conclusion2	Улучшились: {0} · ухудшились: {1} · без изменений/информативно: {2}.
+ES	eh.pln.res.mejoro	Mejoró
+EN	eh.pln.res.mejoro	Improved
+PT	eh.pln.res.mejoro	Melhorou
+RU	eh.pln.res.mejoro	Улучшилось
+ES	eh.pln.res.empeoro	Empeoró
+EN	eh.pln.res.empeoro	Worsened
+PT	eh.pln.res.empeoro	Piorou
+RU	eh.pln.res.empeoro	Ухудшилось
+ES	eh.pln.res.igual	Sin cambios
+EN	eh.pln.res.igual	Unchanged
+PT	eh.pln.res.igual	Sem mudanças
+RU	eh.pln.res.igual	Без изменений
+ES	eh.pln.res.neutro	Informativo
+EN	eh.pln.res.neutro	Informational
+PT	eh.pln.res.neutro	Informativo
+RU	eh.pln.res.neutro	Информативно
+ES	eh.pdf.resumen.enobservacion	Plan cerrado. El período de observación está en curso: los resultados serán evaluables a partir del {0}.
+EN	eh.pdf.resumen.enobservacion	Plan closed. The observation period is in progress: results will be evaluable from {0}.
+PT	eh.pdf.resumen.enobservacion	Plano fechado. O período de observação está em curso: os resultados serão avaliáveis a partir de {0}.
+RU	eh.pdf.resumen.enobservacion	План закрыт. Период наблюдения продолжается: результаты можно будет оценить с {0}.
+ES	eh.pdf.resumen.evaluable	Plan cerrado y período de observación cumplido: los resultados están listos para evaluarse en la aplicación.
+EN	eh.pdf.resumen.evaluable	Plan closed and observation period complete: results are ready to be evaluated in the application.
+PT	eh.pdf.resumen.evaluable	Plano fechado e período de observação concluído: os resultados estão prontos para serem avaliados na aplicação.
+RU	eh.pdf.resumen.evaluable	План закрыт, период наблюдения завершён: результаты готовы к оценке в приложении.
+ES	eh.ayuda.titulo	Ayuda
+EN	eh.ayuda.titulo	Help
+PT	eh.ayuda.titulo	Ajuda
+RU	eh.ayuda.titulo	Справка
+ES	eh.ayuda.quepodeshacer	Qué podés hacer acá
+EN	eh.ayuda.quepodeshacer	What you can do here
+PT	eh.ayuda.quepodeshacer	O que você pode fazer aqui
+RU	eh.ayuda.quepodeshacer	Что можно сделать здесь
+ES	eh.ayuda.entendido	Entendido
+EN	eh.ayuda.entendido	Got it
+PT	eh.ayuda.entendido	Entendi
+RU	eh.ayuda.entendido	Понятно
+ES	mnu.ayuda	Ayuda
+EN	mnu.ayuda	Help
+PT	mnu.ayuda	Ajuda
+RU	mnu.ayuda	Справка
+ES	eh.ayuda.menu.tit	ExperienceHub: panorama general
+EN	eh.ayuda.menu.tit	ExperienceHub: overview
+PT	eh.ayuda.menu.tit	ExperienceHub: visão geral
+RU	eh.ayuda.menu.tit	ExperienceHub: общий обзор
+ES	eh.ayuda.menu.cuerpo	ExperienceHub organiza el trabajo en tres procesos: Comercialización (contratar y cobrar planes), Reservas (gestionar experiencias y listas de espera) y Planificación (analizar indicadores y decidir acciones). Cada bloque del menú superior corresponde a uno de estos procesos.
+EN	eh.ayuda.menu.cuerpo	ExperienceHub organizes the work into three processes: Commercialization (sign up and charge plans), Reservations (manage experiences and waiting lists) and Planning (analyze indicators and decide actions). Each block in the top menu corresponds to one of these processes.
+PT	eh.ayuda.menu.cuerpo	O ExperienceHub organiza o trabalho em três processos: Comercialização (contratar e cobrar planos), Reservas (gerenciar experiências e listas de espera) e Planejamento (analisar indicadores e decidir ações). Cada bloco do menu superior corresponde a um desses processos.
+RU	eh.ayuda.menu.cuerpo	ExperienceHub организует работу в три процесса: Коммерциализация (оформление и оплата планов), Резервирование (управление мероприятиями и списками ожидания) и Планирование (анализ показателей и принятие решений). Каждый блок верхнего меню соответствует одному из этих процессов.
+ES	eh.ayuda.menu.p1	Comercialización: contratar un plan nuevo o cobrar una contratación pendiente.
+EN	eh.ayuda.menu.p1	Commercialization: sign up a new plan or charge a pending contract.
+PT	eh.ayuda.menu.p1	Comercialização: contratar um plano novo ou cobrar uma contratação pendente.
+RU	eh.ayuda.menu.p1	Коммерциализация: оформить новый план или оплатить незавершённую сделку.
+ES	eh.ayuda.menu.p2	Reservas: crear, confirmar o cancelar reservas de experiencias.
+EN	eh.ayuda.menu.p2	Reservations: create, confirm or cancel experience reservations.
+PT	eh.ayuda.menu.p2	Reservas: criar, confirmar ou cancelar reservas de experiências.
+RU	eh.ayuda.menu.p2	Резервирование: создать, подтвердить или отменить резервирование мероприятий.
+ES	eh.ayuda.menu.p3	Planificación: ver indicadores, generar recomendaciones y seguir planes de acción.
+EN	eh.ayuda.menu.p3	Planning: view indicators, generate recommendations and track action plans.
+PT	eh.ayuda.menu.p3	Planejamento: ver indicadores, gerar recomendações e acompanhar planos de ação.
+RU	eh.ayuda.menu.p3	Планирование: просматривать показатели, формировать рекомендации и следить за планами действий.
+ES	eh.ayuda.nc.tit	Nueva contratación: 3 pasos
+EN	eh.ayuda.nc.tit	New contract: 3 steps
+PT	eh.ayuda.nc.tit	Nova contratação: 3 passos
+RU	eh.ayuda.nc.tit	Новая сделка: 3 шага
+ES	eh.ayuda.nc.cuerpo	Este asistente te guía para dar de alta una suscripción: primero identificás o creás al cliente, después elegís el plan, y por último confirmás. El indicador de pasos de arriba muestra en cuál de los tres estás.
+EN	eh.ayuda.nc.cuerpo	This wizard guides you to create a subscription: first you identify or create the client, then you choose the plan, and finally you confirm. The step indicator above shows which of the three you're on.
+PT	eh.ayuda.nc.cuerpo	Este assistente guia você para criar uma assinatura: primeiro identifica ou cria o cliente, depois escolhe o plano, e por último confirma. O indicador de passos acima mostra em qual dos três você está.
+RU	eh.ayuda.nc.cuerpo	Этот помощник поможет оформить подписку: сначала вы находите или создаёте клиента, затем выбираете план и в конце подтверждаете. Индикатор шагов сверху показывает, на каком из трёх этапов вы находитесь.
+ES	eh.ayuda.nc.p1	Paso 1: buscá al cliente por DNI o creá uno nuevo si no existe.
+EN	eh.ayuda.nc.p1	Step 1: look up the client by ID or create a new one if they don't exist.
+PT	eh.ayuda.nc.p1	Passo 1: procure o cliente pelo CPF/documento ou crie um novo se não existir.
+RU	eh.ayuda.nc.p1	Шаг 1: найдите клиента по документу или создайте нового, если он не существует.
+ES	eh.ayuda.nc.p2	Paso 2: elegí el plan de suscripción que va a contratar.
+EN	eh.ayuda.nc.p2	Step 2: choose the subscription plan to sign up for.
+PT	eh.ayuda.nc.p2	Passo 2: escolha o plano de assinatura que ele vai contratar.
+RU	eh.ayuda.nc.p2	Шаг 2: выберите план подписки, который он оформит.
+ES	eh.ayuda.nc.p3	Paso 3: confirmá los datos. La contratación queda pendiente de pago hasta que se cobre en Caja.
+EN	eh.ayuda.nc.p3	Step 3: confirm the details. The contract stays pending payment until it's charged at the register.
+PT	eh.ayuda.nc.p3	Passo 3: confirme os dados. A contratação fica pendente de pagamento até ser cobrada no Caixa.
+RU	eh.ayuda.nc.p3	Шаг 3: подтвердите данные. Сделка остаётся неоплаченной, пока не будет оплачена в кассе.
+ES	eh.ayuda.form.tit	Formalizar contratación
+EN	eh.ayuda.form.tit	Formalize contract
+PT	eh.ayuda.form.tit	Formalizar contratação
+RU	eh.ayuda.form.tit	Оформление сделки
+ES	eh.ayuda.form.cuerpo	Acá se registran los datos definitivos de una contratación antes del cobro: vigencia, condiciones del plan y comprobante. Una vez formalizada, pasa a la pantalla de Cobros.
+EN	eh.ayuda.form.cuerpo	Here the final details of a contract are recorded before charging: validity, plan conditions and receipt. Once formalized, it moves to the Charges screen.
+PT	eh.ayuda.form.cuerpo	Aqui são registrados os dados definitivos de uma contratação antes da cobrança: vigência, condições do plano e comprovante. Depois de formalizada, passa para a tela de Cobranças.
+RU	eh.ayuda.form.cuerpo	Здесь фиксируются окончательные данные сделки перед оплатой: срок действия, условия плана и подтверждающий документ. После оформления сделка переходит на экран «Платежи».
+ES	eh.ayuda.form.p1	Revisá los datos del plan y de la suscripción antes de confirmar.
+EN	eh.ayuda.form.p1	Review the plan and subscription details before confirming.
+PT	eh.ayuda.form.p1	Revise os dados do plano e da assinatura antes de confirmar.
+RU	eh.ayuda.form.p1	Проверьте данные плана и подписки перед подтверждением.
+ES	eh.ayuda.form.p2	Podés exportar la constancia de suscripción en PDF.
+EN	eh.ayuda.form.p2	You can export the subscription certificate as PDF.
+PT	eh.ayuda.form.p2	Você pode exportar o comprovante de assinatura em PDF.
+RU	eh.ayuda.form.p2	Вы можете экспортировать подтверждение подписки в PDF.
+ES	eh.ayuda.cob.tit	Cobros pendientes
+EN	eh.ayuda.cob.tit	Pending charges
+PT	eh.ayuda.cob.tit	Cobranças pendentes
+RU	eh.ayuda.cob.tit	Ожидающие оплаты
+ES	eh.ayuda.cob.cuerpo	Lista las contrataciones formalizadas que todavía no se cobraron. Al cobrar una, la suscripción del cliente queda activa de inmediato.
+EN	eh.ayuda.cob.cuerpo	Lists formalized contracts that haven't been charged yet. Charging one activates the client's subscription immediately.
+PT	eh.ayuda.cob.cuerpo	Lista as contratações formalizadas que ainda não foram cobradas. Ao cobrar uma, a assinatura do cliente fica ativa imediatamente.
+RU	eh.ayuda.cob.cuerpo	Список оформленных сделок, которые ещё не оплачены. После оплаты подписка клиента сразу становится активной.
+ES	eh.ayuda.cob.p1	Seleccioná una contratación y registrá el cobro con su medio de pago.
+EN	eh.ayuda.cob.p1	Select a contract and record the charge with its payment method.
+PT	eh.ayuda.cob.p1	Selecione uma contratação e registre a cobrança com a forma de pagamento.
+RU	eh.ayuda.cob.p1	Выберите сделку и зарегистрируйте оплату с указанием способа платежа.
+ES	eh.ayuda.cob.p2	Tras 3 intentos de pago sin concretarse, la contratación se cancela automáticamente.
+EN	eh.ayuda.cob.p2	After 3 failed payment attempts, the contract is cancelled automatically.
+PT	eh.ayuda.cob.p2	Após 3 tentativas de pagamento sem sucesso, a contratação é cancelada automaticamente.
+RU	eh.ayuda.cob.p2	После 3 неудачных попыток оплаты сделка автоматически отменяется.
+ES	eh.ayuda.cob.p3	El comprobante de pago se puede exportar en PDF desde acá.
+EN	eh.ayuda.cob.p3	The payment receipt can be exported as PDF from here.
+PT	eh.ayuda.cob.p3	O comprovante de pagamento pode ser exportado em PDF a partir daqui.
+RU	eh.ayuda.cob.p3	Квитанцию об оплате можно экспортировать в PDF прямо здесь.
+ES	eh.ayuda.res.tit	Reservas de experiencias
+EN	eh.ayuda.res.tit	Experience reservations
+PT	eh.ayuda.res.tit	Reservas de experiências
+RU	eh.ayuda.res.tit	Резервирование мероприятий
+ES	eh.ayuda.res.cuerpo	Gestioná las reservas de un cliente: crear, confirmar, cancelar y marcar asistencia. Una reserva nace Confirmada si hay cupo disponible; si no, el cliente puede anotarse en la lista de espera.
+EN	eh.ayuda.res.cuerpo	Manage a client's reservations: create, confirm, cancel and mark attendance. A reservation is born Confirmed if there's room available; otherwise, the client can join the waiting list.
+PT	eh.ayuda.res.cuerpo	Gerencie as reservas de um cliente: criar, confirmar, cancelar e marcar presença. Uma reserva nasce Confirmada se houver vaga disponível; caso contrário, o cliente pode entrar na lista de espera.
+RU	eh.ayuda.res.cuerpo	Управляйте резервированием клиента: создавайте, подтверждайте, отменяйте и отмечайте посещение. Резервирование сразу получает статус «Подтверждено», если есть свободное место; в противном случае клиент может встать в список ожидания.
+ES	eh.ayuda.res.p1	Elegí al cliente y la experiencia para crear una reserva nueva.
+EN	eh.ayuda.res.p1	Choose the client and the experience to create a new reservation.
+PT	eh.ayuda.res.p1	Escolha o cliente e a experiência para criar uma nova reserva.
+RU	eh.ayuda.res.p1	Выберите клиента и мероприятие, чтобы создать новое резервирование.
+ES	eh.ayuda.res.p2	Cancelar con 48hs o más de anticipación devuelve el beneficio del plan; cancelar después, no.
+EN	eh.ayuda.res.p2	Cancelling 48h or more in advance returns the plan's benefit; cancelling later does not.
+PT	eh.ayuda.res.p2	Cancelar com 48h ou mais de antecedência devolve o benefício do plano; cancelar depois, não.
+RU	eh.ayuda.res.p2	Отмена за 48 часов или более возвращает льготу по плану; отмена позже — не возвращает.
+ES	eh.ayuda.res.p3	Marcá asistencia o inasistencia una vez realizada la experiencia.
+EN	eh.ayuda.res.p3	Mark attendance or absence once the experience has taken place.
+PT	eh.ayuda.res.p3	Marque presença ou ausência depois que a experiência for realizada.
+RU	eh.ayuda.res.p3	Отметьте присутствие или отсутствие после проведения мероприятия.
+ES	eh.ayuda.le.tit	Lista de espera
+EN	eh.ayuda.le.tit	Waiting list
+PT	eh.ayuda.le.tit	Lista de espera
+RU	eh.ayuda.le.tit	Список ожидания
+ES	eh.ayuda.le.cuerpo	Cuando una experiencia está completa, los clientes interesados quedan anotados acá. Si se libera un lugar, se le ofrece automáticamente al primero de la lista, con un plazo para confirmar.
+EN	eh.ayuda.le.cuerpo	When an experience is full, interested clients are listed here. If a spot opens up, it's automatically offered to the first person on the list, with a deadline to confirm.
+PT	eh.ayuda.le.cuerpo	Quando uma experiência está completa, os clientes interessados ficam anotados aqui. Se uma vaga abrir, ela é oferecida automaticamente ao primeiro da lista, com um prazo para confirmar.
+RU	eh.ayuda.le.cuerpo	Когда мероприятие заполнено, заинтересованные клиенты записываются сюда. Если место освобождается, оно автоматически предлагается первому в списке с ограниченным сроком для подтверждения.
+ES	eh.ayuda.le.p1	Una oferta vencida pasa automáticamente al siguiente en la lista.
+EN	eh.ayuda.le.p1	An expired offer automatically passes to the next person on the list.
+PT	eh.ayuda.le.p1	Uma oferta vencida passa automaticamente para o próximo da lista.
+RU	eh.ayuda.le.p1	Просроченное предложение автоматически переходит к следующему в списке.
+ES	eh.ayuda.le.p2	Podés exportar la confirmación de reserva una vez que el cliente acepta la oferta.
+EN	eh.ayuda.le.p2	You can export the reservation confirmation once the client accepts the offer.
+PT	eh.ayuda.le.p2	Você pode exportar a confirmação da reserva depois que o cliente aceitar a oferta.
+RU	eh.ayuda.le.p2	Вы можете экспортировать подтверждение резервирования после того, как клиент примет предложение.
+ES	eh.ayuda.pn03r.tit	Resumen ejecutivo
+EN	eh.ayuda.pn03r.tit	Executive summary
+PT	eh.ayuda.pn03r.tit	Resumo executivo
+RU	eh.ayuda.pn03r.tit	Краткий обзор
+ES	eh.ayuda.pn03r.cuerpo	Visión general del período: qué pasó con la demanda y la oferta. Los filtros de fecha/ciudad/categoría/organizador de acá se comparten con las demás pantallas de Planificación.
+EN	eh.ayuda.pn03r.cuerpo	Overview of the period: what happened with demand and supply. The date/city/category/organizer filters here are shared with the other Planning screens.
+PT	eh.ayuda.pn03r.cuerpo	Visão geral do período: o que aconteceu com a demanda e a oferta. Os filtros de data/cidade/categoria/organizador aqui são compartilhados com as outras telas de Planejamento.
+RU	eh.ayuda.pn03r.cuerpo	Общий обзор периода: что произошло со спросом и предложением. Фильтры по дате/городу/категории/организатору здесь являются общими для остальных экранов Планирования.
+ES	eh.ayuda.pn03r.p1	Ajustá el período y los filtros, y tocá Aplicar.
+EN	eh.ayuda.pn03r.p1	Adjust the period and filters, then tap Apply.
+PT	eh.ayuda.pn03r.p1	Ajuste o período e os filtros, e toque em Aplicar.
+RU	eh.ayuda.pn03r.p1	Настройте период и фильтры и нажмите «Применить».
+ES	eh.ayuda.pn03r.p2	Exportá el informe del tablero en PDF, o guardá esta vista de análisis para reabrirla después.
+EN	eh.ayuda.pn03r.p2	Export the dashboard report as PDF, or save this analysis view to reopen later.
+PT	eh.ayuda.pn03r.p2	Exporte o relatório do painel em PDF, ou salve esta visão de análise para reabrir depois.
+RU	eh.ayuda.pn03r.p2	Экспортируйте отчёт панели в PDF или сохраните этот вид анализа, чтобы открыть его позже.
+ES	eh.ayuda.pn03d.tit	Demanda y capacidad
+EN	eh.ayuda.pn03d.tit	Demand and capacity
+PT	eh.ayuda.pn03d.tit	Demanda e capacidade
+RU	eh.ayuda.pn03d.tit	Спрос и вместимость
+ES	eh.ayuda.pn03d.cuerpo	Identificá experiencias con poca ocupación (candidatas a revisar) y con mucha lista de espera (demanda insatisfecha). Usá las pestañas internas para alternar entre ocupación, espera y el detalle de capacidad.
+EN	eh.ayuda.pn03d.cuerpo	Identify experiences with low occupancy (candidates to review) and with a long waiting list (unmet demand). Use the internal tabs to switch between occupancy, waiting list and capacity detail.
+PT	eh.ayuda.pn03d.cuerpo	Identifique experiências com baixa ocupação (candidatas a revisão) e com muita lista de espera (demanda não atendida). Use as abas internas para alternar entre ocupação, espera e o detalhe de capacidade.
+RU	eh.ayuda.pn03d.cuerpo	Выявляйте мероприятия с низкой заполняемостью (кандидаты на пересмотр) и с большим списком ожидания (неудовлетворённый спрос). Используйте внутренние вкладки для переключения между заполняемостью, ожиданием и детальной вместимостью.
+ES	eh.ayuda.pn03e.tit	Desempeño y calidad
+EN	eh.ayuda.pn03e.tit	Performance and quality
+PT	eh.ayuda.pn03e.tit	Desempenho e qualidade
+RU	eh.ayuda.pn03e.tit	Эффективность и качество
+ES	eh.ayuda.pn03e.cuerpo	Calidad (calificación de organizadores), comportamiento (inasistencias) y utilización (uso de planes), cada uno en su propia pestaña para no mezclarlos.
+EN	eh.ayuda.pn03e.cuerpo	Quality (organizer ratings), behavior (no-shows) and utilization (plan usage), each in its own tab so they're not mixed up.
+PT	eh.ayuda.pn03e.cuerpo	Qualidade (avaliação dos organizadores), comportamento (ausências) e utilização (uso dos planos), cada um em sua própria aba para não misturar.
+RU	eh.ayuda.pn03e.cuerpo	Качество (оценки организаторов), поведение (непосещения) и использование (использование планов) — каждое на своей вкладке, чтобы не смешивать их.
+ES	eh.ayuda.pn03de.tit	Decisiones y recomendaciones
+EN	eh.ayuda.pn03de.tit	Decisions and recommendations
+PT	eh.ayuda.pn03de.tit	Decisões e recomendações
+RU	eh.ayuda.pn03de.tit	Решения и рекомендации
+ES	eh.ayuda.pn03de.cuerpo	El motor analiza el período y sugiere acciones (ampliar cupo, revisar un organizador, etc.) con su evidencia. Esta es la etapa ① del proceso de planificación: Analizar y decidir.
+EN	eh.ayuda.pn03de.cuerpo	The engine analyzes the period and suggests actions (expand capacity, review an organizer, etc.) with supporting evidence. This is stage ① of the planning process: Analyze and decide.
+PT	eh.ayuda.pn03de.cuerpo	O motor analisa o período e sugere ações (ampliar vagas, revisar um organizador, etc.) com suas evidências. Esta é a etapa ① do processo de planejamento: Analisar e decidir.
+RU	eh.ayuda.pn03de.cuerpo	Механизм анализирует период и предлагает действия (увеличить вместимость, пересмотреть организатора и т. д.) с соответствующими доказательствами. Это этап ① процесса планирования: Анализировать и решать.
+ES	eh.ayuda.pn03de.p1	Tocá «Generar recomendaciones» para ver las sugerencias del período.
+EN	eh.ayuda.pn03de.p1	Tap «Generate recommendations» to see the period's suggestions.
+PT	eh.ayuda.pn03de.p1	Toque em «Gerar recomendações» para ver as sugestões do período.
+RU	eh.ayuda.pn03de.p1	Нажмите «Создать рекомендации», чтобы увидеть предложения за период.
+ES	eh.ayuda.pn03de.p2	Marcá las que te interesen y creá un plan de acción con ellas.
+EN	eh.ayuda.pn03de.p2	Check the ones you're interested in and create an action plan with them.
+PT	eh.ayuda.pn03de.p2	Marque as que lhe interessam e crie um plano de ação com elas.
+RU	eh.ayuda.pn03de.p2	Отметьте те, что вас интересуют, и создайте из них план действий.
+ES	eh.ayuda.pn03de.p3	El plan creado te lleva directo a la etapa ② Ejecutar el plan, en Planes de acción.
+EN	eh.ayuda.pn03de.p3	The created plan takes you straight to stage ② Execute the plan, in Action plans.
+PT	eh.ayuda.pn03de.p3	O plano criado leva direto à etapa ② Executar o plano, em Planos de ação.
+RU	eh.ayuda.pn03de.p3	Созданный план сразу переводит вас на этап ② Выполнение плана, в разделе «Планы действий».
+ES	eh.ayuda.pn03p.tit	Planes de acción
+EN	eh.ayuda.pn03p.tit	Action plans
+PT	eh.ayuda.pn03p.tit	Planos de ação
+RU	eh.ayuda.pn03p.tit	Планы действий
+ES	eh.ayuda.pn03p.cuerpo	Acá se recorren las etapas ② Ejecutar y ③ Evaluar de un plan. El indicador de progreso (arriba del detalle) muestra el AVANCE REAL del plan; la marca azul debajo de una etapa indica cuál estás mirando — son cosas distintas.
+EN	eh.ayuda.pn03p.cuerpo	Here you go through stages ② Execute and ③ Evaluate of a plan. The progress indicator (above the detail) shows the plan's ACTUAL progress; the blue mark below a stage shows which one you're viewing — those are different things.
+PT	eh.ayuda.pn03p.cuerpo	Aqui você percorre as etapas ② Executar e ③ Avaliar de um plano. O indicador de progresso (acima do detalhe) mostra o AVANÇO REAL do plano; a marca azul abaixo de uma etapa indica qual você está vendo — são coisas diferentes.
+RU	eh.ayuda.pn03p.cuerpo	Здесь проходят этапы ② Выполнение и ③ Оценка плана. Индикатор прогресса (над деталями) показывает РЕАЛЬНЫЙ ход выполнения плана; синяя отметка под этапом показывает, какой из них вы просматриваете — это разные вещи.
+ES	eh.ayuda.pn03p.p1	Elegí un plan de la lista para ver su detalle.
+EN	eh.ayuda.pn03p.p1	Choose a plan from the list to see its detail.
+PT	eh.ayuda.pn03p.p1	Escolha um plano da lista para ver seu detalhe.
+RU	eh.ayuda.pn03p.p1	Выберите план из списка, чтобы увидеть его детали.
+ES	eh.ayuda.pn03p.p2	En «Analizar y decidir»: aprobá o descartá cada recomendación.
+EN	eh.ayuda.pn03p.p2	In «Analyze and decide»: approve or discard each recommendation.
+PT	eh.ayuda.pn03p.p2	Em «Analisar e decidir»: aprove ou descarte cada recomendação.
+RU	eh.ayuda.pn03p.p2	В разделе «Анализировать и решать»: одобрите или отклоните каждую рекомендацию.
+ES	eh.ayuda.pn03p.p3	En «Ejecutar el plan»: ejecutá las tareas ya aprobadas.
+EN	eh.ayuda.pn03p.p3	In «Execute the plan»: carry out the already-approved tasks.
+PT	eh.ayuda.pn03p.p3	Em «Executar o plano»: execute as tarefas já aprovadas.
+RU	eh.ayuda.pn03p.p3	В разделе «Выполнение плана»: выполните уже одобренные задачи.
+ES	eh.ayuda.pn03p.p4	En «Evaluar resultados»: una vez cerrado el plan, esperá el período de observación y tocá «Evaluar resultados» para ver el comparativo real.
+EN	eh.ayuda.pn03p.p4	In «Evaluate results»: once the plan is closed, wait for the observation period and tap «Evaluate results» to see the real comparison.
+PT	eh.ayuda.pn03p.p4	Em «Avaliar resultados»: depois que o plano for fechado, espere o período de observação e toque em «Avaliar resultados» para ver a comparação real.
+RU	eh.ayuda.pn03p.p4	В разделе «Оценка результатов»: после закрытия плана подождите период наблюдения и нажмите «Оценка результатов», чтобы увидеть реальное сравнение.
+ES	eh.pln.sim.titulo	Resultados del plan
+EN	eh.pln.sim.titulo	Plan results
+PT	eh.pln.sim.titulo	Resultados do plano
+RU	eh.pln.sim.titulo	Результаты плана
+ES	eh.pln.sim.banner	SIMULADO — estimación ilustrativa y reproducible para previsualizar el impacto de lo ya ejecutado. No reemplaza la evaluación oficial del plan (esa usa datos reales y se habilita tras el período de observación, en «Evaluar resultados»).
+EN	eh.pln.sim.banner	SIMULATED — illustrative, reproducible estimate to preview the impact of what has already been executed. It does not replace the plan's official evaluation (that uses real data and becomes available after the observation period, in «Evaluate results»).
+PT	eh.pln.sim.banner	SIMULADO — estimativa ilustrativa e reproduzível para pré-visualizar o impacto do que já foi executado. Não substitui a avaliação oficial do plano (que usa dados reais e fica disponível após o período de observação, em «Avaliar resultados»).
+RU	eh.pln.sim.banner	СИМУЛЯЦИЯ — иллюстративная воспроизводимая оценка для предварительного просмотра эффекта уже выполненного. Не заменяет официальную оценку плана (она использует реальные данные и становится доступной после периода наблюдения, в «Оценить результаты»).
+ES	eh.pln.sim.vacio	Todavía no se ejecutó ninguna tarea de este plan. Cuando ejecutes alguna en «Tareas», acá vas a ver una proyección de su impacto.
+EN	eh.pln.sim.vacio	No task of this plan has been executed yet. Once you execute one in «Tasks», you'll see a projection of its impact here.
+PT	eh.pln.sim.vacio	Ainda não foi executada nenhuma tarefa deste plano. Quando executar alguma em «Tarefas», você verá aqui uma projeção do seu impacto.
+RU	eh.pln.sim.vacio	Ни одна задача этого плана ещё не выполнена. Как только вы выполните задачу в «Задачах», здесь появится прогноз её влияния.
+ES	eh.pln.sim.faltan	{0} tarea(s) aprobada(s) todavía sin ejecutar: no están incluidas en este cálculo.
+EN	eh.pln.sim.faltan	{0} approved task(s) still not executed: they are not included in this calculation.
+PT	eh.pln.sim.faltan	{0} tarefa(s) aprovada(s) ainda não executada(s): não estão incluídas neste cálculo.
+RU	eh.pln.sim.faltan	{0} утверждённых задач(и) ещё не выполнено: они не включены в этот расчёт.
+ES	eh.pln.sim.kpi.ocup	Ocupación promedio
+EN	eh.pln.sim.kpi.ocup	Average occupancy
+PT	eh.pln.sim.kpi.ocup	Ocupação média
+RU	eh.pln.sim.kpi.ocup	Средняя заполняемость
+ES	eh.pln.sim.kpi.reservas	Reservas
+EN	eh.pln.sim.kpi.reservas	Reservations
+PT	eh.pln.sim.kpi.reservas	Reservas
+RU	eh.pln.sim.kpi.reservas	Бронирования
+ES	eh.pln.sim.kpi.espera	Lista de espera
+EN	eh.pln.sim.kpi.espera	Waitlist
+PT	eh.pln.sim.kpi.espera	Lista de espera
+RU	eh.pln.sim.kpi.espera	Список ожидания
+ES	eh.pln.sim.kpi.cancel	Cancelaciones
+EN	eh.pln.sim.kpi.cancel	Cancellations
+PT	eh.pln.sim.kpi.cancel	Cancelamentos
+RU	eh.pln.sim.kpi.cancel	Отмены
+ES	eh.pln.sim.kpi.ingresos	Ingresos estimados
+EN	eh.pln.sim.kpi.ingresos	Estimated revenue
+PT	eh.pln.sim.kpi.ingresos	Receita estimada
+RU	eh.pln.sim.kpi.ingresos	Оценочный доход
+ES	eh.pln.sim.kpi.efectividad	Efectividad de las recomendaciones
+EN	eh.pln.sim.kpi.efectividad	Recommendation effectiveness
+PT	eh.pln.sim.kpi.efectividad	Efetividade das recomendações
+RU	eh.pln.sim.kpi.efectividad	Эффективность рекомендаций
+ES	eh.pln.sim.basecount	sobre {0} tarea(s) con impacto
+EN	eh.pln.sim.basecount	over {0} task(s) with impact
+PT	eh.pln.sim.basecount	sobre {0} tarefa(s) com impacto
+RU	eh.pln.sim.basecount	из {0} задач(и) с эффектом
+ES	eh.pln.sim.detalle.titulo	Impacto simulado por recomendación ejecutada
+EN	eh.pln.sim.detalle.titulo	Simulated impact per executed recommendation
+PT	eh.pln.sim.detalle.titulo	Impacto simulado por recomendação executada
+RU	eh.pln.sim.detalle.titulo	Смоделированный эффект по каждой выполненной рекомендации
+ES	eh.pln.sim.col.reservas	Δ Reservas
+EN	eh.pln.sim.col.reservas	Δ Reservations
+PT	eh.pln.sim.col.reservas	Δ Reservas
+RU	eh.pln.sim.col.reservas	Δ Бронирования
+ES	eh.pln.sim.col.espera	Δ Espera
+EN	eh.pln.sim.col.espera	Δ Waitlist
+PT	eh.pln.sim.col.espera	Δ Espera
+RU	eh.pln.sim.col.espera	Δ Ожидание
+ES	eh.pln.sim.col.ocup	Δ Ocupación
+EN	eh.pln.sim.col.ocup	Δ Occupancy
+PT	eh.pln.sim.col.ocup	Δ Ocupação
+RU	eh.pln.sim.col.ocup	Δ Заполняемость
+ES	eh.pln.sim.col.ingresos	Δ Ingresos
+EN	eh.pln.sim.col.ingresos	Δ Revenue
+PT	eh.pln.sim.col.ingresos	Δ Receita
+RU	eh.pln.sim.col.ingresos	Δ Доход
+ES	eh.pln.sim.resultado.mejoro	Mejoró
+EN	eh.pln.sim.resultado.mejoro	Improved
+PT	eh.pln.sim.resultado.mejoro	Melhorou
+RU	eh.pln.sim.resultado.mejoro	Улучшилось
+ES	eh.pln.sim.resultado.neutro	Neutro
+EN	eh.pln.sim.resultado.neutro	Neutral
+PT	eh.pln.sim.resultado.neutro	Neutro
+RU	eh.pln.sim.resultado.neutro	Нейтрально
+ES	eh.pln.sim.resultado.sinimpacto	Sin impacto medible
+EN	eh.pln.sim.resultado.sinimpacto	No measurable impact
+PT	eh.pln.sim.resultado.sinimpacto	Sem impacto mensurável
+RU	eh.pln.sim.resultado.sinimpacto	Без измеримого эффекта
+ES	eh.btn.descargarinformesim	Descargar informe PDF
+EN	eh.btn.descargarinformesim	Download PDF report
+PT	eh.btn.descargarinformesim	Baixar relatório PDF
+RU	eh.btn.descargarinformesim	Скачать отчёт PDF
+ES	eh.pln.sim.resumen.programar	Nueva edición programada: reabsorbe parte de la demanda en lista de espera.
+EN	eh.pln.sim.resumen.programar	New edition scheduled: reabsorbs part of the waitlist demand.
+PT	eh.pln.sim.resumen.programar	Nova edição programada: reabsorve parte da demanda da lista de espera.
+RU	eh.pln.sim.resumen.programar	Запланирован новый выпуск: частично поглощает спрос из списка ожидания.
+ES	eh.pln.sim.resumen.ampliar	Cupo ampliado: entra más demanda de la lista de espera sin abrir una edición nueva.
+EN	eh.pln.sim.resumen.ampliar	Capacity expanded: more waitlist demand gets in without opening a new edition.
+PT	eh.pln.sim.resumen.ampliar	Cota ampliada: entra mais demanda da lista de espera sem abrir uma nova edição.
+RU	eh.pln.sim.resumen.ampliar	Квота увеличена: больше спроса из списка ожидания удовлетворяется без нового выпуска.
+ES	eh.pln.sim.resumen.cancelar	Experiencia dada de baja: se evitan nuevas reservas y cancelaciones sobre un evento de baja demanda.
+EN	eh.pln.sim.resumen.cancelar	Experience discontinued: avoids new reservations and cancellations on a low-demand event.
+PT	eh.pln.sim.resumen.cancelar	Experiência desativada: evita novas reservas e cancelamentos em um evento de baixa demanda.
+RU	eh.pln.sim.resumen.cancelar	Мероприятие отменено: исключены новые бронирования и отмены по событию с низким спросом.
+ES	eh.pln.sim.resumen.suspender	Organizador suspendido: se proyectan menos cancelaciones en sus próximas experiencias.
+EN	eh.pln.sim.resumen.suspender	Organizer suspended: fewer cancellations are projected on its upcoming experiences.
+PT	eh.pln.sim.resumen.suspender	Organizador suspenso: menos cancelamentos são projetados em suas próximas experiências.
+RU	eh.pln.sim.resumen.suspender	Организатор отстранён: прогнозируется меньше отмен в его предстоящих мероприятиях.
+ES	eh.pln.sim.resumen.sinimpacto	Tarea de revisión/decisión: sin impacto operativo directo medible.
+EN	eh.pln.sim.resumen.sinimpacto	Review/decision task: no measurable direct operational impact.
+PT	eh.pln.sim.resumen.sinimpacto	Tarefa de revisão/decisão: sem impacto operacional direto mensurável.
+RU	eh.pln.sim.resumen.sinimpacto	Задача проверки/решения: без измеримого прямого операционного эффекта.
+ES	eh.pdf.sim.titulo	Informe de impacto SIMULADO
+EN	eh.pdf.sim.titulo	SIMULATED impact report
+PT	eh.pdf.sim.titulo	Relatório de impacto SIMULADO
+RU	eh.pdf.sim.titulo	Отчёт о СИМУЛИРОВАННОМ эффекте
+ES	eh.pdf.sim.aviso	⚠ Documento ILUSTRATIVO: los indicadores de este informe son una simulación determinística (misma entrada → mismo resultado), no mediciones reales. La evaluación oficial del plan se genera por separado, con datos reales, una vez cumplido el período de observación posterior al cierre.
+EN	eh.pdf.sim.aviso	⚠ ILLUSTRATIVE document: the indicators in this report are a deterministic simulation (same input → same result), not real measurements. The plan's official evaluation is generated separately, with real data, once the observation period after closing has elapsed.
+PT	eh.pdf.sim.aviso	⚠ Documento ILUSTRATIVO: os indicadores deste relatório são uma simulação determinística (mesma entrada → mesmo resultado), não medições reais. A avaliação oficial do plano é gerada separadamente, com dados reais, após o período de observação posterior ao fechamento.
+RU	eh.pdf.sim.aviso	⚠ ИЛЛЮСТРАТИВНЫЙ документ: показатели этого отчёта — детерминированная симуляция (одинаковый вход → одинаковый результат), а не реальные измерения. Официальная оценка плана формируется отдельно, на реальных данных, после завершения периода наблюдения.
+ES	eh.pdf.sim.ejecutadas	Tareas ejecutadas incluidas
+EN	eh.pdf.sim.ejecutadas	Executed tasks included
+PT	eh.pdf.sim.ejecutadas	Tarefas executadas incluídas
+RU	eh.pdf.sim.ejecutadas	Включённые выполненные задачи
+ES	eh.pdf.sim.pendientes	Tareas aprobadas sin ejecutar (excluidas)
+EN	eh.pdf.sim.pendientes	Approved tasks not executed (excluded)
+PT	eh.pdf.sim.pendientes	Tarefas aprovadas sem executar (excluídas)
+RU	eh.pdf.sim.pendientes	Утверждённые невыполненные задачи (исключены)
+ES	eh.pdf.sim.resumen	Resumen ejecutivo (simulado)
+EN	eh.pdf.sim.resumen	Executive summary (simulated)
+PT	eh.pdf.sim.resumen	Resumo executivo (simulado)
+RU	eh.pdf.sim.resumen	Исполнительное резюме (симуляция)
+ES	eh.pdf.sim.indicador	Indicador
+EN	eh.pdf.sim.indicador	Indicator
+PT	eh.pdf.sim.indicador	Indicador
+RU	eh.pdf.sim.indicador	Показатель
+ES	eh.pdf.sim.efectividad	Efectividad simulada de las recomendaciones ejecutadas: {0}% — {1} de {2} tarea(s) con impacto medible mejoraron (≥3 de 5 indicadores positivos).
+EN	eh.pdf.sim.efectividad	Simulated effectiveness of the executed recommendations: {0}% — {1} of {2} task(s) with measurable impact improved (≥3 of 5 indicators positive).
+PT	eh.pdf.sim.efectividad	Efetividade simulada das recomendações executadas: {0}% — {1} de {2} tarefa(s) com impacto mensurável melhoraram (≥3 de 5 indicadores positivos).
+RU	eh.pdf.sim.efectividad	Смоделированная эффективность выполненных рекомендаций: {0}% — {1} из {2} задач(и) с измеримым эффектом улучшились (≥3 из 5 показателей положительны).
+ES	eh.pdf.sim.detalle	Detalle
+EN	eh.pdf.sim.detalle	Detail
+PT	eh.pdf.sim.detalle	Detalhe
+RU	eh.pdf.sim.detalle	Подробности
+ES	eh.pdf.sim.aclaracion.titulo	Aclaración metodológica
+EN	eh.pdf.sim.aclaracion.titulo	Methodological note
+PT	eh.pdf.sim.aclaracion.titulo	Nota metodológica
+RU	eh.pdf.sim.aclaracion.titulo	Методологическое примечание
+ES	eh.pdf.sim.aclaracion	Los valores de este informe se generan con una semilla determinística basada en el identificador real de cada recomendación: para el mismo plan siempre arrojan los mismos números, pero NO provienen de mediciones reales del sistema. Útiles para previsualizar la magnitud esperada del impacto, no para reportar resultados reales.
+EN	eh.pdf.sim.aclaracion	The values in this report are generated with a deterministic seed based on each recommendation's real identifier: for the same plan they always yield the same numbers, but they do NOT come from real system measurements. Useful to preview the expected magnitude of the impact, not to report real results.
+PT	eh.pdf.sim.aclaracion	Os valores deste relatório são gerados com uma semente determinística baseada no identificador real de cada recomendação: para o mesmo plano, sempre geram os mesmos números, mas NÃO vêm de medições reais do sistema. Úteis para pré-visualizar a magnitude esperada do impacto, não para relatar resultados reais.
+RU	eh.pdf.sim.aclaracion	Значения в этом отчёте формируются по детерминированному принципу на основе реального идентификатора каждой рекомендации: для одного и того же плана они всегда дают одинаковые числа, но НЕ являются реальными измерениями системы. Полезны для предварительной оценки ожидаемого масштаба эффекта, а не для отчёта о реальных результатах.
+ES	eh.pln.sim.encab	Resultados · #{0} {1}   ·   {2:dd/MM/yy}–{3:dd/MM/yy}
+EN	eh.pln.sim.encab	Results · #{0} {1}   ·   {2:dd/MM/yy}–{3:dd/MM/yy}
+PT	eh.pln.sim.encab	Resultados · #{0} {1}   ·   {2:dd/MM/yy}–{3:dd/MM/yy}
+RU	eh.pln.sim.encab	Результаты · #{0} {1}   ·   {2:dd/MM/yy}–{3:dd/MM/yy}
+ES	eh.pln.sim.banner.corto	SIMULADO — estimación ilustrativa, no reemplaza la evaluación oficial (datos reales, tras el período de observación).
+EN	eh.pln.sim.banner.corto	SIMULATED — illustrative estimate, does not replace the official evaluation (real data, after the observation period).
+PT	eh.pln.sim.banner.corto	SIMULADO — estimativa ilustrativa, não substitui a avaliação oficial (dados reais, após o período de observação).
+RU	eh.pln.sim.banner.corto	СИМУЛЯЦИЯ — иллюстративная оценка, не заменяет официальную оценку (реальные данные, после периода наблюдения).
+ES	eh.pln.sim.sec.indicadores	Indicadores clave (Antes → Después)
+EN	eh.pln.sim.sec.indicadores	Key indicators (Before → After)
+PT	eh.pln.sim.sec.indicadores	Indicadores-chave (Antes → Depois)
+RU	eh.pln.sim.sec.indicadores	Ключевые показатели (До → После)
+ES	eh.pln.sim.sec.graficos	Comparativo visual
+EN	eh.pln.sim.sec.graficos	Visual comparison
+PT	eh.pln.sim.sec.graficos	Comparativo visual
+RU	eh.pln.sim.sec.graficos	Визуальное сравнение
+ES	eh.pln.sim.graf.ocup	Ocupación promedio (%)
+EN	eh.pln.sim.graf.ocup	Average occupancy (%)
+PT	eh.pln.sim.graf.ocup	Ocupação média (%)
+RU	eh.pln.sim.graf.ocup	Средняя заполняемость (%)
+ES	eh.pln.sim.graf.vol	Reservas y lista de espera
+EN	eh.pln.sim.graf.vol	Reservations and waitlist
+PT	eh.pln.sim.graf.vol	Reservas e lista de espera
+RU	eh.pln.sim.graf.vol	Бронирования и список ожидания
+ES	eh.pln.sim.sinbase	Ninguna tarea ejecutada tiene impacto medible todavía.
+EN	eh.pln.sim.sinbase	No executed task has a measurable impact yet.
+PT	eh.pln.sim.sinbase	Nenhuma tarefa executada tem impacto mensurável ainda.
+RU	eh.pln.sim.sinbase	Ни одна выполненная задача пока не имеет измеримого эффекта.
+ES	eh.pln.sim.basecount2	{0} de {1} tarea(s) con impacto mejoraron (≥3 de 5 indicadores positivos).
+EN	eh.pln.sim.basecount2	{0} of {1} task(s) with impact improved (≥3 of 5 indicators positive).
+PT	eh.pln.sim.basecount2	{0} de {1} tarefa(s) com impacto melhoraram (≥3 de 5 indicadores positivos).
+RU	eh.pln.sim.basecount2	{0} из {1} задач(и) с эффектом улучшились (≥3 из 5 показателей положительны).

@@ -1,0 +1,27 @@
+@startuml
+title CU05-GER-EVALUAR RESULTADOS DEL PLAN
+actor "Gerente de Operaciones" as Ger
+participant ":PlanesAccionForm" as F
+participant ":BLL.PlanAccionService" as BLL
+participant ":BE.PlanAccion" as PA
+database "BD" as DB
+
+autonumber
+Ger -> F : seleccionar un plan cerrado y evaluar sus resultados
+F -> BLL : EvaluarResultados(idPlan)
+BLL -> PA : PeriodoObservacionCumplido(ahora)
+
+alt 2.1 todavía no se cumplió el período de observación
+  PA --> BLL : false
+  BLL --> F : fecha prevista de evaluación
+  F --> Ger : informar que todavía no corresponde evaluar
+else período de observación cumplido
+  PA --> BLL : true
+  BLL -> DB : SELECT KpiSnapshot WHERE Momento = Antes
+  BLL -> DB : SELECT KpiSnapshot WHERE Momento = Despues
+  DB --> BLL : snapshots
+  BLL -> BLL : comparar indicadores Antes vs. Después
+  BLL --> F : resultado de la comparación
+  F --> Ger : presentar los resultados del plan
+end
+@enduml

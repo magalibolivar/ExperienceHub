@@ -1,0 +1,8 @@
+PDFsharp 1.50.5147 — MIT License
+Copyright (c) 2005-2019 empira Software GmbH, Troisdorf (Germany)
+https://github.com/empira/PDFsharp
+
+Se distribuye bajo licencia MIT: uso/distribución permitidos conservando este aviso.
+Se incluye únicamente la DLL administrada (PdfSharp.dll, build GDI net20); sin
+dependencias nativas. Usada por ExperienceHub para exportar PDF directo a archivo
+(GUI/Exportacion/ExportadorPdfArchivo.cs).

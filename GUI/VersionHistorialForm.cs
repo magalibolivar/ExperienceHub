@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class VersionHistorialForm : Form, IIdiomaObserver
+    public partial class VersionHistorialForm : FormBase, IIdiomaObserver
     {
         private readonly BLL.VersionUsuario _bll         = new BLL.VersionUsuario();
         private readonly BLL.Usuario        _bllUsuario  = new BLL.Usuario();
@@ -16,7 +16,6 @@ namespace GUI
         public VersionHistorialForm()
         {
             InitializeComponent();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
         }
 
         // Abre el historial ya filtrado a un usuario concreto (desde Administración de Usuarios).
@@ -27,8 +26,7 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico); } catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
             GestorIdioma.SuscribirObservador(this);
             Traducir(GestorIdioma.IdiomaActual);
             CargarUsuarios();
@@ -98,9 +96,8 @@ namespace GUI
             catch (Exception ex)
             {
                 var tErr = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
-                string titErr = tErr.ContainsKey("msg.error.titulo") ? tErr["msg.error.titulo"].Texto : "Error";
                 string fmtErr = tErr.ContainsKey("msg.historial.errorcargar") ? tErr["msg.historial.errorcargar"].Texto : "Error al cargar historial:\n{0}";
-                MessageBox.Show(string.Format(fmtErr, ex.Message), titErr, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(fmtErr, ex.Message));
             }
         }
 
@@ -155,10 +152,7 @@ namespace GUI
 
             if (dgv.CurrentRow == null)
             {
-                MessageBox.Show(
-                    T("msg.historial.sinseleccion", "Seleccioná una versión de la grilla."),
-                    T("msg.historial.atencion",     "Atención"),
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MostrarError(T("msg.historial.sinseleccion", "Seleccioná una versión de la grilla."));
                 return;
             }
 
@@ -182,26 +176,22 @@ namespace GUI
                 "¿Restaurar al usuario al estado del {0}?\n\n{1}\n\nEl usuario quedará exactamente en este estado. Es reversible (queda registrado como un nuevo cambio en el historial).");
             string msg = string.Format(tpl, fechaTxt, estado);
 
-            if (MessageBox.Show(msg, T("msg.backup.titulorestaura", "Confirmar Restauración"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            if (!Estilo.Confirmar(this, T("msg.backup.titulorestaura", "Confirmar Restauración"), msg))
                 return;
 
             try
             {
                 _bll.RestaurarVersion(this.Text, idVersion);
-                MessageBox.Show(
-                    T("msg.historial.restaurado",  "Versión restaurada correctamente."),
-                    T("rpt.dlg.exito.titulo",       "Éxito"),
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rpt.dlg.exito.titulo", "Éxito"),
+                    T("msg.historial.restaurado", "Versión restaurada correctamente."));
 
                 btnCargar_Click(null, EventArgs.Empty);
             }
             catch (Exception ex)
             {
                 var tErr = Traductor.ObtenerTraducciones(GestorIdioma.IdiomaActual);
-                string titErr = tErr.ContainsKey("msg.error.titulo") ? tErr["msg.error.titulo"].Texto : "Error";
                 string fmtErr = tErr.ContainsKey("msg.historial.errorrestaur") ? tErr["msg.historial.errorrestaur"].Texto : "Error al restaurar versión:\n{0}";
-                MessageBox.Show(string.Format(fmtErr, ex.Message), titErr, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(fmtErr, ex.Message));
             }
         }
     }

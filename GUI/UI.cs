@@ -23,8 +23,11 @@ namespace GUI
         public const int GapXL = 24;
 
         // ── Nivel 1 — Encabezado de pantalla ─────────────────────────────────────
-        /// <summary>Cabecera con título grande + descripción breve y una línea divisoria.</summary>
-        public static Panel Encabezado(string titulo, string descripcion, string tagTitulo = null, string tagDesc = null)
+        /// <summary>Cabecera con título grande + descripción breve y una línea divisoria. Si se indica
+        /// <paramref name="contextoAyuda"/>, agrega un botón "?" que abre la ayuda contextual de la
+        /// pantalla (<see cref="Ayuda.AyudaDialog"/>) — ver <see cref="Ayuda.AyudaContenido"/> para los
+        /// contextos registrados.</summary>
+        public static Panel Encabezado(string titulo, string descripcion, string tagTitulo = null, string tagDesc = null, string contextoAyuda = null)
         {
             var p = new Panel { Dock = DockStyle.Top, Height = string.IsNullOrEmpty(descripcion) ? 58 : 76,
                                 Padding = new Padding(GapXL, GapL, GapXL, Gap), BackColor = Estilo.Lienzo };
@@ -39,6 +42,27 @@ namespace GUI
             if (!string.IsNullOrEmpty(descripcion)) p.Controls.Add(lblSub);
             p.Controls.Add(lblTit);
             p.Controls.Add(linea);
+
+            if (!string.IsNullOrEmpty(contextoAyuda))
+            {
+                // Posicionado por Anchor (no Dock): el encabezado ya reparte casi toda su altura
+                // entre título/descripción/línea, así que un panel Dock=Right quedaría aplastado.
+                const int ladoBtn = 28;
+                var btnAyuda = new Button
+                {
+                    Text = "?", Size = new Size(ladoBtn, ladoBtn),
+                    Location = new Point(p.Width - GapXL - ladoBtn, string.IsNullOrEmpty(descripcion) ? 14 : 20),
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    Font = Estilo.SemiBold(10f), ForeColor = Estilo.Coral, BackColor = Estilo.BlancoCalido,
+                    FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand, TabStop = false
+                };
+                btnAyuda.FlatAppearance.BorderColor = Estilo.Coral;
+                btnAyuda.FlatAppearance.BorderSize = 1;
+                string ctx = contextoAyuda;
+                btnAyuda.Click += (s, e) => Ayuda.AyudaDialog.Mostrar(btnAyuda.FindForm(), ctx);
+                p.Controls.Add(btnAyuda);
+            }
+
             return p;
         }
 

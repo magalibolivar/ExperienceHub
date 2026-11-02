@@ -25,6 +25,10 @@ bld/
 packages/
 *.nupkg
 
+# ── Python (Scripts/) ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
 # ── Herramientas de sesión / IDE local ───────────────────────────────────
 .claude/
 

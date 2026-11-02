@@ -27,11 +27,21 @@
 ; - Rollback automatico: si el servicio no arranca o falla la creacion de la
 ;   BD DESPUES de copiar archivos, se desinstala todo lo recien copiado
 ;   (preservando el log en Documentos).
+; - Antes de tocar la base de datos: se verifica que el usuario tenga permisos
+;   suficientes en el servidor (sysadmin o permiso de crear/propietario de la
+;   BD) y, si la base ya existia (reinstalacion sobre datos previos), se genera
+;   un backup completo (COPY_ONLY) antes de ejecutar el script de instalacion;
+;   la ruta queda en el log y, si algo falla despues, en el mensaje de error.
 ; - El GUI.exe.config instalado se reescribe con el servidor realmente
 ;   elegido - el connection string queda embebido pero correcto para
 ;   CUALQUIER instancia, no solo ".\SQLEXPRESS" fijo.
 ; - Al desinstalar, se pregunta (por defecto "No") si tambien borrar la BD.
 ; - Para instalaciones desatendidas: Instalador.exe /VERYSILENT /SERVIDOR=.\SQLEXPRESS
+; - Tutorial_SQL_Server.html (autonomo, sin recursos externos): salida CONTEXTUAL cuando la
+;   configuracion automatica de la BD falla de verdad (instalacion de LocalDB fallida, o el
+;   usuario no tiene ningun motor y cancela) - nunca se fuerza su lectura en una instalacion
+;   normal. Tambien queda instalado en {app} y con acceso directo en el grupo de Inicio, para
+;   consultarlo despues de instalar.
 ;
 ; Fuera de alcance (gap conocido, no bloqueante):
 ; - SQL Server Express completo (servicio multiusuario) no se embebe: sin
@@ -72,6 +82,14 @@
   #error "No se encontro Redist\SqlLocalDB.msi. Correr compilar-y-firmar.ps1, que lo descarga."
 #endif
 
+; Tutorial HTML autonomo (sin recursos externos): salida alternativa cuando la configuracion
+; automatica de la BD falla. Se ofrece CONTEXTUALMENTE (solo ante un error real), nunca se
+; fuerza su lectura en una instalacion normal.
+#define TutorialSqlHtml "Tutorial_SQL_Server.html"
+#if !FileExists(TutorialSqlHtml)
+  #error "No se encontro Tutorial_SQL_Server.html junto al .iss."
+#endif
+
 [Setup]
 AppId={{A7E4C2D1-5B3F-4A8E-9C6D-1E2F3A4B5C6D}
 AppName={#MyAppName}
@@ -86,6 +104,9 @@ PrivilegesRequired=admin
 ; queda sujeto a la redireccion WOW64 del registro y NUNCA encuentra las
 ; instancias de SQL Server (que se registran en la rama nativa de 64 bits).
 ArchitecturesInstallIn64BitMode=x64compatible
+; El instalador ya apunta a 64 bits (linea de arriba); se usa el loader nativo de
+; 64 bits del compilador (Inno Setup 6.7.1+) en vez del de 32 bits.
+UseSetupLdr=x64
 ; Si GUI.exe esta corriendo, Inno detecta la app abierta (Restart Manager) y
 ; pide cerrarla antes de continuar, en vez de fallar con el archivo bloqueado.
 CloseApplications=yes
@@ -112,6 +133,10 @@ Source: "{#DbInstallerSourceDir}\{#DbInstallerExeName}"; DestDir: "{app}\BD"; Fl
 ; wizard (pre-flight de conexion) antes de que se copien los archivos a {app}.
 Source: "{#DbInstallerSourceDir}\{#DbInstallerExeName}"; DestDir: "{tmp}"; Flags: dontcopy
 Source: "Credenciales_Iniciales.txt"; DestDir: "{app}"; Flags: ignoreversion
+; Tutorial de ayuda: queda instalado para consultarlo despues (como Credenciales) Y disponible
+; en {tmp} desde ANTES de copiar nada, para poder abrirlo si la instalacion todavia no avanzo.
+Source: "{#TutorialSqlHtml}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#TutorialSqlHtml}"; DestDir: "{tmp}"; Flags: dontcopy
 ; Solo se extrae (a {tmp}) si hay que instalar LocalDB: ver InstalarLocalDb.
 Source: "{#LocalDbMsi}"; DestDir: "{tmp}"; Flags: dontcopy nocompression
 
@@ -124,6 +149,7 @@ Name: "{app}\TempBackups"; Permissions: users-modify
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\Credenciales iniciales"; Filename: "{app}\Credenciales_Iniciales.txt"
+Name: "{group}\Ayuda - Instalar SQL Server"; Filename: "{app}\{#TutorialSqlHtml}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
@@ -146,6 +172,8 @@ var
   ServidorElegido: String;
   ServicioWindowsElegido: String;
   ServidorPorParametro: String;
+  // Ruta completa del backup previo a una actualización ('' si la base no existía: instalación nueva).
+  RutaBackupPrevio: String;
 
 procedure ExitProcess(uExitCode: Cardinal);
   external 'ExitProcess@kernel32.dll stdcall';
@@ -305,6 +333,28 @@ begin
   Result := 2;
 end;
 
+// Salida alternativa CONTEXTUAL (solo se llama desde un punto de fallo real, nunca en el flujo
+// normal): abre el tutorial HTML autonomo en el navegador por defecto. Funciona incluso ANTES de
+// copiar archivos a {app} (lo extrae a {tmp} si todavia no esta ahi).
+procedure AbrirTutorialSql();
+var
+  Ruta: String;
+  ErrorCode: Integer;
+begin
+  try
+    ExtractTemporaryFile('{#TutorialSqlHtml}');
+  except
+  end;
+  Ruta := ExpandConstant('{tmp}\{#TutorialSqlHtml}');
+  if FileExists(Ruta) then
+    ShellExec('open', Ruta, '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode)
+  else
+    SuppressibleMsgBox(
+      'No se pudo abrir el tutorial automaticamente. Lo vas a encontrar en la carpeta de instalacion ' +
+      'como Tutorial_SQL_Server.html, o en el grupo de Inicio "Ayuda - Instalar SQL Server" despues de instalar.',
+      mbError, MB_OK, IDOK);
+end;
+
 function InstalarLocalDb(): Boolean;
 var
   ResultCode: Integer;
@@ -322,12 +372,13 @@ begin
       ResultCode := -1;
     if (ResultCode <> 0) and (ResultCode <> 3010) then
     begin
-      SuppressibleMsgBox(
-        'No se pudo instalar SQL Server LocalDB (codigo ' + IntToStr(ResultCode) + ').' + #13#13 +
-        'Detalle en: ' + Log + #13#13 +
-        'Podes instalar SQL Server Express a mano desde https://www.microsoft.com/sql-server/sql-server-downloads ' +
-        'y volver a ejecutar este instalador. No se instalo nada de ExperienceHub.',
-        mbError, MB_OK, IDOK);
+      if SuppressibleMsgBox(
+           'No se pudo instalar SQL Server LocalDB (codigo ' + IntToStr(ResultCode) + ').' + #13#13 +
+           'Detalle en: ' + Log + #13#13 +
+           'No se instalo nada de ExperienceHub. Queres ver un tutorial paso a paso con alternativas ' +
+           '(instalar SQL Server Express a mano, identificar una instancia existente, problemas comunes)?',
+           mbError, MB_YESNO, IDYES) = IDYES then
+        AbrirTutorialSql();
       exit;
     end;
 
@@ -539,12 +590,12 @@ begin
     end
     else if PaginaSinInstancias.SelectedValueIndex = IndiceCancelarEnSinInstancias() then
     begin
-      SuppressibleMsgBox(
-        'ExperienceHub necesita SQL Server para funcionar y no se detecto ninguna instancia en este equipo.' + #13#13 +
-        'Descarga e instala SQL Server Express (o LocalDB) desde:' + #13 +
-        'https://www.microsoft.com/sql-server/sql-server-downloads' + #13#13 +
-        'Despues, volve a ejecutar este instalador. No se instalo nada.',
-        mbInformation, MB_OK, IDOK);
+      if SuppressibleMsgBox(
+           'ExperienceHub necesita SQL Server para funcionar y no se detecto ninguna instancia en este equipo.' + #13#13 +
+           'No se instalo nada. Queres ver un tutorial paso a paso para instalarlo (opcion recomendada: dejar ' +
+           'que este mismo instalador lo resuelva solo) antes de salir?',
+           mbInformation, MB_YESNO, IDYES) = IDYES then
+        AbrirTutorialSql();
       ExitProcess(1);
     end;
   end;
@@ -625,6 +676,25 @@ begin
     SaveStringToFile(RutaConfig, ReemplazarDataSource(Contenido, AnsiString(NuevoServidor)), False);
 end;
 
+// Lee el resultado corto ("<log>.out", UTF-8) que deja DbInstaller.exe.
+function LeerSalidaDbInstaller(const LogPath: String): String;
+var
+  Contenido: AnsiString;
+begin
+  Result := '';
+  if LoadStringFromFile(LogPath + '.out', Contenido) then
+    Result := Trim(UTF8Decode(Contenido));
+end;
+
+// Texto a sumar en los mensajes de error si ya se habia hecho un backup previo.
+function TextoBackup(): String;
+begin
+  if RutaBackupPrevio <> '' then
+    Result := 'Antes de tocar la base se genero un backup de seguridad en:' + #13#10 + RutaBackupPrevio
+  else
+    Result := '';
+end;
+
 function EjecutarScriptSql(NombreArchivo: String; var ErrMsg: String): Boolean;
 var
   ResultCode: Integer;
@@ -689,6 +759,10 @@ begin
       'Como el script de creacion de la base no se ejecuta dentro de una unica transaccion, ' +
       'es posible que hayan quedado objetos creados a medias en el servidor.' + #13#13;
 
+  if TextoBackup() <> '' then
+    MensajeFinal := MensajeFinal + TextoBackup() + #13#13 +
+      'Si la base de datos quedo en un estado inconsistente, podes restaurar ese backup manualmente.' + #13#13;
+
   MensajeFinal := MensajeFinal +
     'QUE SE HIZO:' + #13#10 +
     'Se deshace la instalacion (rollback automatico) para no dejar la aplicacion instalada pero no funcional.' + #13#13 +
@@ -733,6 +807,38 @@ begin
           'El servicio de SQL Server (' + ServicioWindowsElegido + ') esta detenido y no se pudo iniciar ' +
           'automaticamente (faltan permisos de administrador?).', False);
     end;
+
+    WizardForm.StatusLabel.Caption := 'Verificando permisos en el servidor SQL...';
+    LogPath := ExpandConstant('{app}\install.log');
+    if not Exec(ExpandConstant('{app}\BD\{#DbInstallerExeName}'),
+                'check-perms "' + ServidorElegido + '" "{#MyDatabaseName}" "' + LogPath + '"',
+                '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+      ResultCode := -1;
+
+    if ResultCode = 3 then
+      RevertirInstalacion(
+        'El usuario con el que se ejecuto este instalador no tiene permisos suficientes en ''' +
+        ServidorElegido + ''' para crear o actualizar la base de datos. Volve a ejecutar el ' +
+        'instalador con una cuenta que tenga el rol sysadmin, o con permiso para crear bases de datos.', False)
+    else if ResultCode <> 0 then
+      RevertirInstalacion(
+        'No se pudieron verificar los permisos en ''' + ServidorElegido + ''' antes de continuar.', False);
+
+    WizardForm.StatusLabel.Caption := 'Generando un backup de seguridad (si la base ya existia)...';
+    RutaBackupPrevio := '';
+    if not Exec(ExpandConstant('{app}\BD\{#DbInstallerExeName}'),
+                'backup "' + ServidorElegido + '" "{#MyDatabaseName}" "{#MyAppVersion}" "' + LogPath + '"',
+                '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+      ResultCode := -1;
+
+    if ResultCode = 0 then
+      RutaBackupPrevio := LeerSalidaDbInstaller(LogPath)
+    else if ResultCode <> 4 then
+      // 4 = la base todavia no existia (instalacion nueva): no hay nada que respaldar, se sigue de largo.
+      RevertirInstalacion(
+        'No se pudo generar el backup de seguridad de la base de datos existente. Por seguridad, ' +
+        'la instalacion se detiene sin modificarla.' + #13#13 +
+        'Revisa el log para mas detalle: ' + LogPath, False);
 
     WizardForm.StatusLabel.Caption := 'Creando la base de datos ExperienceHubDB...';
 

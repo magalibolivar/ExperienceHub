@@ -273,8 +273,7 @@ namespace BLL
                     "No se puede cancelar la reserva: la experiencia '{0}' ya está {1}.",
                     experiencia.Nombre, experiencia.Estado);
 
-            double horas = experiencia != null ? (experiencia.FechaHoraInicio - DateTime.Now).TotalHours : 0;
-            bool aTiempo = horas >= HORAS_ANTICIPACION_CANCELACION;
+            bool aTiempo = experiencia != null && experiencia.CancelacionATiempo(DateTime.Now, HORAS_ANTICIPACION_CANCELACION);
             int  lugares = reserva.LugaresOcupados;
 
             // Regla 2 — el cupo se libera SIEMPRE (a tiempo o tardía) para poder reasignarlo por lista

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ExperienceHub — Cómo instalar SQL Server</title>
+<style>
+  :root{
+    --azul-oscuro:#243B53; --coral:#FF6B6B; --naranja:#FF8C42; --amarillo:#FFD166;
+    --lienzo:#F8F9FF; --gris100:#F1F5F9; --gris200:#E2E8F0; --gris400:#94A3B8; --gris700:#475569;
+    --verde:#2E9E5B; --blanco:#FFFDF9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:"Segoe UI",Tahoma,Arial,sans-serif; margin:0; background:var(--lienzo); color:var(--gris700);
+    line-height:1.55;
+  }
+  header{
+    background:var(--azul-oscuro); color:#fff; padding:28px 40px; border-bottom:4px solid var(--coral);
+  }
+  header h1{ margin:0 0 6px 0; font-size:1.6em; font-weight:600; }
+  header p{ margin:0; color:#cbd5e1; font-size:0.95em; }
+  main{ max-width:880px; margin:0 auto; padding:28px 40px 60px; }
+  nav.indice{
+    background:#fff; border:1px solid var(--gris200); border-radius:10px; padding:18px 22px; margin-bottom:28px;
+  }
+  nav.indice h2{ margin:0 0 10px 0; font-size:1em; color:var(--azul-oscuro); text-transform:uppercase; letter-spacing:.04em; }
+  nav.indice ol{ margin:0; padding-left:20px; }
+  nav.indice a{ color:var(--azul-oscuro); text-decoration:none; }
+  nav.indice a:hover{ text-decoration:underline; }
+  section{
+    background:#fff; border:1px solid var(--gris200); border-radius:10px; padding:24px 28px; margin-bottom:22px;
+  }
+  h2{ color:var(--azul-oscuro); font-size:1.2em; margin-top:0; border-bottom:2px solid var(--coral); padding-bottom:8px; }
+  h3{ color:var(--azul-oscuro); font-size:1.02em; }
+  .recomendado{
+    display:inline-block; background:var(--verde); color:#fff; font-size:0.78em; font-weight:600;
+    padding:3px 10px; border-radius:12px; margin-left:8px; vertical-align:middle;
+  }
+  .nota{ background:var(--gris100); border-left:4px solid var(--naranja); padding:12px 16px; border-radius:0 6px 6px 0; margin:14px 0; }
+  .nota strong{ color:var(--azul-oscuro); }
+  .alerta{ background:#FFF4DC; border-left:4px solid var(--amarillo); padding:12px 16px; border-radius:0 6px 6px 0; margin:14px 0; }
+  code, .cmd{
+    background:var(--azul-oscuro); color:#e2e8f0; padding:2px 7px; border-radius:4px; font-family:Consolas,monospace; font-size:0.92em;
+  }
+  pre{
+    background:var(--azul-oscuro); color:#e2e8f0; padding:14px 18px; border-radius:8px; overflow-x:auto;
+    font-family:Consolas,monospace; font-size:0.9em;
+  }
+  table{ width:100%; border-collapse:collapse; margin:14px 0; }
+  th, td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--gris200); font-size:0.93em; }
+  th{ background:var(--gris100); color:var(--azul-oscuro); }
+  .paso{
+    display:flex; gap:14px; margin:16px 0; align-items:flex-start;
+  }
+  .paso .num{
+    flex:0 0 auto; width:28px; height:28px; border-radius:50%; background:var(--coral); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9em;
+  }
+  .paso .txt{ flex:1; }
+  footer{ text-align:center; color:var(--gris400); font-size:0.85em; padding:24px; }
+  a.boton{
+    display:inline-block; background:var(--coral); color:#fff; text-decoration:none; padding:10px 20px;
+    border-radius:8px; font-weight:600; margin-top:8px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>ExperienceHub — Cómo instalar y configurar SQL Server</h1>
+  <p>Guía de ayuda del instalador. Abrí esta página solo si el instalador no pudo configurar la base de datos automáticamente.</p>
+</header>
+<main>
+
+<nav class="indice">
+  <h2>Contenido</h2>
+  <ol>
+    <li><a href="#porque">¿Por qué ExperienceHub necesita SQL Server?</a></li>
+    <li><a href="#opcion-recomendada">Opción recomendada: dejar que el instalador lo resuelva</a></li>
+    <li><a href="#instalar-express">Instalar SQL Server Express manualmente</a></li>
+    <li><a href="#identificar-instancia">Cómo identificar el nombre de tu instancia</a></li>
+    <li><a href="#problemas">Problemas comunes y cómo resolverlos</a></li>
+    <li><a href="#desatendida">Instalación desatendida (avanzado)</a></li>
+  </ol>
+</nav>
+
+<section id="porque">
+  <h2>1. ¿Por qué ExperienceHub necesita SQL Server?</h2>
+  <p>ExperienceHub guarda toda su información (clientes, reservas, planes, usuarios) en una base de datos
+  <strong>SQL Server</strong>. El instalador crea esa base automáticamente la primera vez, pero para hacerlo
+  necesita que en tu equipo exista <em>algún</em> motor de SQL Server al que conectarse — no importa cuál,
+  siempre que esté instalado y encendido.</p>
+</section>
+
+<section id="opcion-recomendada">
+  <h2>2. Opción recomendada <span class="recomendado">Más simple</span></h2>
+  <p>Si tu equipo no tiene SQL Server, el <strong>propio instalador de ExperienceHub lo resuelve por vos</strong>:
+  trae embebido <strong>SQL Server Express LocalDB</strong> (una versión liviana, pensada para un solo usuario) y
+  lo instala automáticamente con un par de clics, sin que tengas que descargar nada aparte.</p>
+  <div class="paso"><div class="num">1</div><div class="txt">Volvé a ejecutar <code>Instalador_ExperienceHub_V1.exe</code>.</div></div>
+  <div class="paso"><div class="num">2</div><div class="txt">En la pantalla "No se encontró SQL Server en este equipo", elegí la opción
+  <strong>"Instalar SQL Server Express LocalDB ahora (recomendado)"</strong> y hacé clic en Siguiente.</div></div>
+  <div class="paso"><div class="num">3</div><div class="txt">Esperá a que termine (puede tardar 1–2 minutos) y continuá con el resto de la instalación normalmente.</div></div>
+  <div class="nota"><strong>¿Cuándo NO conviene esta opción?</strong> Si varias personas van a usar ExperienceHub
+  desde distintas computadoras contra la misma base de datos (instalación en red), LocalDB no sirve — en ese caso
+  instalá SQL Server Express completo (sección siguiente) en el equipo que hace de servidor.</div>
+</section>
+
+<section id="instalar-express">
+  <h2>3. Instalar SQL Server Express manualmente</h2>
+  <p>Si preferís instalar vos mismo el motor completo (por ejemplo, para usarlo en red), seguí estos pasos:</p>
+  <div class="paso"><div class="num">1</div><div class="txt">Descargá el instalador oficial y gratuito de Microsoft desde
+  <a href="https://www.microsoft.com/sql-server/sql-server-downloads" target="_blank">microsoft.com/sql-server/sql-server-downloads</a>
+  — elegí la edición <strong>Express</strong>.</div></div>
+  <div class="paso"><div class="num">2</div><div class="txt">Ejecutalo y elegí el tipo de instalación <strong>"Básica"</strong> (Basic). Aceptá los términos de licencia.</div></div>
+  <div class="paso"><div class="num">3</div><div class="txt">El instalador de Microsoft va a mostrarte el <strong>nombre de la instancia</strong> creada al finalizar
+  (normalmente <code>.\SQLEXPRESS</code>). <strong>Anotalo</strong>: lo vas a necesitar en el paso siguiente.</div></div>
+  <div class="paso"><div class="num">4</div><div class="txt">Volvé a ejecutar el instalador de ExperienceHub. En la pantalla de selección de base de datos,
+  elegí <strong>"Ya tengo SQL Server instalado... ingresar manualmente"</strong> y escribí el nombre de la instancia del paso 3.</div></div>
+</section>
+
+<section id="identificar-instancia">
+  <h2>4. Cómo identificar el nombre de tu instancia</h2>
+  <p>Si ya tenés SQL Server instalado pero no sabés el nombre exacto de la instancia, probá alguna de estas formas:</p>
+  <h3>Opción A — Administrador de servicios de Windows</h3>
+  <div class="paso"><div class="num">1</div><div class="txt">Presioná <code>Win + R</code>, escribí <code>services.msc</code> y Enter.</div></div>
+  <div class="paso"><div class="num">2</div><div class="txt">Buscá un servicio llamado <strong>"SQL Server (NOMBRE)"</strong>. Ese <em>NOMBRE</em> entre paréntesis es tu instancia.</div></div>
+  <table>
+    <tr><th>Si el servicio se llama...</th><th>El nombre de instancia para ExperienceHub es...</th></tr>
+    <tr><td>SQL Server (MSSQLSERVER)</td><td><code>.</code> &nbsp;(instancia por defecto, sin nombre)</td></tr>
+    <tr><td>SQL Server (SQLEXPRESS)</td><td><code>.\SQLEXPRESS</code></td></tr>
+    <tr><td>SQL Server (SQLEXPRESS01)</td><td><code>.\SQLEXPRESS01</code></td></tr>
+  </table>
+  <h3>Opción B — SQL Server Configuration Manager</h3>
+  <p>Si lo tenés instalado, abrilo y mirá la lista de "SQL Server Services": ahí aparecen todas las instancias
+  del equipo con su nombre exacto.</p>
+</section>
+
+<section id="problemas">
+  <h2>5. Problemas comunes y cómo resolverlos</h2>
+
+  <h3>"No se pudo conectar al servidor"</h3>
+  <ul>
+    <li>Verificá que el nombre de la instancia esté bien escrito (sección 4).</li>
+    <li>Confirmá que el servicio de SQL Server esté <strong>en ejecución</strong> (en <code>services.msc</code>,
+    el estado debe decir "En ejecución"; si dice "Detenido", hacé clic derecho → Iniciar).</li>
+    <li>Si el servicio no arranca por falta de permisos, volvé a ejecutar el instalador <strong>como Administrador</strong>
+    (clic derecho → "Ejecutar como administrador").</li>
+  </ul>
+
+  <h3>"El usuario no tiene privilegios suficientes" (error de permisos)</h3>
+  <div class="alerta">Esto significa que la cuenta con la que se instala no es <strong>administrador (sysadmin)</strong>
+  de esa instancia de SQL Server, aunque sí sea administrador de Windows. Son permisos distintos.</div>
+  <ul>
+    <li>Si instalaste SQL Server vos mismo, normalmente tu usuario de Windows ya queda como sysadmin automáticamente.</li>
+    <li>Si la instancia la administra otra persona (IT, otro desarrollador), pedile que te dé permisos de
+    <code>sysadmin</code> o al menos <code>dbcreator</code> sobre esa instancia.</li>
+  </ul>
+
+  <h3>"SQL Server LocalDB se instaló pero no aparece registrado"</h3>
+  <p>Reiniciá el equipo y volvé a ejecutar el instalador de ExperienceHub — a veces Windows necesita un reinicio
+  para terminar de registrar el nuevo motor.</p>
+
+  <h3>La instalación se revirtió (rollback) y no entiendo por qué</h3>
+  <p>El instalador de ExperienceHub <strong>nunca deja una instalación a medias</strong>: si algo falla creando
+  la base de datos, deshace automáticamente lo que ya había copiado y te guarda un log detallado en tu carpeta
+  <strong>Documentos</strong> (archivo <code>ExperienceHub_instalacion_fallida.log</code>). Revisá ese archivo:
+  ahí vas a encontrar el motivo técnico exacto del error.</p>
+</section>
+
+<section id="desatendida">
+  <h2>6. Instalación desatendida (avanzado)</h2>
+  <p>Para instalar ExperienceHub sin mostrar ninguna pantalla (por ejemplo, en varios equipos a la vez), se
+  puede pasar la instancia de SQL Server por línea de comandos:</p>
+  <pre>Instalador_ExperienceHub_V1.exe /VERYSILENT /SERVIDOR=.\SQLEXPRESS</pre>
+  <div class="nota"><strong>Importante:</strong> en modo desatendido <em>sin</em> indicar <code>/SERVIDOR=</code>,
+  el instalador NO instala LocalDB automáticamente (requiere que elijas opciones en pantalla). Para instalaciones
+  desatendidas, asegurate de tener ya una instancia de SQL Server funcionando y pasá su nombre con <code>/SERVIDOR=</code>.</div>
+</section>
+
+</main>
+<footer>
+  ExperienceHub — Esta página se instala junto con la aplicación y también vive dentro del instalador,
+  para que tengas ayuda disponible incluso si la configuración automática de la base de datos no pudo completarse.
+</footer>
+</body>
+</html>

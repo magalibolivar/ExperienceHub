@@ -1,0 +1,75 @@
+@startuml
+title CU01-VTA-GESTIONAR SUSCRIPCIÓN
+actor "Agente de Reservas" as Ag
+participant ":NuevaContratacionForm" as F
+participant ":BLL.PlanSuscripcion" as BP
+participant ":BLL.Cliente" as BC
+participant ":BLL.Contratacion" as BCt
+participant ":CobrosPendientesForm" as FC
+participant ":FormalizacionForm" as FF
+participant ":DAL.Contratacion" as DC
+database "BD" as DB
+
+autonumber
+Ag -> F : abrir Nueva Contratación
+ref over F
+  CU02-VTA-CONSULTAR PLANES
+end ref
+Ag -> F : seleccionar el plan elegido por el cliente
+F --> Ag : condiciones del plan seleccionado
+
+alt 2.1 no existen planes vigentes
+  F --> Ag : "No existen planes disponibles para ofrecer"
+else hay planes disponibles
+  Ag -> F : informar las condiciones al cliente
+
+  alt 6.1 el cliente no acepta las condiciones
+    F --> Ag : contratación no generada
+  else el cliente acepta
+    alt 7.1 cliente no registrado
+      ref over F
+        CU03-VTA-REGISTRAR CLIENTE
+      end ref
+    end
+    F -> BC : ObtenerPorId / ExisteDNI
+    BC --> F : cliente identificado
+
+    F -> BCt : CrearContratacion(modulo, idCliente, idPlan)
+    BCt -> BP : ObtenerPorId(idPlan)
+    BP --> BCt : plan activo
+    BCt -> DC : Alta(contratacion)
+    DC -> DB : INSERT Contratacion (Estado = PendienteDePago)
+    DB --> DC : idContratacion
+    DC --> BCt : idContratacion
+    BCt --> F : contratación pendiente de pago
+
+    Ag -> FC : derivar la contratación a Caja
+    ref over FC
+      CU01-CAJ-GESTIONAR COBRO
+    end ref
+
+    alt 10.2 se alcanza el máximo de intentos
+      FC --> F : contratación cancelada
+      F --> Ag : "La suscripción no se formalizó"
+    else el pago fue concretado
+      FC --> F : pago confirmado
+
+      Ag -> FF : solicitar formalizar la suscripción
+      FF -> BCt : Formalizar(modulo, idContratacion)
+      BCt -> BCt : c.PuedeFormalizarse()
+      BCt -> DC : FormalizarConSuscripcion(idContratacion, suscripcion)
+      DC -> DB : INSERT Suscripcion (Activa) + UPDATE Contratacion (Formalizada)
+      DB --> DC : idSuscripcion
+      DC --> BCt : idSuscripcion
+
+      alt 12.1 no se puede formalizar la suscripción
+        BCt --> FF : error
+        FF --> Ag : informar la situación, permite reintentar
+      else formalización exitosa
+        BCt --> FF : constancia de suscripción
+        FF --> Ag : "Suscripción formalizada correctamente"
+      end
+    end
+  end
+end
+@enduml

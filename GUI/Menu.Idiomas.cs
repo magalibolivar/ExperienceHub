@@ -73,10 +73,16 @@ namespace GUI
             // Bloques de negocio (creados por código) + ítems de catálogo redistribuidos.
             Aplicar(_mnuComercializacion, t);
             Aplicar(_mnuReservas,         t);
+            Aplicar(_mnuPlanificacion,    t);
             Aplicar(_miOrganizadores,  t);
             Aplicar(_miCategorias,     t);
             Aplicar(_miCiudades,       t);
             Aplicar(_miListaEspera,    t);
+            Aplicar(_miResumen,        t);
+            Aplicar(_miDemanda,        t);
+            Aplicar(_miDesempeno,      t);
+            Aplicar(_miPlanes,         t);
+            Aplicar(_miAyuda,          t);
             // PN01 — los textos de Nueva contratación / Para formalizar (N) / Cobros pendientes (N)
             // los fija ActualizarContadoresComercializacion (incluye el contador), para no pisar el (N).
             ActualizarContadoresComercializacion();

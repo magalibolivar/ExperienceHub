@@ -1,0 +1,44 @@
+@startuml PN03 - Modelado de Casos de Uso
+left to right direction
+skinparam actor {
+  BackgroundColor #FBD7A5
+  BorderColor #333333
+}
+skinparam usecase {
+  BackgroundColor #D6E4F9
+  BorderColor #333333
+  FontStyle bold
+}
+skinparam rectangle {
+  BorderColor #333333
+}
+skinparam ArrowColor #333333
+skinparam packageStyle folder
+
+package "uc Procesos de negocio" {
+  actor Usuario
+  actor "Gerente de Operaciones" as GER
+  actor "Coordinador de Experiencias" as CO
+  Usuario <|-- GER
+  Usuario <|-- CO
+
+  rectangle "Gerente de Operaciones" {
+    usecase "CU01-GER-ANALIZAR INDICADORES Y\nGENERAR RECOMENDACIONES" as CU1
+    usecase "CU02-GER-DECIDIR SOBRE\nRECOMENDACIONES" as CU2
+    usecase "CU03-GER-GESTIONAR PLAN\nDE ACCIÓN" as CU3
+    usecase "CU05-GER-EVALUAR RESULTADOS\nDEL PLAN" as CU5
+  }
+  rectangle "Coordinador de Experiencias" {
+    usecase "CU04-CO-EJECUTAR RECOMENDACIÓN\nAPROBADA" as CU4
+  }
+
+  GER --> CU1
+  GER --> CU2
+  GER --> CU3
+  GER --> CU5
+  CO --> CU4
+
+  CU2 ..> CU1 : <<include>>
+  CU3 ..> CU4 : <<extend>>
+}
+@enduml

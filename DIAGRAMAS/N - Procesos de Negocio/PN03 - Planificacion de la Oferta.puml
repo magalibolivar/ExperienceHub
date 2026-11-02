@@ -1,0 +1,97 @@
+@startuml
+title PN03 - Planificación de la oferta (construido a partir del código real; sin documento académico ni diagrama previo)
+
+|Gerente de Operaciones|
+start
+note right
+  **Limitación operativa registrada (auditoría), no inventada:**
+  el rol "Gerente de Operaciones" existe en BD
+  (BD/22_Rol_Gerente_Planificacion.sql) pero no tiene
+  ningún usuario demo asignado. Hoy solo el Administrador
+  puede recorrer este circuito completo.
+end note
+:Analizar indicadores de demanda,\nocupación y desempeño;
+note right
+  Tableros: Resumen ejecutivo,
+  Demanda y capacidad,
+  Desempeño y calidad.
+end note
+
+:Generar recomendaciones;
+note right
+  Motor de recomendaciones (4 reglas):
+  lista de espera alta, ocupación baja,
+  organizador a revisar, plan subutilizado.
+end note
+
+:Seleccionar las recomendaciones\na llevar al plan de acción;
+:Crear el plan de acción;
+note right
+  El plan nace en Borrador con todas las
+  recomendaciones seleccionadas en estado
+  Pendiente. Se toma el snapshot de KPIs "Antes".
+end note
+
+:Revisar una recomendación del plan;
+if (¿Aprueba la recomendación?) then (No)
+  :Descartar la recomendación;
+  note right: Decisión: Descartada (con motivo)
+else (Sí)
+  :Aprobar la recomendación;
+  note right: Decisión: Aprobada
+endif
+note right: Se repite para cada recomendación del plan.
+
+:Aprobar el plan de acción;
+note right
+  Transición del plan:
+  Borrador → Aprobado.
+end note
+:Marcar el plan en ejecución;
+note right
+  Transición del plan:
+  Aprobado → En ejecución.
+end note
+
+|Coordinador de Experiencias|
+:Ejecutar la recomendación aprobada;
+if (¿La acción sugerida modifica el catálogo?) then (Sí - Programar edición / Ampliar cupo / Cancelar experiencia / Suspender organizador)
+  :Aplicar el cambio en el catálogo\nde experiencias u organizadores;
+  note right
+    Reutiliza las operaciones existentes
+    (BLL.Experiencia / BLL.Organizador).
+  end note
+else (No - Revisar plan / No reprogramar)
+  :Registrar la tarea como atendida\nsin modificar el catálogo;
+  note right
+    **[OBSERVACIÓN PENDIENTE — no corregida en esta etapa]**
+    El mensaje de confirmación que ve el Coordinador
+    es igual para ambos caminos: no aclara que esta
+    rama no modifica el catálogo. Requiere ajustar
+    el texto de la GUI, no la lógica de negocio.
+  end note
+endif
+:Marcar la recomendación como Ejecutada;
+
+|Gerente de Operaciones|
+:Cerrar el plan de acción;
+note right
+  Transición del plan:
+  En ejecución → Cerrado.
+  El snapshot de KPIs "Después" todavía NO
+  se toma acá: se registra recién al evaluar.
+end note
+
+if (¿Se cumplió el período de observación?) then (No, todavía no)
+  :Esperar a la fecha prevista de evaluación;
+  stop
+else (Sí)
+  :Evaluar los resultados del plan;
+  note right
+    Acá se toma el snapshot "Después" y se
+    compara contra el snapshot "Antes".
+  end note
+  stop
+endif
+
+@enduml

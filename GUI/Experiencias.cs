@@ -343,14 +343,12 @@ namespace GUI
                 var ex = _bll.ObtenerPorId(_idSel);
                 var impacto = _bll.ObtenerImpactoCancelacion(_idSel);
 
-                var confirm = MessageBox.Show(
+                bool confirm = Estilo.Confirmar(this, "Cancelar experiencia",
                     $"Vas a cancelar «{ex.Nombre}».\n\n" +
                     $"• Reservas activas que se cancelarán (con devolución del plan): {impacto.ReservasActivas}\n" +
                     $"• Clientes en lista de espera que se darán de baja: {impacto.EnListaEspera}\n\n" +
-                    "Esta acción no se puede deshacer. ¿Confirmás?",
-                    "Cancelar experiencia",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (confirm != DialogResult.Yes) return;
+                    "Esta acción no se puede deshacer. ¿Confirmás?");
+                if (!confirm) return;
 
                 using (var dlg = new InputDialog("Cancelar experiencia", "Motivo de cancelación:", false))
                 {

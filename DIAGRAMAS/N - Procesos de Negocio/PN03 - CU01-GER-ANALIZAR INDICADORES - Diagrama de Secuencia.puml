@@ -1,0 +1,30 @@
+@startuml
+title CU01-GER-ANALIZAR INDICADORES Y GENERAR RECOMENDACIONES
+actor "Gerente de Operaciones" as Ger
+participant ":DecisionesRecomendacionesForm" as F
+participant ":BLL.Analitica" as BLL
+participant ":DAL.AnaliticaDAL" as DAL
+database "BD" as DB
+
+autonumber
+Ger -> F : analizar el período
+F -> BLL : CalcularIndicadores(periodo)
+BLL -> DAL : ObtenerDemandaOcupacionDesempeño(periodo)
+DAL -> DB : SELECT agregados de Reserva, Experiencia, ListaEspera, Calificacion
+DB --> DAL : indicadores
+DAL --> BLL : indicadores calculados
+BLL -> BLL : EvaluarMotorDeReglas(indicadores)
+note right of BLL
+  4 reglas: lista de espera alta,
+  ocupación baja, organizador a
+  revisar, plan subutilizado
+end note
+
+alt 4.1 ninguna regla se cumple
+  BLL --> F : sin recomendaciones
+  F --> Ger : "No hay recomendaciones para el período"
+else alguna regla se cumple
+  BLL --> F : List<Recomendacion>
+  F --> Ger : presentar recomendaciones generadas
+end
+@enduml

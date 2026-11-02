@@ -21,6 +21,8 @@ namespace BLL
             t.Experiencias  = _dal.KpisExperiencia(desde, hasta, ciudad, categoria, organizador);
             t.Organizadores = _dal.KpisOrganizador(desde, hasta, ciudad, categoria, organizador);
             t.Planes        = _dal.KpisPlan(desde, hasta, ciudad, categoria, organizador);
+            t.ReservasMensuales = _dal.ReservasPorMes(desde, hasta, ciudad, categoria, organizador);
+            t.ReservasPorEstado = _dal.ReservasPorEstado(desde, hasta, ciudad, categoria, organizador);
             _dal.Globales(t, desde, hasta, ciudad, categoria, organizador);
             return t;
         }

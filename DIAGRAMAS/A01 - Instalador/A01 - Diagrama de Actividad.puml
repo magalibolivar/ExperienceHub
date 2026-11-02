@@ -1,0 +1,137 @@
+@startuml A01 - Diagrama de Actividad
+' ===== Estetica SUNSET (identidad ExperienceHub), misma paleta que A03 =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam activity {
+  BackgroundColor #FFE8D6
+  BorderColor #243B53
+  FontColor #243B53
+  ArrowColor #243B53
+  DiamondBackgroundColor #FFD166
+  DiamondBorderColor #243B53
+  StartColor #FF6B6B
+  EndColor #FF6B6B
+}
+skinparam partition {
+  BorderColor #243B53
+  FontColor #FFFFFF
+  BackgroundColor #FF8C42
+}
+skinparam note {
+  BackgroundColor #FFF3C4
+  BorderColor #FFD166
+  FontColor #243B53
+}
+skinparam ArrowFontColor #243B53
+title A01 - Instalador (caso de instalación simple, con instancia de SQL Server detectada)
+
+|Responsable de instalación|
+start
+:Ejecuta Instalador_ExperienceHub_V1.exe;
+
+|Asistente de instalación (Inno Setup)|
+:Verifica .NET Framework 4.7.2 o superior;
+if (¿está instalado?) then (no)
+  :Informa el requisito faltante\ny el enlace de descarga;
+  stop
+else (sí)
+endif
+:Detecta instancias de SQL Server\n(registro de Windows, rama nativa y WOW64)\ny si hay SQL LocalDB instalado;
+
+if (¿se detectó al menos una instancia?) then (sí)
+  :Sugiere la instancia detectada\n(ej. .\SQLEXPRESS)\ny ofrece elegir otra;
+else (no)
+  if (¿hay SQL LocalDB disponible?) then (sí)
+    :Propone usar LocalDB\nya instalada en el equipo;
+  else (no)
+    |Responsable de instalación|
+    :Elige una alternativa;
+    |Asistente de instalación (Inno Setup)|
+    if (¿instalar SQL Server 2022 Express\nLocalDB embebido?) then (sí)
+      :Instala LocalDB en modo silencioso\n(Redist\\SqlLocalDB.msi, msiexec /passive);
+      note right
+        Instalador oficial de Microsoft
+        embebido en el .exe del instalador
+      end note
+    else (no)
+      if (¿ingresar servidor/instancia\nmanualmente?) then (sí)
+        :Pide servidor/instancia\n(ej. MIPC\INSTANCIA);
+      else (cancelar)
+        :Ofrece el tutorial de contingencia;
+        note right
+          Tutorial_SQL_Server.html
+          (autónomo, sin recursos externos)
+        end note
+        stop
+      endif
+    endif
+  endif
+endif
+
+|Responsable de instalación|
+:Confirma la instancia a utilizar;
+
+|Asistente de instalación (Inno Setup)|
+:Verifica el servicio de Windows\nde la instancia elegida;
+
+|Motor SQL (DbInstaller.exe)|
+:check-service / test-connection;
+note right
+  Cliente SQL embebido
+  (ADO.NET puro, sin sqlcmd)
+end note
+
+|Asistente de instalación (Inno Setup)|
+if (¿servicio disponible y accesible?) then (no)
+  :Intenta iniciar el servicio\nautomáticamente;
+  if (¿arrancó?) then (no)
+    :Permite continuar igual\n(se reintenta más adelante)\no cancelar;
+  endif
+else (sí)
+endif
+:Copia los archivos de la aplicación\na Archivos de Programa;
+
+|Motor SQL (DbInstaller.exe)|
+:run-script 00_Instalacion_Completa.sql\n(batch por batch, GO a GO);
+note right
+  Genera install.log
+  (uno por batch, con diagnóstico
+  de permisos si corresponde)
+end note
+
+|Asistente de instalación (Inno Setup)|
+if (¿algún batch falló?) then (sí)
+  :Revierte la instalación\n(desinstalador en modo silencioso);
+  note right
+    Preserva una copia del log en
+    Documentos\ExperienceHub_instalacion_fallida.log
+  end note
+  stop
+else (no)
+endif
+:Reescribe GUI.exe.config\ncon el servidor elegido;
+
+|Motor SQL (DbInstaller.exe)|
+:grant-users (si no es LocalDB);
+:verify (usuario admin + planes\nde suscripción semilla);
+
+|Asistente de instalación (Inno Setup)|
+if (¿la verificación final falló?) then (sí)
+  :Revierte la instalación;
+  stop
+else (no)
+endif
+:Crea accesos directos\n(menú Inicio y escritorio opcional);
+note right
+  Credenciales_Iniciales.txt
+  queda disponible para consultar
+end note
+:Muestra "Instalación completada";
+
+|Responsable de instalación|
+:Abre ExperienceHub\ny inicia sesión por primera vez;
+stop
+@enduml

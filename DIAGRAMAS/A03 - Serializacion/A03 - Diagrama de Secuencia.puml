@@ -1,0 +1,65 @@
+@startuml A03 - Diagrama de Secuencia
+' ===== Estetica SUNSET (identidad ExperienceHub) =====
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #243B53
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam sequenceArrowColor #FF6B6B
+skinparam sequenceLifeLineBorderColor #FF8C42
+skinparam sequenceLifeLineBackgroundColor #FFE8D6
+skinparam sequenceParticipantBorderColor #243B53
+skinparam sequenceParticipantBackgroundColor #FF6B6B
+skinparam sequenceParticipantFontColor #FFFFFF
+skinparam sequenceParticipantFontStyle bold
+skinparam sequenceActorBorderColor #243B53
+skinparam sequenceActorBackgroundColor #FFD166
+skinparam sequenceActorFontColor #243B53
+skinparam sequenceGroupBorderColor #FF8C42
+skinparam sequenceGroupBackgroundColor #FF8C42
+skinparam sequenceGroupHeaderFontColor #FFFFFF
+skinparam sequenceGroupBodyBackgroundColor #FFFCF7
+skinparam noteBackgroundColor #FFF3C4
+skinparam noteBorderColor #FFD166
+skinparam noteFontColor #243B53
+' =====================================================
+title A03 - Guardar y cargar una vista de análisis (PN03)
+actor "Gerente de Operaciones" as G
+participant "ResumenEjecutivoForm\n(GUI)" as F
+participant "SerializadorInformes" as S
+participant "DataContractSerializer" as DCS
+database "%LOCALAPPDATA%\\ExperienceHub\\Informes\\*.xml" as FS
+
+group Guardar vista
+  G -> F : ajusta período, filtros y umbrales; «Guardar vista»
+  F -> S : Guardar(cfg, nombreArchivo)
+  S -> S : Serializar(cfg)
+  S -> DCS : WriteObject(writer, cfg)
+  DCS --> S : XML indentado (UTF-8)
+  S -> FS : File.WriteAllText(ruta, xml)
+  S --> F : ruta del archivo
+  F --> G : "Vista guardada"
+end
+
+group Cargar vista
+  G -> F : «Abrir vista», elige un nombre de la lista
+  F -> S : Listar()
+  S -> FS : Directory.GetFiles(*.xml)
+  FS --> S : nombres
+  S --> F : List<string> (orden alfabético)
+  F -> S : Cargar(ruta)
+  S -> FS : File.ReadAllText(ruta)
+  FS --> S : xml
+  S -> S : Deserializar(xml)
+  S -> DCS : ReadObject(reader)
+  alt xml dañado o de versión incompatible
+    DCS --> S : SerializationException / XmlException
+    S --> F : AppException "err.informe.corrupto"
+    F --> G : mensaje claro de error
+  else xml válido
+    DCS --> S : ConfiguracionInforme
+    S --> F : cfg
+    F --> G : tablero recargado con esa vista
+  end
+end
+@enduml

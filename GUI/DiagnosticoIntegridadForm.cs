@@ -6,7 +6,7 @@ using Servicios.Multiidioma;
 
 namespace GUI
 {
-    public class DiagnosticoIntegridadForm : Form, IIdiomaObserver
+    public class DiagnosticoIntegridadForm : FormBase, IIdiomaObserver
     {
         // ── Tab diagnóstico ───────────────────────────────────────────────────
         private Label       _lblEstadoDVV;
@@ -28,7 +28,7 @@ namespace GUI
         public DiagnosticoIntegridadForm()
         {
             BuildUI();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
+            // Ícono, identidad visual SUNSET y preferencias de UI: los aplica FormBase.OnLoad.
         }
 
         // Helper de traducción
@@ -132,6 +132,9 @@ namespace GUI
                 ForeColor = Color.White
             };
             _btnRecalcularTodo.FlatAppearance.BorderSize = 0;
+            // Rol explícito: es la acción más destructiva de este formulario (sobreescribe todos los
+            // DV almacenados) y su texto no dispara la clasificación automática por palabra clave.
+            _btnRecalcularTodo.AccessibleDescription = "rol:peligro";
             _btnRecalcularTodo.Click += BtnRecalcularTodo_Click;
 
             _btnActualizar = new Button
@@ -245,13 +248,7 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try
-            {
-                string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
-                if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico);
-            }
-            catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
             GestorIdioma.SuscribirObservador(this);
             CargarDiagnostico();
             CargarHistorial();
@@ -371,10 +368,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(T("diag.err.cargar", "Error al cargar diagnóstico: {0}"), ex.Message),
-                    T("diag.err.titulo", "Error"),
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("diag.err.cargar", "Error al cargar diagnóstico: {0}"), ex.Message));
             }
             finally
             {
@@ -455,7 +449,7 @@ namespace GUI
             e.CellStyle.ForeColor = val == ok
                 ? Color.FromArgb(30, 130, 50)
                 : Color.FromArgb(229, 72, 77);
-            e.CellStyle.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            e.CellStyle.Font = Estilo.Bold(9f);   // en la misma familia (Montserrat) que el resto de la grilla
         }
 
         // ── Acciones ──────────────────────────────────────────────────────────
@@ -472,12 +466,10 @@ namespace GUI
 
         private void BtnRecalcularTodo_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(
-                    T("diag.conf.recalcular",
-                      "¿Recalcular todos los DVH y el DVV de la tabla Usuario?\n\nEsta operación sobreescribirá todos los dígitos verificadores almacenados."),
-                    T("diag.conf.recalcular.titulo", "Confirmar Recálculo Total"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-                return;
+            bool confirma = Estilo.Confirmar(this, T("diag.conf.recalcular.titulo", "Confirmar Recálculo Total"),
+                T("diag.conf.recalcular",
+                  "¿Recalcular todos los DVH y el DVV de la tabla Usuario?\n\nEsta operación sobreescribirá todos los dígitos verificadores almacenados."));
+            if (!confirma) return;
 
             using (var admin = new ConfirmarAdminForm())
             {
@@ -486,17 +478,12 @@ namespace GUI
                 try
                 {
                     BLL.Configuracion.RecalcularIntegridadDV();
-                    MessageBox.Show(
-                        T("diag.msg.recalc.exito", "Dígitos verificadores recalculados con éxito."),
-                        T("diag.msg.exito.titulo", "Éxito"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Estilo.Exito(this, T("diag.msg.exito.titulo", "Éxito"),
+                        T("diag.msg.recalc.exito", "Dígitos verificadores recalculados con éxito."));
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        string.Format(T("diag.err.recalcular", "Error al recalcular: {0}"), ex.Message),
-                        T("diag.err.titulo", "Error"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MostrarError(string.Format(T("diag.err.recalcular", "Error al recalcular: {0}"), ex.Message));
                 }
             }
 

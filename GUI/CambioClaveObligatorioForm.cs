@@ -12,7 +12,7 @@ namespace GUI
     /// ante un error muestra el detalle y permanece abierto. La cancelación la maneja el Login
     /// (cierra la sesión y vuelve al ingreso).
     /// </summary>
-    public class CambioClaveObligatorioForm : Form
+    public class CambioClaveObligatorioForm : FormBase
     {
         private readonly BLL.Usuario _usuarioBLL = new BLL.Usuario();
         private readonly TextBox _txtNueva;
@@ -33,10 +33,9 @@ namespace GUI
             this.StartPosition   = FormStartPosition.CenterParent;
             this.MaximizeBox     = false;
             this.MinimizeBox     = false;
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
+            // Ícono, identidad visual SUNSET y preferencias de UI: los aplica FormBase.OnLoad.
             this.BackColor       = Color.White;
             this.Font            = new Font("Segoe UI", 9f);
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new Icon(ico); } catch { }
 
             var lblInfo = new Label
             {
@@ -123,9 +122,8 @@ namespace GUI
             {
                 // La BLL valida requisitos, que difiera de la actual, persiste y baja el flag.
                 _usuarioBLL.CambiarClavePropia(this.Text, _txtNueva.Text);
-                MessageBox.Show(
-                    T("msg.cambioclave.exito", "Contraseña actualizada. Ya podés usar el sistema."),
-                    T("rpt.dlg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rpt.dlg.exito.titulo", "Éxito"),
+                    T("msg.cambioclave.exito", "Contraseña actualizada. Ya podés usar el sistema."));
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }

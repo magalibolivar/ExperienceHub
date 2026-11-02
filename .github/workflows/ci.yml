@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    env:
+      CONFIG: Debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Setup Python (para la auditoria de traducciones)
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Validar corpus de traducciones (i18n ES/EN/PT/RU)
+        run: python Scripts/validar_traducciones.py
+
+      # Compila la app (valida que el WinForms arranque a compilar) y la suite de tests.
+      # Sin NuGet: el proyecto no usa packages.config/PackageReference (PdfSharp.dll viaja
+      # vendorizada en lib/), asi que no hace falta paso de restore.
+      - name: Compilar GUI.csproj
+        run: msbuild GUI/GUI.csproj /p:Configuration=${{ env.CONFIG }} /nologo /v:minimal /m
+
+      - name: Compilar Tests.csproj
+        run: msbuild Tests/Tests.csproj /p:Configuration=${{ env.CONFIG }} /nologo /v:minimal /m
+
+      - name: Compilar DbInstaller (cliente SQL embebido del instalador)
+        run: msbuild Instalador/DbInstaller/DbInstaller.csproj /p:Configuration=${{ env.CONFIG }} /nologo /v:minimal
+
+      # El runner trae SQL Server LocalDB preinstalado (instancia MSSQLLocalDB), no una
+      # instancia SQLEXPRESS con nombre -- por eso NO se toca Tests/App.config (así sigue
+      # apuntando a .\SQLEXPRESS para el desarrollo local) y en cambio se arranca LocalDB acá.
+      - name: Arrancar SQL Server LocalDB
+        shell: pwsh
+        run: |
+          sqllocaldb start MSSQLLocalDB
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "La instancia MSSQLLocalDB no existia, creandola..."
+            sqllocaldb create MSSQLLocalDB -s
+            if ($LASTEXITCODE -ne 0) { throw "No se pudo crear/arrancar MSSQLLocalDB" }
+          }
+          sqllocaldb info MSSQLLocalDB
+
+      # DbInstaller.exe es el mismo instalador de BD que usa el setup real (ADO.NET puro,
+      # sin depender de sqlcmd). El script crea la base 'ExperienceHubDB' (nombre fijo).
+      - name: Crear el esquema (BD/00_Instalacion_Completa.sql) en LocalDB
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP "db-install.log"
+          & "Instalador/DbInstaller/bin/$env:CONFIG/DbInstaller.exe" run-script "(localdb)\MSSQLLocalDB" "BD/00_Instalacion_Completa.sql" $log
+          $exit = $LASTEXITCODE
+          Get-Content $log
+          if ($exit -ne 0) { throw "DbInstaller run-script fallo (exit $exit) -- ver log arriba" }
+
+      # Solo se edita la copia de configuracion ya compilada (Tests/bin/<Config>/Tests.dll.config,
+      # un artefacto de build, nunca comiteado) para que esta corrida de CI apunte a LocalDB en vez
+      # de a .\SQLEXPRESS. El runner es efimero: no hay una "base real" que proteger acá, así que
+      # apunta directo a 'ExperienceHubDB' (no hace falta el sufijo _Test de desarrollo local).
+      - name: Apuntar los tests a LocalDB (solo en esta corrida de CI)
+        shell: pwsh
+        run: |
+          $cfg = "Tests/bin/$env:CONFIG/Tests.dll.config"
+          (Get-Content $cfg -Raw) `
+            -replace 'Data Source=\.\\SQLEXPRESS', 'Data Source=(localdb)\MSSQLLocalDB' `
+            -replace 'Initial Catalog=ExperienceHubDB_Test', 'Initial Catalog=ExperienceHubDB' |
+            Set-Content $cfg -Encoding UTF8
+          Get-Content $cfg
+
+      - name: Ejecutar la suite de tests (vstest.console.exe)
+        shell: pwsh
+        run: |
+          $vstest = Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $vstest) { throw "No se encontro vstest.console.exe en el runner" }
+          & $vstest "Tests/bin/$env:CONFIG/Tests.dll" "/Logger:console;verbosity=normal" "/Logger:trx;LogFileName=resultados.trx" "/ResultsDirectory:TestResults"
+          if ($LASTEXITCODE -ne 0) { throw "La suite de tests fallo (exit $LASTEXITCODE)" }
+
+      - name: Publicar resultados de tests
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: TestResults/**/*.trx
+          if-no-files-found: ignore

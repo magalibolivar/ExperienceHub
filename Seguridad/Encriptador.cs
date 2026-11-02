@@ -108,9 +108,9 @@ namespace Seguridad
 
         // ── AES-128-CBC — cifrado reversible para datos sensibles (ej: DNI) ───
 
-        // Clave AES cargada (o generada la primera vez) desde key.dat junto al ejecutable.
+        // Clave AES cargada (o generada SOLO la primera vez) desde key.dat.
         // El archivo nunca se sube al repositorio (.gitignore).
-        private static readonly byte[] _claveAES = CargarOCrearClave();
+        private static readonly byte[] _claveAES = CargarClave();
 
         /// <summary>
         /// Cifra un texto con AES-128-CBC usando un IV aleatorio por operacion.
@@ -191,39 +191,83 @@ namespace Seguridad
             catch (OverflowException)      { return valor; }   // dato corto / no cifrado (defensa extra)
         }
 
-        // Carga la clave AES desde key.dat, PROTEGIDA con DPAPI (ProtectedData, ámbito del
-        // usuario actual). Migra automáticamente un key.dat legacy en texto plano sin cambiar
-        // la clave (para no invalidar los datos ya cifrados).
-        // ⚠ Eliminar key.dat hace que los DNI cifrados existentes sean irrecuperables.
-        private static byte[] CargarOCrearClave()
+        // Nombre del AMBIENTE (Desarrollo/Testing/…), leído de la config del host (App.config del
+        // ejecutable). Cada ambiente usa su PROPIA clave → no se comparten claves entre aplicaciones
+        // conectadas a bases distintas. Default seguro: "Desarrollo".
+        private static string Ambiente()
         {
-            string ruta = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "key.dat");
+            try
+            {
+                string a = System.Configuration.ConfigurationManager.AppSettings["ExperienceHub.Ambiente"];
+                return string.IsNullOrWhiteSpace(a) ? "Desarrollo" : a.Trim();
+            }
+            catch { return "Desarrollo"; }
+        }
+
+        /// <summary>
+        /// Resuelve la ruta del key.dat SIN mover ni crear nada todavía. Estrategia segura de migración:
+        ///   1) Si ya existe la clave PERSISTENTE (%APPDATA%\ExperienceHub\{Ambiente}\key.dat) → usarla.
+        ///   2) Si no, pero existe una clave LEGACY junto al ejecutable (bin\key.dat) → usarla EN SU LUGAR
+        ///      (no se copia ni se borra; la migración de ruta es un paso explícito y autorizado aparte).
+        ///   3) Si no hay ninguna → se usará la ruta persistente (primer arranque real crea la clave ahí).
+        /// La ubicación persistente sobrevive a rebuilds y limpiezas de bin; nunca es una ruta absoluta
+        /// de una máquina concreta (se deriva de %APPDATA% del usuario).
+        /// </summary>
+        public static string RutaClave()
+        {
+            string persistente = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "ExperienceHub", Ambiente(), "key.dat");
+            if (File.Exists(persistente)) return persistente;
+
+            string legacy = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "key.dat");
+            if (File.Exists(legacy)) return legacy;
+
+            return persistente;
+        }
+
+        // Carga la clave AES, PROTEGIDA con DPAPI (ProtectedData, ámbito del usuario actual).
+        // REGLA DE SEGURIDAD: nunca regenera ni sobrescribe una clave EXISTENTE que no se pueda
+        // recuperar. Si el archivo existe pero no descifra (p.ej. otro usuario/máquina), LANZA para
+        // que el problema se note, en vez de generar una clave nueva y volver irrecuperables los DNI
+        // ya cifrados. Solo crea una clave nueva cuando NO existe ningún archivo (primer arranque).
+        private static byte[] CargarClave()
+        {
+            string ruta = RutaClave();
 
             if (File.Exists(ruta))
             {
-                byte[] bytes = null;
+                byte[] bytes;
                 try { bytes = Convert.FromBase64String(File.ReadAllText(ruta).Trim()); }
-                catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Encriptador] key.dat ilegible: " + ex.Message); }
-
-                if (bytes != null)
+                catch (Exception ex)
                 {
-                    // 1) Caso normal: el archivo es un blob DPAPI → desproteger.
-                    try
-                    {
-                        byte[] clave = ProtectedData.Unprotect(bytes, null, DataProtectionScope.CurrentUser);
-                        if (clave.Length == 16) return clave;
-                    }
-                    catch (Exception ex) { System.Diagnostics.Trace.TraceError("[Encriptador] key.dat no es un blob DPAPI (se intenta legacy): " + ex.Message); }
-
-                    // 2) Legacy: clave plana de 16 bytes → migrar a DPAPI conservando la MISMA clave.
-                    if (bytes.Length == 16)
-                    {
-                        GuardarClaveProtegida(ruta, bytes);
-                        return bytes;
-                    }
+                    throw new CryptographicException(
+                        "El archivo de clave '" + ruta + "' existe pero no es Base64 válido. " +
+                        "NO se sobrescribe para no perder datos cifrados. Restaurá la clave correcta.", ex);
                 }
+
+                // 1) Caso normal: blob DPAPI del usuario actual → desproteger.
+                try
+                {
+                    byte[] clave = ProtectedData.Unprotect(bytes, null, DataProtectionScope.CurrentUser);
+                    if (clave.Length == 16) return clave;
+                }
+                catch (CryptographicException ex)
+                {
+                    System.Diagnostics.Trace.TraceError("[Encriptador] key.dat no recuperable por DPAPI del usuario actual: " + ex.Message);
+                }
+
+                // 2) Legacy: clave plana de 16 bytes → usarla EN MEMORIA (no se reescribe el archivo).
+                if (bytes.Length == 16) return bytes;
+
+                // 3) Existe pero NO se pudo recuperar → NO regenerar, NO sobrescribir: avisar.
+                throw new CryptographicException(
+                    "El archivo de clave '" + ruta + "' existe pero no pudo descifrarse con DPAPI del " +
+                    "usuario actual (posible cambio de usuario o de equipo). NO se regenera la clave para " +
+                    "no perder el acceso a los datos cifrados. Restaurá la clave correcta o migrá los datos.");
             }
 
+            // No existe ningún archivo de clave → primer arranque legítimo: crear una nueva.
             byte[] nueva = new byte[16];
             using (var rng = RandomNumberGenerator.Create())
                 rng.GetBytes(nueva);
@@ -232,9 +276,12 @@ namespace Seguridad
             return nueva;
         }
 
-        // Persiste la clave AES protegida con DPAPI (Base64 del blob protegido).
+        // Persiste la clave AES protegida con DPAPI (Base64 del blob protegido). Crea el directorio
+        // destino si no existe. Solo se invoca al CREAR una clave nueva (primer arranque).
         private static void GuardarClaveProtegida(string ruta, byte[] clave)
         {
+            string dir = Path.GetDirectoryName(ruta);
+            if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             byte[] protegida = ProtectedData.Protect(clave, null, DataProtectionScope.CurrentUser);
             File.WriteAllText(ruta, Convert.ToBase64String(protegida));
         }

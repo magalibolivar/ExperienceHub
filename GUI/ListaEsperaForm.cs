@@ -83,7 +83,18 @@ namespace GUI
             var btn = UI.Secundario("↻ Actualizar", "eh.btn.refrescar", (s, e) => Actualizar());
             var der = new Panel { Dock = DockStyle.Right, Width = 150, BackColor = Color.White };
             btn.Location = new Point(0, 8); btn.Width = 140; der.Controls.Add(btn);
-            p.Controls.Add(txt); p.Controls.Add(der);
+            var ayuda = new Panel { Dock = DockStyle.Right, Width = 36, BackColor = Color.White };
+            var btnAyuda = new Button
+            {
+                Text = "?", Size = new Size(28, 28), Location = new Point(2, 13),
+                Font = Estilo.SemiBold(10f), ForeColor = Estilo.Coral, BackColor = Estilo.BlancoCalido,
+                FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand, TabStop = false
+            };
+            btnAyuda.FlatAppearance.BorderColor = Estilo.Coral;
+            btnAyuda.FlatAppearance.BorderSize = 1;
+            btnAyuda.Click += (s, e) => Ayuda.AyudaDialog.Mostrar(this, "pn02.listaespera");
+            ayuda.Controls.Add(btnAyuda);
+            p.Controls.Add(txt); p.Controls.Add(ayuda); p.Controls.Add(der);
             return p;
         }
 

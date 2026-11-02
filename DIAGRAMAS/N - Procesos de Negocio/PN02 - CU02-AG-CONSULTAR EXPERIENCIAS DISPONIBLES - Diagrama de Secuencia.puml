@@ -1,0 +1,26 @@
+@startuml
+title CU02-AG-CONSULTAR EXPERIENCIAS DISPONIBLES
+actor "Agente de Reservas" as Ag
+participant ":Reservas" as F
+participant ":BLL.Experiencia" as BLL
+participant ":DAL.Experiencia" as DAL
+database "BD" as DB
+
+autonumber
+Ag -> F : consultar experiencias disponibles
+F -> BLL : ObtenerDisponibles()
+BLL -> DAL : ObtenerProgramadasConCupo()
+DAL -> DB : SELECT Experiencia WHERE Estado IN (Programada, Completa)
+DB --> DAL : filas
+
+alt 2.1 no existen experiencias disponibles
+  DAL --> BLL : lista vacía
+  BLL --> F : sin resultados
+  F --> Ag : "No hay experiencias disponibles"
+else hay experiencias disponibles
+  DAL --> BLL : List<Experiencia>
+  BLL --> F : categoría, fecha, horario, cupo, edad mínima, condición premium
+  F --> Ag : listado de experiencias
+  Ag -> F : seleccionar una experiencia para ver su detalle
+end
+@enduml

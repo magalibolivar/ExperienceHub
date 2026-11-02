@@ -6,7 +6,7 @@ namespace GUI.Exportacion
     /// Patrón FACTORY METHOD — rol "Product" (Producto abstracto).
     ///
     /// Define la operación común a todos los exportadores de reportes. Cada producto
-    /// concreto (<see cref="ExportadorPdf"/>, <see cref="ExportadorTxt"/>) sabe llevar
+    /// concreto (<see cref="ExportadorPdfUnificado"/>, <see cref="ExportadorTxt"/>) sabe llevar
     /// un <see cref="ReporteExportable"/> a SU formato. El cliente trabaja contra esta
     /// abstracción y nunca instancia los concretos: los pide a un GeneradorReporte.
     ///

@@ -3490,20 +3490,32 @@ PRINT 'Demo situaciones: clientes verificados.';
 GO
 
 -- 2) Suscripciones según situación (solo si el cliente aún no tiene ninguna) -----
+-- Los IdPlan se resuelven por NOMBRE (no hardcodeados): el catálogo de planes puede
+-- cambiar de un ambiente a otro (altas/bajas de planes), y un IdPlan fijo rompe la
+-- carga con un error de FK si ya no corresponde a ese plan. Si algún plan nombrado
+-- no existe en este ambiente, cae a "Básico" (siempre presente) para no romper el seed.
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
 DECLARE @perMes DATE = DATEFROMPARTS(YEAR(@hoy), MONTH(@hoy), 1);
 -- (DNI, IdPlan, Estado, OffsetVencDias, ConsumoMes)
 DECLARE @subs TABLE (DNI VARCHAR(20), IdPlan INT, Estado INT, OffVenc INT, Consumo INT);
 INSERT INTO @subs VALUES
- ('40100001', 2, 0,  60,  0),   -- Activa con cupo (Estándar, 15/mes)
- ('40100002', 2, 0,  60, 15),   -- Activa SIN cupo (consumió las 15)
- ('40100003', 2, 0,   5,  2),   -- Por vencer (5 días)
- ('40100004', 2, 2, -10,  3),   -- Vencida
- ('40100005', 2, 1,  60,  1),   -- Suspendida
- ('40100006', 3, 0,  90,  4),   -- Premium activa
- ('40100021', 1, 0,  45,  1),   -- Básico activa
- ('40100022', 1, 0,  45,  0),   -- Básico activa
- ('40100023', 2, 0,  45,  5);   -- Estándar activa
+ ('40100001', @idEstandar, 0,  60,  0),   -- Activa con cupo (Estándar, 15/mes)
+ ('40100002', @idEstandar, 0,  60, 15),   -- Activa SIN cupo (consumió las 15)
+ ('40100003', @idEstandar, 0,   5,  2),   -- Por vencer (5 días)
+ ('40100004', @idEstandar, 2, -10,  3),   -- Vencida
+ ('40100005', @idEstandar, 1,  60,  1),   -- Suspendida
+ ('40100006', @idPremium,  0,  90,  4),   -- Premium activa
+ ('40100021', @idBasico,   0,  45,  1),   -- Básico activa
+ ('40100022', @idBasico,   0,  45,  0),   -- Básico activa
+ ('40100023', @idEstandar, 0,  45,  5);   -- Estándar activa
 
 INSERT INTO Suscripcion (IdCliente, IdPlan, FechaInicio, FechaVencimiento, Estado, ReservasConsumidasMes, PeriodoConsumo)
 SELECT c.IdCliente, s.IdPlan, DATEADD(day, -15, @hoy), DATEADD(day, s.OffVenc, @hoy), s.Estado, s.Consumo, @perMes
@@ -3515,11 +3527,20 @@ PRINT 'Demo situaciones: suscripciones verificadas.';
 GO
 
 -- 3) Contrataciones Pendientes de pago (cola de Caja) ----------------------------
+-- Mismo criterio que el bloque 2: IdPlan por NOMBRE, no hardcodeado (ver comentario ahí).
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @pend TABLE (DNI VARCHAR(20), IdPlan INT, Intentos INT, OffAltaDias INT);
 INSERT INTO @pend VALUES
- ('40100012', 2, 0,  0),   -- recién creada
- ('40100013', 2, 1, -1),   -- 1 intento fallido
- ('40100014', 3, 2, -4);   -- 2 intentos (al 3º se cancela)
+ ('40100012', @idEstandar, 0,  0),   -- recién creada
+ ('40100013', @idEstandar, 1, -1),   -- 1 intento fallido
+ ('40100014', @idPremium,  2, -4);   -- 2 intentos (al 3º se cancela)
 
 INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta)
 SELECT c.IdCliente, p.IdPlan, p.Precio, 0 /*Pendiente*/, q.Intentos, DATEADD(day, q.OffAltaDias, GETDATE())
@@ -3531,10 +3552,19 @@ GO
 
 -- 4) Contrataciones PAGADAS sin formalizar (cola "Para formalizar") --------------
 --    Bruno Castro: pago único (Efectivo). Daniela Ponce: 3 cuotas con Tarjeta (+10%).
+-- Mismo criterio que el bloque 2: IdPlan por NOMBRE, no hardcodeado (ver comentario ahí).
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @pag TABLE (DNI VARCHAR(20), IdPlan INT, Medio INT, Cuotas INT, Recargo DECIMAL(9,2), OffPagoDias INT);
 INSERT INTO @pag VALUES
- ('40100015', 2, 0, 1,  0, -2),    -- Efectivo, pago único
- ('40100016', 3, 1, 3, 10, -1);    -- Tarjeta, 3 cuotas, +10%
+ ('40100015', @idEstandar, 0, 1,  0, -2),    -- Efectivo, pago único
+ ('40100016', @idPremium,  1, 3, 10, -1);    -- Tarjeta, 3 cuotas, +10%
 
 INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta,
                           MedioPago, FechaPago, Cuotas, RecargoPorcentaje, ImporteTotal)
@@ -3596,6 +3626,7 @@ GO
 -- ============================================================================
 -- 21 — PN03: Planificacion de la oferta (anexado al instalador consolidado)
 -- ============================================================================
+/* ==========================================================================
    21 — PN03 : Planificacion de la oferta de experiencias (reporteria + analitica)
    ----------------------------------------------------------------------------
    Todo idempotente. Agrega:
@@ -3726,4 +3757,282 @@ BEGIN
         INSERT (Clave, Valor, Descripcion) VALUES (s.Clave, s.Valor, s.Descripcion);
     PRINT 'PN03: umbrales del motor de recomendaciones verificados en Parametro.';
 END
+GO
+
+
+-- ===================================================================
+-- MODULO: 22_Rol_Gerente_Planificacion.sql (anexado al instalador consolidado)
+-- ===================================================================
+/* ============================================================================
+   22 - PN03: rol Gerente de Operaciones + patentes de Planificacion (T04 Composite)
+   ----------------------------------------------------------------------------
+   El paso 21 (21_PN03_Planificacion.sql) dejo el esquema y los datos del plan de
+   accion, pero anoto: "el rol Gerente de Operaciones y sus patentes se agregan en
+   el paso de GUI/permisos". Este script cierra ese hueco:
+
+     1) Crea las 4 patentes hoja de PN03 (EsFamilia=0, EsRol=0):
+          mnuPlanificacion       -> ver tablero + generar recomendaciones
+          mnuPlanAccion          -> ver / crear plan de accion
+          mnuPlanAccionAprobar   -> aprobar / descartar recomendaciones y cerrar plan
+          mnuPlanAccionEjecutar  -> ejecutar las tareas aprobadas del plan
+     2) Crea el rol "Gerente de Operaciones" (EsFamilia=1, EsRol=1) y le asigna
+        Planificacion + PlanAccion + PlanAccionAprobar (analiza y decide).
+     3) Asigna PlanAccionEjecutar + PlanAccion al "Coordinador de Experiencias"
+        (ejecuta las tareas y ve el plan).
+     El Administrador conserva acceso total por bypass de perfil (no necesita asignacion).
+
+   Para demostrar el circuito con un login propio de Gerente: desde Administrar ->
+   Cuentas de Usuario crear un usuario y, en Perfiles y Permisos, asignarle el rol
+   "Gerente de Operaciones" (la clave se hashea desde la app; por eso no se siembra
+   aqui por SQL, que no puede generar el PBKDF2).
+
+   IDEMPOTENTE: se puede correr varias veces sin duplicar filas. Reiniciar la app
+   despues (el catalogo de patentes se cachea al inicio - BLL.PermisosAccion).
+   Ejecutar DESPUES de 06_Alinear_Roles_ExperienceHub.sql y 21_PN03_Planificacion.sql.
+   ============================================================================ */
+SET NOCOUNT ON;
+GO
+
+-- 1) Patentes hoja de PN03 ------------------------------------------------------
+IF NOT EXISTS (SELECT 1 FROM Permiso WHERE NombreMenu = 'mnuPlanificacion')
+    INSERT INTO Permiso (Nombre, NombreMenu, TipoComponente, Estado, EsFamilia, EsRol)
+    VALUES (N'Planificación - Tablero y recomendaciones', 'mnuPlanificacion', NULL, 1, 0, 0);
+
+IF NOT EXISTS (SELECT 1 FROM Permiso WHERE NombreMenu = 'mnuPlanAccion')
+    INSERT INTO Permiso (Nombre, NombreMenu, TipoComponente, Estado, EsFamilia, EsRol)
+    VALUES (N'Planificación - Plan de acción (ver/crear)', 'mnuPlanAccion', NULL, 1, 0, 0);
+
+IF NOT EXISTS (SELECT 1 FROM Permiso WHERE NombreMenu = 'mnuPlanAccionAprobar')
+    INSERT INTO Permiso (Nombre, NombreMenu, TipoComponente, Estado, EsFamilia, EsRol)
+    VALUES (N'Planificación - Aprobar / cerrar plan', 'mnuPlanAccionAprobar', NULL, 1, 0, 0);
+
+IF NOT EXISTS (SELECT 1 FROM Permiso WHERE NombreMenu = 'mnuPlanAccionEjecutar')
+    INSERT INTO Permiso (Nombre, NombreMenu, TipoComponente, Estado, EsFamilia, EsRol)
+    VALUES (N'Planificación - Ejecutar tareas del plan', 'mnuPlanAccionEjecutar', NULL, 1, 0, 0);
+
+-- 2) Rol "Gerente de Operaciones" (nodo-rol del Composite) ----------------------
+IF NOT EXISTS (SELECT 1 FROM Permiso WHERE Nombre = N'Gerente de Operaciones' AND EsRol = 1)
+    INSERT INTO Permiso (Nombre, NombreMenu, TipoComponente, Estado, EsFamilia, EsRol)
+    VALUES (N'Gerente de Operaciones', NULL, N'Rol', 1, 1, 1);
+GO
+
+DECLARE @planif    INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuPlanificacion'      ORDER BY IdPermiso);
+DECLARE @plan      INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuPlanAccion'         ORDER BY IdPermiso);
+DECLARE @aprobar   INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuPlanAccionAprobar'  ORDER BY IdPermiso);
+DECLARE @ejecutar  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE NombreMenu = 'mnuPlanAccionEjecutar' ORDER BY IdPermiso);
+DECLARE @rolGer    INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Gerente de Operaciones'      AND EsRol = 1 ORDER BY IdPermiso);
+DECLARE @rolCoord  INT = (SELECT TOP 1 IdPermiso FROM Permiso WHERE Nombre = N'Coordinador de Experiencias' AND EsRol = 1 ORDER BY IdPermiso);
+
+-- Helper inline: asignar hijo a padre si no existe aun.
+-- Gerente de Operaciones -> ver tablero + plan + aprobar/cerrar.
+IF @rolGer IS NOT NULL
+BEGIN
+    IF @planif  IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PermisoRelacion WHERE IdPadre=@rolGer AND IdHijo=@planif)
+        INSERT INTO PermisoRelacion (IdPadre, IdHijo) VALUES (@rolGer, @planif);
+    IF @plan    IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PermisoRelacion WHERE IdPadre=@rolGer AND IdHijo=@plan)
+        INSERT INTO PermisoRelacion (IdPadre, IdHijo) VALUES (@rolGer, @plan);
+    IF @aprobar IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PermisoRelacion WHERE IdPadre=@rolGer AND IdHijo=@aprobar)
+        INSERT INTO PermisoRelacion (IdPadre, IdHijo) VALUES (@rolGer, @aprobar);
+END
+
+-- Coordinador de Experiencias -> ver plan + ejecutar las tareas aprobadas.
+IF @rolCoord IS NOT NULL
+BEGIN
+    IF @plan     IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PermisoRelacion WHERE IdPadre=@rolCoord AND IdHijo=@plan)
+        INSERT INTO PermisoRelacion (IdPadre, IdHijo) VALUES (@rolCoord, @plan);
+    IF @ejecutar IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PermisoRelacion WHERE IdPadre=@rolCoord AND IdHijo=@ejecutar)
+        INSERT INTO PermisoRelacion (IdPadre, IdHijo) VALUES (@rolCoord, @ejecutar);
+END
+
+PRINT 'PN03: patentes de planificacion + rol Gerente de Operaciones configurados.';
+GO
+
+
+-- ===================================================================
+-- MODULO: 23_Datos_Historia_PN03.sql (anexado al instalador consolidado)
+-- ===================================================================
+/* ============================================================================
+   23 - DATOS DE HISTORIA (12 meses) para el PN03 - Planificacion
+   ----------------------------------------------------------------------------
+   Agrega una historia de ~12 meses para que el TABLERO de planificacion y las
+   4 reglas del motor de recomendaciones salgan con datos reales:
+     - ~11 experiencias PASADAS (Finalizada=3) repartidas mes a mes, variadas en
+       categoria/ciudad/organizador, con ocupacion alta y baja.
+     - Reservas en TODOS los estados: Asistio(3), NoAsistio(4),
+       Cancelada a tiempo (CancelacionATiempo=1) y Cancelada tardia (=0).
+     - Calificaciones con SESGO por organizador: 'Eventos Dudosos' saca puntajes
+       bajos y muchas inasistencias -> dispara "revisar organizador".
+     - Lista de espera (>=6 Esperando) sobre una experiencia reciente -> dispara
+       "lista de espera alta".
+     - Experiencias de ocupacion < 40% -> dispara "ocupacion baja".
+
+   Marca de demo en Experiencia.Descripcion = 'Historia PN03 (demo).' -> permite
+   identificarlas y limpiarlas. IDEMPOTENTE (NOT EXISTS por nombre/reserva).
+   Re-sella el DVH/DVV de Experiencia/Reserva/Organizador con el marcador
+   __Reseal:<Tabla> (la app recalcula el DVH con su CalculadorDV al arrancar).
+   Ejecutar DESPUES de 12_Datos_Demo y 21_PN03_Planificacion.
+   ============================================================================ */
+USE ExperienceHubDB;
+GO
+SET NOCOUNT ON;
+GO
+
+DECLARE @hoy date = CAST(GETDATE() AS date);
+DECLARE @emp INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo='L-001');
+
+/* 0) Organizador "malo" para el sesgo de calidad (idempotente). ------------- */
+IF NOT EXISTS (SELECT 1 FROM Organizador WHERE Nombre=N'Eventos Dudosos')
+    INSERT INTO Organizador (Nombre, Contacto, Telefono, Mail)
+    VALUES (N'Eventos Dudosos', N'R. Dudoso', '11-5555-9000', 'contacto@eventosdudosos.com');
+GO
+
+/* 1) Experiencias de historia (Finalizada=3), idempotentes por nombre. ------ */
+DECLARE @h date = CAST(GETDATE() AS date);
+;WITH perfil AS (
+    SELECT * FROM (VALUES
+        -- Nombre, Cat, Ciu, Org, OffDias(neg), Cupo, Prem
+        (N'[H] Stand-up en el Club',   N'Cultural',     N'CABA',    N'Teatro Central',   -20, 10, 0),
+        (N'[H] Cata de Malbec',        N'Cata',         N'Mendoza', N'Bodega Los Andes', -50, 20, 1),
+        (N'[H] Escape histórico',      N'Escape Room',  N'CABA',    N'EscapeLab',        -80, 12, 0),
+        (N'[H] Trekking de otoño',     N'Aire Libre',   N'Córdoba', N'Aventura Outdoor',-110, 40, 0),
+        (N'[H] Foto nocturna',         N'Fotografía',   N'Rosario', N'Club de Arte',    -140, 25, 0),
+        (N'[H] Cena a ciegas',         N'Gastronomía',  N'CABA',    N'Eventos Dudosos', -170, 20, 0),
+        (N'[H] Taller exprés',         N'Taller',       N'CABA',    N'Eventos Dudosos', -200, 20, 0),
+        (N'[H] Pintura libre',         N'Pintura',      N'CABA',    N'Club de Arte',    -230, 15, 0),
+        (N'[H] Teatro de verano',      N'Teatro',       N'CABA',    N'Teatro Central',  -260, 50, 0),
+        (N'[H] Cocina thai',           N'Cocina',       N'CABA',    N'Sabores Urbanos', -290, 18, 0),
+        (N'[H] Ruta del vino',         N'Cata',         N'Mendoza', N'Bodega Los Andes',-320, 24, 1)
+    ) AS v(Nombre, Cat, Ciu, Org, OffD, Cupo, Prem)
+)
+INSERT INTO Experiencia
+    (Nombre, Descripcion, IdCategoria, IdCiudad, Ubicacion, Fecha, HoraInicio,
+     DuracionMinutos, IdOrganizador, CupoMaximo, CupoDisponible, EdadMinima, Premium, Estado, DVH)
+SELECT p.Nombre, N'Historia PN03 (demo).',
+       (SELECT IdCategoria   FROM Categoria   WHERE Nombre=p.Cat),
+       (SELECT IdCiudad      FROM Ciudad      WHERE Nombre=p.Ciu),
+       N'Sede demo', DATEADD(day, p.OffD, @h), CONVERT(time(0), '19:00'),
+       120,
+       (SELECT IdOrganizador FROM Organizador WHERE Nombre=p.Org),
+       p.Cupo, p.Cupo, 0, p.Prem, 3 /*Finalizada*/, 0
+FROM perfil p
+WHERE NOT EXISTS (SELECT 1 FROM Experiencia e WHERE e.Nombre=p.Nombre)
+  AND (SELECT IdCategoria FROM Categoria WHERE Nombre=p.Cat) IS NOT NULL
+  AND (SELECT IdCiudad    FROM Ciudad    WHERE Nombre=p.Ciu) IS NOT NULL;
+PRINT 'Historia PN03: experiencias verificadas.';
+GO
+
+/* 2) Reservas de historia (estados + cancelaciones a tiempo/tardias) + calif.
+      Perfil por experiencia: nA Asistio, nI NoAsistio, nCat Cancel a tiempo,
+      nCt Cancel tardia, punt = puntaje de las calificaciones de esa experiencia. */
+DECLARE @emp2 INT = (SELECT TOP 1 IdEmpleado FROM Empleado WHERE Legajo='L-001');
+;WITH
+nums AS (SELECT 1 i UNION ALL SELECT i+1 FROM nums WHERE i < 8),
+cli AS (
+    SELECT c.IdCliente, s.IdSuscripcion,
+           ROW_NUMBER() OVER (ORDER BY c.IdCliente) rn
+    FROM Cliente c
+    CROSS APPLY (SELECT TOP 1 IdSuscripcion FROM Suscripcion s2 WHERE s2.IdCliente=c.IdCliente ORDER BY s2.FechaInicio DESC) s
+    WHERE c.Activo=1
+),
+perfilR AS (
+    SELECT * FROM (VALUES
+        -- Nombre, nA, nI, nCat, nCt, punt
+        (N'[H] Stand-up en el Club',  7, 1, 0, 0, 5),  -- ocupacion alta (8/10)
+        (N'[H] Cata de Malbec',       5, 0, 1, 1, 5),
+        (N'[H] Escape histórico',     4, 1, 0, 1, 4),
+        (N'[H] Trekking de otoño',    3, 0, 0, 0, 5),  -- ocupacion baja (3/40)
+        (N'[H] Foto nocturna',        2, 0, 1, 0, 4),  -- ocupacion baja (2/25)
+        (N'[H] Cena a ciegas',        2, 4, 0, 0, 2),  -- organizador malo: calif 2 + inasist 66%
+        (N'[H] Taller exprés',        2, 3, 1, 0, 2),  -- organizador malo
+        (N'[H] Pintura libre',        5, 0, 0, 1, 5),
+        (N'[H] Teatro de verano',     4, 1, 1, 1, 5),
+        (N'[H] Cocina thai',          6, 0, 0, 0, 4),
+        (N'[H] Ruta del vino',        5, 1, 1, 1, 5)
+    ) AS v(Nombre, nA, nI, nCat, nCt, punt)
+),
+exp AS (
+    SELECT e.IdExperiencia, e.Fecha, p.nA, p.nI, p.nCat, p.nCt, p.punt,
+           (p.nA + p.nI + p.nCat + p.nCt) AS N
+    FROM Experiencia e JOIN perfilR p ON p.Nombre = e.Nombre
+)
+INSERT INTO Reserva
+    (IdCliente, IdExperiencia, IdEmpleado, Estado, FechaReserva, CantidadInvitados,
+     FechaCancelacion, MotivoCancelacion, DVH, IdSuscripcion, CancelacionATiempo)
+SELECT c.IdCliente, exp.IdExperiencia, @emp2,
+       CASE WHEN n.i <= exp.nA THEN 3
+            WHEN n.i <= exp.nA + exp.nI THEN 4
+            ELSE 2 END,
+       DATEADD(day, -7, CAST(exp.Fecha AS datetime)), 0,
+       CASE WHEN n.i > exp.nA + exp.nI THEN DATEADD(day, -2, CAST(exp.Fecha AS datetime)) END,
+       CASE WHEN n.i > exp.nA + exp.nI THEN N'Cancelación demo' END,
+       0, c.IdSuscripcion,
+       CASE WHEN n.i <= exp.nA + exp.nI THEN NULL
+            WHEN n.i <= exp.nA + exp.nI + exp.nCat THEN 1   -- a tiempo
+            ELSE 0 END                                       -- tardia
+FROM exp
+JOIN nums n ON n.i <= exp.N
+JOIN cli  c ON c.rn = n.i
+WHERE NOT EXISTS (SELECT 1 FROM Reserva r WHERE r.IdExperiencia = exp.IdExperiencia)
+OPTION (MAXRECURSION 100);
+PRINT 'Historia PN03: reservas verificadas.';
+GO
+
+/* 2b) Calificaciones para las reservas Asistio, con el puntaje del perfil. --- */
+;WITH perfilR AS (
+    SELECT * FROM (VALUES
+        (N'[H] Stand-up en el Club',5),(N'[H] Cata de Malbec',5),(N'[H] Escape histórico',4),
+        (N'[H] Trekking de otoño',5),(N'[H] Foto nocturna',4),(N'[H] Cena a ciegas',2),
+        (N'[H] Taller exprés',2),(N'[H] Pintura libre',5),(N'[H] Teatro de verano',5),
+        (N'[H] Cocina thai',4),(N'[H] Ruta del vino',5)
+    ) AS v(Nombre, punt)
+)
+INSERT INTO Calificacion (IdReserva, IdCliente, IdExperiencia, Puntaje, Comentario, Fecha)
+SELECT r.IdReserva, r.IdCliente, r.IdExperiencia, p.punt, N'Historia PN03 (demo).',
+       DATEADD(day, 1, CAST(e.Fecha AS datetime))
+FROM Reserva r
+JOIN Experiencia e ON e.IdExperiencia = r.IdExperiencia
+JOIN perfilR p ON p.Nombre = e.Nombre
+WHERE r.Estado = 3
+  AND NOT EXISTS (SELECT 1 FROM Calificacion c WHERE c.IdReserva = r.IdReserva);
+PRINT 'Historia PN03: calificaciones verificadas.';
+GO
+
+/* 3) Lista de espera (>=6 Esperando) sobre la experiencia reciente de alta
+      ocupacion -> dispara "lista de espera alta" sin marcar ocupacion baja. */
+IF EXISTS (SELECT 1 FROM Experiencia WHERE Nombre=N'[H] Stand-up en el Club')
+   AND NOT EXISTS (SELECT 1 FROM ListaEspera le JOIN Experiencia e ON e.IdExperiencia=le.IdExperiencia
+                   WHERE e.Nombre=N'[H] Stand-up en el Club')
+BEGIN
+    DECLARE @idExp INT = (SELECT IdExperiencia FROM Experiencia WHERE Nombre=N'[H] Stand-up en el Club');
+    ;WITH cli AS (
+        SELECT c.IdCliente, ROW_NUMBER() OVER (ORDER BY c.IdCliente) rn
+        FROM Cliente c WHERE c.Activo=1
+    )
+    INSERT INTO ListaEspera (IdExperiencia, IdCliente, Posicion, FechaIngreso, Estado, FechaOferta, MotivoRetiro)
+    SELECT @idExp, c.IdCliente, c.rn, DATEADD(day, -15, GETDATE()), 0 /*Esperando*/, NULL, NULL
+    FROM cli c WHERE c.rn BETWEEN 1 AND 6;
+    PRINT 'Historia PN03: lista de espera cargada (6 en espera).';
+END
+GO
+
+/* 4) Recalcular cupo disponible de las experiencias de historia segun reservas. */
+UPDATE e SET CupoDisponible =
+    CASE WHEN e.CupoMaximo - ISNULL(r.Usados,0) < 0 THEN 0 ELSE e.CupoMaximo - ISNULL(r.Usados,0) END
+FROM Experiencia e
+LEFT JOIN (SELECT IdExperiencia, SUM(1 + CantidadInvitados) Usados FROM Reserva WHERE Estado IN (0,1,3,4) GROUP BY IdExperiencia) r
+    ON r.IdExperiencia = e.IdExperiencia
+WHERE e.Descripcion = N'Historia PN03 (demo).';
+GO
+
+/* 5) Re-sellado del DV de las tablas tocadas (la app recalcula el DVH al arrancar). */
+UPDATE Experiencia SET DVH = 0;
+UPDATE Reserva     SET DVH = 0;
+UPDATE Organizador SET DVH = 0;
+DELETE FROM DVVertical WHERE NombreTabla IN ('Experiencia','Reserva','Organizador');
+INSERT INTO DVVertical (NombreTabla, DVV, FechaCalculo)
+SELECT v.T, 1, GETDATE() FROM (VALUES ('__Reseal:Experiencia'),('__Reseal:Reserva'),('__Reseal:Organizador')) v(T)
+WHERE NOT EXISTS (SELECT 1 FROM DVVertical d WHERE d.NombreTabla = v.T);
+GO
+
+PRINT 'Historia PN03 cargada (experiencias, reservas, calificaciones, lista de espera).';
 GO

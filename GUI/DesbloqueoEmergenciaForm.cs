@@ -10,8 +10,9 @@ namespace GUI
     /// de un solo uso (tipo códigos de respaldo de Steam / 2FA). Se abre desde el Login cuando
     /// la cuenta quedó bloqueada por intentos fallidos, sin depender de otro Administrador.
     /// </summary>
-    public class DesbloqueoEmergenciaForm : Form
+    public class DesbloqueoEmergenciaForm : FormBase
     {
+        private const string PLACEHOLDER_CLAVE = "XXXX-XXXX-XXXX";
         private readonly BLL.RecuperacionAdmin _recBLL = new BLL.RecuperacionAdmin();
 
         private TextBox _txtUsuario;
@@ -27,7 +28,6 @@ namespace GUI
         public DesbloqueoEmergenciaForm(string usuarioSugerido = null)
         {
             BuildUI();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
             if (!string.IsNullOrWhiteSpace(usuarioSugerido))
             {
                 _txtUsuario.Text = usuarioSugerido;
@@ -80,7 +80,7 @@ namespace GUI
                 CharacterCasing = CharacterCasing.Upper,
                 Font         = new Font("Consolas", 11f)
             };
-            _txtClave.SetPlaceholder("XXXX-XXXX-XXXX");
+            _txtClave.SetPlaceholder(PLACEHOLDER_CLAVE);
 
             _lblError = new Label
             {
@@ -124,13 +124,10 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try
-            {
-                string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
-                if (System.IO.File.Exists(ico)) this.Icon = new Icon(ico);
-            }
-            catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
+            // Estilo.Aplicar repinta todos los TextBox en AzulOscuro; si el campo de clave todavía
+            // muestra el placeholder, hay que devolverle el gris para que siga leyéndose como guía.
+            if (_txtClave.Text == PLACEHOLDER_CLAVE) _txtClave.ForeColor = Color.Gray;
         }
 
         private void Desbloquear()
@@ -142,10 +139,8 @@ namespace GUI
                 bool ok = _recBLL.DesbloquearConClave(this.Text, _txtUsuario.Text, _txtClave.Text);
                 if (ok)
                 {
-                    MessageBox.Show(
-                        T("emg.exito", "Cuenta desbloqueada con éxito.\nYa podés iniciar sesión normalmente."),
-                        T("emg.exito.titulo", "Cuenta desbloqueada"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Estilo.Exito(this, T("emg.exito.titulo", "Cuenta desbloqueada"),
+                        T("emg.exito", "Cuenta desbloqueada con éxito.\nYa podés iniciar sesión normalmente."));
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }

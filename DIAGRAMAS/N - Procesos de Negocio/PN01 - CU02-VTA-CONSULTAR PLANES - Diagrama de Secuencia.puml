@@ -1,0 +1,29 @@
+@startuml
+title CU02-VTA-CONSULTAR PLANES
+actor "Agente de Reservas" as Ag
+participant ":NuevaContratacionForm" as F
+participant ":BLL.PlanSuscripcion" as BLL
+participant ":DAL.PlanSuscripcion" as DAL
+database "BD" as DB
+
+autonumber
+Ag -> F : consultar los planes de suscripción
+F -> BLL : ObtenerActivos()
+BLL -> DAL : ObtenerActivos()
+DAL -> DB : SELECT * FROM PlanSuscripcion WHERE Estado = 1
+DB --> DAL : filas
+DAL --> BLL : List<PlanSuscripcion>
+
+alt 2.1 no existen planes vigentes
+  BLL --> F : lista vacía
+  F --> Ag : "No existen planes disponibles para ofrecer"
+else 2.2 no se puede realizar la consulta
+  BLL --> F : error de acceso a datos
+  F --> Ag : "No fue posible obtener la información de los planes"
+else hay planes disponibles
+  BLL --> F : List<PlanSuscripcion>
+  F --> Ag : listado (nombre, beneficios, límites, valor, vigencia)
+  Ag -> F : seleccionar un plan para ver sus condiciones
+  F --> Ag : detalle y condiciones del plan seleccionado
+end
+@enduml

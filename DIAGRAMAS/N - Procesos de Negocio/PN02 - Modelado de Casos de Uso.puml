@@ -1,0 +1,47 @@
+@startuml PN02 - Modelado de Casos de Uso
+left to right direction
+skinparam actor {
+  BackgroundColor #FBD7A5
+  BorderColor #333333
+}
+skinparam usecase {
+  BackgroundColor #D6E4F9
+  BorderColor #333333
+  FontStyle bold
+}
+skinparam rectangle {
+  BorderColor #333333
+}
+skinparam ArrowColor #333333
+skinparam packageStyle folder
+
+package "uc Procesos de negocio" {
+  actor Usuario
+  actor "Agente de Reservas" as AG
+  actor "Coordinador de Experiencias" as CO
+  Usuario <|-- AG
+  Usuario <|-- CO
+
+  rectangle "Agente de Reservas" {
+    usecase "CU01-AG-GESTIONAR RESERVA" as CU1
+    usecase "CU02-AG-CONSULTAR EXPERIENCIAS DISPONIBLES" as CU2
+    usecase "CU03-AG-CANCELAR RESERVA" as CU3
+    usecase "CU04-AG-GESTIONAR LISTA DE ESPERA" as CU4
+  }
+  rectangle "Coordinador de Experiencias" {
+    usecase "CU05-CO-PROGRAMAR EXPERIENCIA" as CU5
+    usecase "CU06-CO-CANCELAR EXPERIENCIA" as CU6
+  }
+
+  AG --> CU1
+  AG --> CU2
+  AG --> CU3
+  AG --> CU4
+  CO --> CU5
+  CO --> CU6
+
+  CU1 ..> CU2 : <<include>>
+  CU1 ..> CU4 : <<extend>>
+  CU3 ..> CU4 : <<include>>
+}
+@enduml

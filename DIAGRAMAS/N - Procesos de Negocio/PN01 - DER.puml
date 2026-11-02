@@ -1,0 +1,64 @@
+@startuml PN01 - DER
+skinparam linetype ortho
+hide circle
+title PN01 - DER (Comercialización de la suscripción)
+
+entity "Cliente" as C {
+  * IdCliente : int <<PK>>
+  --
+  Nombre / Apellido : nvarchar
+  DNI : nvarchar «cifrado»
+  Email : nvarchar
+  IdPlan : int <<FK, null>>
+  FechaNacimiento : date
+  Activo : bit
+  DVH : int
+}
+entity "PlanSuscripcion" as P {
+  * IdPlan : int <<PK>>
+  --
+  Nombre : nvarchar
+  Precio : decimal
+  ReservasMensuales : int
+  AnticipacionMaximaDias : int
+  AccesoPremium : bit
+  PrioridadListaEspera : bit
+  CantidadInvitados : int
+  Estado : bit
+}
+entity "Contratacion" as Ct {
+  * IdContratacion : int <<PK>>
+  --
+  IdCliente : int <<FK>>
+  IdPlan : int <<FK>>
+  Importe : decimal
+  Estado : int «enum»
+  IntentosPago : int
+  MedioPago : int «enum, null»
+  Cuotas : int «null»
+  RecargoPorcentaje : decimal «null»
+  ImporteTotal : decimal «null»
+  NumeroComprobante : nvarchar «null»
+  IdSuscripcion : int <<FK, null>>
+  Tipo : int «enum (Alta/Renovacion)»
+  IdSuscripcionRenovada : int <<FK, null>>
+  FechaAlta : datetime
+}
+entity "Suscripcion" as S {
+  * IdSuscripcion : int <<PK>>
+  --
+  IdCliente : int <<FK>>
+  IdPlan : int <<FK>>
+  FechaInicio : date
+  FechaVencimiento : date «null»
+  Estado : int «enum»
+  ReservasConsumidasMes : int
+  PeriodoConsumo : date «null»
+}
+
+C ||--o{ Ct : registra
+P ||--o{ Ct : se contrata con
+Ct |o--o| S : formaliza
+C ||--o| S : posee
+P ||--o{ S : define
+@enduml

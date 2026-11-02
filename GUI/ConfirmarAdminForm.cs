@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class ConfirmarAdminForm : Form
+    public partial class ConfirmarAdminForm : FormBase
     {
         private readonly Usuario _usuarioBLL = new Usuario();
         private readonly RecuperacionAdmin _recuperacionBLL = new RecuperacionAdmin();
@@ -15,9 +15,8 @@ namespace GUI
         public ConfirmarAdminForm()
         {
             InitializeComponent();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
             Autorizado = false;
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico); } catch { }
+            // Ícono, identidad visual SUNSET y preferencias de UI: los aplica FormBase.OnLoad.
         }
 
         protected override void OnLoad(EventArgs e)

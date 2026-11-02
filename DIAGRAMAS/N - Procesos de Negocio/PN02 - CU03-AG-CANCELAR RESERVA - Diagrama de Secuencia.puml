@@ -1,0 +1,73 @@
+@startuml
+title CU03-AG-CANCELAR RESERVA
+actor "Cliente" as Cli
+actor "Agente de Reservas" as Ag
+participant ":Reservas" as F
+participant ":BLL.Reserva" as BLL
+participant ":DAL.Experiencia" as DE
+participant ":DAL.ListaEspera" as DLE
+participant ":DAL.Reserva" as DR
+participant ":Servicios.Bitacora" as BIT
+database "BD" as DB
+
+autonumber
+Cli -> Ag : solicitar cancelación de la reserva
+Ag -> F : seleccionar reserva, indicar motivo y confirmar
+F -> BLL : Cancelar(modulo, reserva, motivo)
+BLL -> BLL : reserva.PuedeCancelarse()
+
+alt estado no cancelable, o motivo vacío
+  BLL --> F : AppException (estado inválido / motivo obligatorio)
+  F --> Ag : informar el error
+else reserva cancelable y motivo indicado
+  BLL -> DE : ObtenerPorId(reserva.IdExperiencia)
+  DE --> BLL : experiencia
+
+  alt 1.1 la experiencia ya está EnCurso o Finalizada
+    BLL --> F : AppException("No se puede cancelar: la experiencia ya está " + estado)
+    F --> Ag : informar el error
+  else experiencia todavía cancelable
+    BLL -> BLL : CancelacionATiempo(ahora, margen)
+
+    alt a tiempo (48 h o más)
+      BLL -> BLL : ResolverSuscripcionADevolver(reserva)
+      note right
+        Solo si la suscripción con la que
+        se reservó sigue vigente. Si la
+        reserva es anterior a PN03 (sin
+        IdSuscripcion), no se devuelve a
+        ciegas: queda advertencia en la
+        bitácora de negocio.
+      end note
+    else tardía (menos de 48 h)
+      note right: no se devuelve el beneficio del plan
+    end
+
+    BLL -> DR : Cancelar(idReserva, idExperiencia, lugares, motivo,\nliberarCupo=true, idSuscripcionADevolver, historial, cancelacionATiempo)
+    DR -> DB : UPDATE Experiencia (libera cupo)
+    DR -> DB : UPDATE Suscripcion (devuelve beneficio) — solo si corresponde
+    DR -> DB : UPDATE Reserva (Cancelada) + INSERT ReservaHistorial
+    DB --> DR : ok
+    DR --> BLL : confirmación
+
+    BLL -> BIT : Registrar(detalle: "a tiempo" o "tardía")
+
+    BLL -> DLE : ObtenerPrimeroEnEspera(idExperiencia)
+    DLE --> BLL : primero de la fila (o ninguno)
+
+    alt hay alguien en lista de espera
+      alt 6.1 falta menos del margen de horas para el inicio
+        BLL -> BIT : Registrar("cupo liberado sin ofrecer: queda para reserva directa")
+      else hay margen suficiente
+        ref over BLL
+          CU04-AG-GESTIONAR LISTA DE ESPERA
+        end ref
+      end
+    else sin lista de espera
+    end
+
+    BLL --> F : cancelación registrada
+    F --> Ag : "Reserva cancelada" (constancia de cancelación)
+  end
+end
+@enduml

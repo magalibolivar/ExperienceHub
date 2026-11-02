@@ -18,7 +18,7 @@ namespace GUI
     /// (admin logueado) y desde el arranque (Program), cuando un Administrador autenticado entra
     /// con la base comprometida. Cada acción se confirma con ConfirmarAdminForm.
     /// </summary>
-    public class RecuperacionEspejoForm : Form
+    public class RecuperacionEspejoForm : FormBase
     {
         private DataGridView _grid;
         private Label  _lblEstado;
@@ -34,7 +34,7 @@ namespace GUI
         public RecuperacionEspejoForm()
         {
             BuildUI();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
+            // Ícono, identidad visual SUNSET y preferencias de UI: los aplica FormBase.OnLoad.
         }
 
         private static string T(string key, string fallback)
@@ -83,16 +83,24 @@ namespace GUI
                 Padding = new Padding(8, 8, 8, 8), BackColor = Color.FromArgb(248, 250, 252)
             };
 
+            // Rol EXPLÍCITO (AccessibleDescription) en vez de dejar que Estilo infiera el color por
+            // palabra clave del texto: acá la jerarquía semántica es la que importa (Reparar es la
+            // opción SEGURA/preferida; Asumir Pérdida consolida un posible daño; Backup es la vía
+            // alternativa), y no coincide con lo que el clasificador automático infiere del texto.
             _btnCerrar = MkButton(T("rec.btn.cerrar", "Cerrar"), Color.FromArgb(120, 120, 135), 90);
+            _btnCerrar.AccessibleDescription = "rol:secundario";
             _btnCerrar.Click += (s, e) => this.Close();
 
             _btnBackup = MkButton(T("rec.btn.backup", "Restaurar Backup..."), Color.FromArgb(255, 140, 66), 160);
+            _btnBackup.AccessibleDescription = "rol:secundario";
             _btnBackup.Click += BtnBackup_Click;
 
             _btnAsumir = MkButton(T("rec.btn.asumir", "Asumir Pérdida"), Color.FromArgb(180, 120, 60), 140);
+            _btnAsumir.AccessibleDescription = "rol:peligro";
             _btnAsumir.Click += BtnAsumir_Click;
 
             _btnReparar = MkButton(T("rec.btn.reparar", "Reparar desde Espejo"), Color.FromArgb(80, 150, 90), 170);
+            _btnReparar.AccessibleDescription = "rol:exito";
             _btnReparar.Click += BtnReparar_Click;
 
             panelBotones.Controls.AddRange(new Control[] { _btnCerrar, _btnBackup, _btnAsumir, _btnReparar });
@@ -115,8 +123,13 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new Icon(ico); } catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
+            // Estilo.Aplicar repinta todo TextBox en blanco/AzulOscuro con la tipografía del sistema;
+            // _txtResumen es un panel de lectura tipo "consola" (monoespaciado, fondo propio) y debe
+            // conservar ese tratamiento para que el diagnóstico se siga leyendo alineado.
+            _txtResumen.BackColor = Color.FromArgb(248, 244, 250);
+            _txtResumen.ForeColor = Color.FromArgb(60, 30, 50);
+            _txtResumen.Font      = new Font("Consolas", 8.5f);
             CargarDiagnostico();
         }
 
@@ -169,8 +182,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format(T("rec.err.cargar", "Error al diagnosticar: {0}"), ex.Message),
-                    T("rec.err.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("rec.err.cargar", "Error al diagnosticar: {0}"), ex.Message));
             }
         }
 
@@ -182,18 +194,17 @@ namespace GUI
 
         private void BtnReparar_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(
-                    T("rec.conf.reparar", "¿Restaurar la tabla Usuario a los valores legítimos del espejo?\n\nSe revertirán las filas modificadas y se eliminarán las inserciones externas."),
-                    T("rec.conf.reparar.titulo", "Confirmar Reparación"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            bool confirma = Estilo.Confirmar(this, T("rec.conf.reparar.titulo", "Confirmar Reparación"),
+                T("rec.conf.reparar", "¿Restaurar la tabla Usuario a los valores legítimos del espejo?\n\nSe revertirán las filas modificadas y se eliminarán las inserciones externas."));
+            if (!confirma) return;
             if (!ConfirmarAdmin()) return;
 
             try
             {
                 BLL.RecuperacionIntegridad.RepararDesdeEspejo();
                 RecuperadoExitosamente = true;
-                MessageBox.Show(T("rec.msg.reparado", "Saneamiento completado: se restauraron los datos legítimos del espejo."),
-                    T("rec.msg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rec.msg.exito.titulo", "Éxito"),
+                    T("rec.msg.reparado", "Saneamiento completado: se restauraron los datos legítimos del espejo."));
                 CargarDiagnostico();
             }
             catch (Exception ex) { MostrarError(ex); }
@@ -201,18 +212,17 @@ namespace GUI
 
         private void BtnAsumir_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(
-                    T("rec.conf.asumir", "ATENCIÓN: se aceptarán los datos ACTUALES como legítimos y se recalcularán todos los dígitos verificadores.\n\nSi hubo manipulación, quedará consolidada. ¿Continuar?"),
-                    T("rec.conf.asumir.titulo", "Confirmar Asumir Pérdida"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes) return;
+            bool confirma = Estilo.Confirmar(this, T("rec.conf.asumir.titulo", "Confirmar Asumir Pérdida"),
+                T("rec.conf.asumir", "ATENCIÓN: se aceptarán los datos ACTUALES como legítimos y se recalcularán todos los dígitos verificadores.\n\nSi hubo manipulación, quedará consolidada. ¿Continuar?"));
+            if (!confirma) return;
             if (!ConfirmarAdmin()) return;
 
             try
             {
                 BLL.RecuperacionIntegridad.AsumirPerdida();
                 RecuperadoExitosamente = true;
-                MessageBox.Show(T("rec.msg.asumido", "Dígitos verificadores recalculados sobre los datos actuales."),
-                    T("rec.msg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rec.msg.exito.titulo", "Éxito"),
+                    T("rec.msg.asumido", "Dígitos verificadores recalculados sobre los datos actuales."));
                 CargarDiagnostico();
             }
             catch (Exception ex) { MostrarError(ex); }
@@ -232,10 +242,9 @@ namespace GUI
                 // posteriores que se perderían al sobrescribir) antes de confirmar la restauración.
                 string alcance = ConstruirAlcancePerdida(ofd.FileName);
 
-                if (MessageBox.Show(
-                        T("conf.rest.sobreescribir", "¿Está seguro? Esta operación sobrescribirá todos los datos actuales y reiniciará la aplicación.") + alcance,
-                        T("msg.backup.titulorestaura", "Confirmar Restauración"),
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+                bool confirmaRestaurar = Estilo.Confirmar(this, T("msg.backup.titulorestaura", "Confirmar Restauración"),
+                    T("conf.rest.sobreescribir", "¿Está seguro? Esta operación sobrescribirá todos los datos actuales y reiniciará la aplicación.") + alcance);
+                if (!confirmaRestaurar) return;
 
                 string clave = null;
                 if (BLL.Backup.EsCifrado(ofd.FileName))
@@ -253,8 +262,8 @@ namespace GUI
                 try
                 {
                     new BLL.Backup().RestaurarBackup("RecuperacionEspejo", ofd.FileName, clave);
-                    MessageBox.Show(T("msg.backup.restauradaexito", "Base de datos restaurada con éxito.\nLa aplicación se reiniciará."),
-                        T("rpt.dlg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Estilo.Exito(this, T("rpt.dlg.exito.titulo", "Éxito"),
+                        T("msg.backup.restauradaexito", "Base de datos restaurada con éxito.\nLa aplicación se reiniciará."));
                     RecuperadoExitosamente = true;
                     Application.Restart();
                 }
@@ -298,10 +307,8 @@ namespace GUI
             catch { return string.Empty; }
         }
 
-        private void MostrarError(Exception ex)
-        {
-            MessageBox.Show(T("rec.err.titulo", "Error") + ":\n" + ex.Message,
-                T("rec.err.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+        // MostrarError(Exception) se hereda de FormBase: distingue errores de negocio (traducidos,
+        // sin loguear) de excepciones inesperadas (logueadas en bitácora, mensaje genérico al
+        // usuario) — mejora sobre el MessageBox.Show plano que tenía este formulario antes.
     }
 }

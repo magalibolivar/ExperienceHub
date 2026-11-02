@@ -52,6 +52,33 @@ namespace GUI
             if (_clienteOriginal != null) CargarDatosExistentes();   // prefill (edición o alta-reintento)
 
             ReorganizarLayout();
+
+            txtDNI.Leave += TxtDNI_Leave;
+        }
+
+        // Aviso proactivo de DNI duplicado: se dispara al salir del campo, ANTES de que el usuario
+        // complete el resto del formulario y llegue a perder todo lo cargado en el guardado. No
+        // bloquea el campo ni reutiliza la ficha existente — solo orienta a buscarla en el listado.
+        private void TxtDNI_Leave(object sender, EventArgs e)
+        {
+            string dni = txtDNI.Text.Trim();
+            if (dni.Length < 7 || dni.Length > 8) return;
+
+            try
+            {
+                var existente = new BLL.Cliente().BuscarPorDNI(dni);
+                bool esElMismo = _esEdicion && existente != null && existente.IdCliente == _clienteOriginal.IdCliente;
+                if (existente != null && !esElMismo)
+                {
+                    lblMensaje.ForeColor = Color.DarkOrange;
+                    lblMensaje.Text = $"⚠ Ya existe un cliente registrado con este DNI: {existente.NombreCompleto}. Buscalo en el listado de clientes en lugar de crear uno nuevo.";
+                }
+                else if (lblMensaje.Text.StartsWith("⚠"))
+                {
+                    lblMensaje.Text = string.Empty;   // el usuario corrigió el DNI: limpia el aviso previo
+                }
+            }
+            catch { /* el aviso es una ayuda best-effort: si falla, no debe interrumpir el alta */ }
         }
 
         // Rediseño del diálogo en SECCIONES (reutiliza los mismos controles/handlers del Designer):
@@ -269,6 +296,7 @@ namespace GUI
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             lblMensaje.Text = string.Empty;
+            lblMensaje.ForeColor = Estilo.Rojo;
 
             try
             {

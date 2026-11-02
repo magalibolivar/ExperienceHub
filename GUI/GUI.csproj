@@ -47,6 +47,12 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <!-- PDFsharp 1.50.5147 (MIT) — exportación de PDF a archivo sin impresora virtual. DLL administrada
+         (build GDI, net20), sin dependencias nativas. Se copia junto al ejecutable (Private=True). -->
+    <Reference Include="PdfSharp">
+      <HintPath>..\lib\PDFsharp\PdfSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Experiencias.cs">
@@ -74,8 +80,36 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PermisosGui.cs" />
-    <Compile Include="PasoBar.cs" />
+    <Compile Include="PasoBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ListaEsperaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Graficos\GraficoControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Planificacion\ContextoPlanificacion.cs" />
+    <Compile Include="Planificacion\ProcesoPlanificacion.cs" />
+    <Compile Include="Planificacion\PlanificacionTextos.cs" />
+    <Compile Include="Planificacion\SimuladorResultados.cs" />
+    <Compile Include="Planificacion\PlanificacionFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Planificacion\ResumenEjecutivoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Planificacion\DemandaCapacidadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Planificacion\DesempenoCalidadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Planificacion\PlanesAccionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Ayuda\AyudaContenido.cs" />
+    <Compile Include="Ayuda\AyudaDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="I18n.cs" />
@@ -212,10 +246,14 @@
     </Compile>
     <Compile Include="PreferenciasUI.cs" />
     <Compile Include="Exportacion\ReporteExportable.cs" />
+    <Compile Include="Exportacion\InformePlanificacion.cs" />
+    <Compile Include="Exportacion\DocumentoReporte.cs" />
+    <Compile Include="Exportacion\ExportadorPdfDocumento.cs" />
+    <Compile Include="Exportacion\ExportadorPdfArchivo.cs" />
     <Compile Include="Exportacion\DocumentosContratacion.cs" />
     <Compile Include="Exportacion\DocumentosReserva.cs" />
     <Compile Include="Exportacion\Exportador.cs" />
-    <Compile Include="Exportacion\ExportadorPdf.cs" />
+    <Compile Include="Exportacion\ExportadorPdfUnificado.cs" />
     <Compile Include="Exportacion\ExportadorTxt.cs" />
     <Compile Include="Exportacion\GeneradorReporte.cs" />
     <Compile Include="Exportacion\GeneradorBitacora.cs" />

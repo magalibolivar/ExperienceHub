@@ -38,12 +38,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bitacora.cs" />
     <Compile Include="BitacoraNegocio.cs" />
     <Compile Include="Exportacion\SerializadorCsv.cs" />
+    <Compile Include="Serializacion\SerializadorInformes.cs" />
     <Compile Include="GeneradorCredenciales.cs" />
     <Compile Include="Multiidioma\Etiqueta.cs" />
     <Compile Include="Multiidioma\GestorIdioma.cs" />

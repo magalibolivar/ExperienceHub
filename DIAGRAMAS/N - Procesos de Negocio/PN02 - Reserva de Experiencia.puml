@@ -1,0 +1,153 @@
+@startuml
+title PN02 - Reserva de experiencias (incluye cancelación y lista de espera)
+
+|Cliente (externo)|
+start
+:Solicitar reserva de experiencia;
+
+|Agente de Reservas|
+:Solicitar identificación del cliente;
+
+|Cliente (externo)|
+:Brindar identificación;
+note right: DNI, Nombre, Apellido
+
+|Agente de Reservas|
+:Identificar cliente;
+note right
+  Ficha del cliente:
+  suscripción, plan, reservas, datos del cliente.
+end note
+:Verificar suscripción;
+if (¿Suscripción vigente?) then (No)
+  :Informar imposibilidad de reservar;
+  note right: Aviso de suscripción no vigente
+  |Cliente (externo)|
+  :Recibir aviso;
+  stop
+else (Sí)
+  :Verificar reservas disponibles del mes;
+endif
+
+if (¿Le quedan reservas en el mes?) then (No)
+  :Informar límite del plan;
+  note right
+    Restricciones del plan:
+    límite de reservas del plan en el mes.
+  end note
+  |Cliente (externo)|
+  :Recibir aviso;
+  stop
+else (Sí)
+  :Presentar experiencias disponibles;
+endif
+
+|Cliente (externo)|
+:Consultar experiencias;
+:Seleccionar experiencia;
+:Indicar cantidad de lugares / invitados;
+note right
+  Detalle de reserva:
+  experiencia, fecha, horario, N.º de personas.
+end note
+
+|Agente de Reservas|
+:Validar condiciones del plan;
+note right
+  Condiciones:
+  premium, edad mínima, invitados, ciudad,
+  experiencia ya realizada, superposición de horarios.
+end note
+if (¿Cumple las condiciones?) then (No)
+  :Informar motivo;
+  |Cliente (externo)|
+  if (¿Ajusta la selección?) then (Sí)
+    :Seleccionar experiencia;
+    note right: vuelve a validar
+  else (No)
+    :Desistir;
+    stop
+  endif
+else (Sí)
+  |Agente de Reservas|
+  :Verificar cupo de la experiencia;
+  if (¿Hay cupo suficiente?) then (Sí)
+    :Registrar y confirmar reserva;
+    note right
+      Confirmación de la reserva:
+      voucher / constancia.
+      (Operación atómica: descuenta cupo,
+      consume una reserva del plan y confirma
+      en una sola transacción. El sistema no
+      modela un estado "Pendiente" intermedio.)
+    end note
+    |Cliente (externo)|
+    :Recibir confirmación;
+  else (No)
+    :Informar falta de disponibilidad;
+    |Cliente (externo)|
+    if (¿Desea ingresar a lista de espera?) then (Sí)
+      |Agente de Reservas|
+      :Ingresar a lista de espera;
+      note right: posición FIFO
+      |Cliente (externo)|
+      :Recibir su posición;
+      stop
+    else (No)
+      if (¿Desea seleccionar otra experiencia?) then (Sí (otra))
+        :Consultar experiencias;
+        note right: vuelve al catálogo
+      else (No)
+        :Desistir;
+        stop
+      endif
+    endif
+  endif
+endif
+
+|Cliente (externo)|
+:Reserva Confirmada;
+note right
+  Estado de la reserva: Confirmada.
+  A partir de acá la reserva puede cancelarse
+  (por el cliente) o la experiencia completa
+  puede ser cancelada (por el Coordinador).
+end note
+
+if (¿Qué ocurre con la reserva Confirmada?) then (El cliente la cancela)
+  :Solicitar cancelación de la reserva;
+
+  |Agente de Reservas|
+  :Registrar cancelación de la reserva;
+  if (¿Faltan 48 horas o más para la experiencia?) then (Sí, a tiempo)
+    :Liberar el cupo y devolver el beneficio del plan;
+  else (No, tardía)
+    :Liberar el cupo sin devolver el beneficio del plan;
+  endif
+  note right: Constancia de cancelación
+  if (¿Hay clientes en lista de espera?) then (Sí)
+    :Ofrecer el cupo liberado al primero de la fila;
+    stop
+  else (No)
+    stop
+  endif
+
+else (Se cancela toda la experiencia)
+  |Coordinador de Experiencias|
+  :Cancelar la experiencia;
+  :Cancelar en cascada cada reserva activa;
+  :Devolver el beneficio del plan de cada reserva;
+  :Cerrar la lista de espera de la experiencia;
+  note right
+    **[DISCREPANCIA PENDIENTE — no corregida en esta etapa]**
+    La cancelación en cascada no clasifica cada
+    reserva como "a tiempo" o "tardía": el dato
+    queda sin establecer y el reporte de Planificación
+    la cuenta igual que una cancelación tardía,
+    sin importar la fecha real. Requiere corregir
+    código (DAL/BLL), no el diagrama ni la GUI.
+  end note
+  stop
+endif
+
+@enduml

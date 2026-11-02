@@ -57,20 +57,32 @@ PRINT 'Demo situaciones: clientes verificados.';
 GO
 
 -- 2) Suscripciones según situación (solo si el cliente aún no tiene ninguna) -----
+-- Los IdPlan se resuelven por NOMBRE (no hardcodeados): el catálogo de planes puede
+-- cambiar de un ambiente a otro (altas/bajas de planes), y un IdPlan fijo rompe la
+-- carga con un error de FK si ya no corresponde a ese plan. Si algún plan nombrado
+-- no existe en este ambiente, cae a "Básico" (siempre presente) para no romper el seed.
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
 DECLARE @perMes DATE = DATEFROMPARTS(YEAR(@hoy), MONTH(@hoy), 1);
 -- (DNI, IdPlan, Estado, OffsetVencDias, ConsumoMes)
 DECLARE @subs TABLE (DNI VARCHAR(20), IdPlan INT, Estado INT, OffVenc INT, Consumo INT);
 INSERT INTO @subs VALUES
- ('40100001', 2, 0,  60,  0),   -- Activa con cupo (Estándar, 15/mes)
- ('40100002', 2, 0,  60, 15),   -- Activa SIN cupo (consumió las 15)
- ('40100003', 2, 0,   5,  2),   -- Por vencer (5 días)
- ('40100004', 2, 2, -10,  3),   -- Vencida
- ('40100005', 2, 1,  60,  1),   -- Suspendida
- ('40100006', 3, 0,  90,  4),   -- Premium activa
- ('40100021', 1, 0,  45,  1),   -- Básico activa
- ('40100022', 1, 0,  45,  0),   -- Básico activa
- ('40100023', 2, 0,  45,  5);   -- Estándar activa
+ ('40100001', @idEstandar, 0,  60,  0),   -- Activa con cupo (Estándar, 15/mes)
+ ('40100002', @idEstandar, 0,  60, 15),   -- Activa SIN cupo (consumió las 15)
+ ('40100003', @idEstandar, 0,   5,  2),   -- Por vencer (5 días)
+ ('40100004', @idEstandar, 2, -10,  3),   -- Vencida
+ ('40100005', @idEstandar, 1,  60,  1),   -- Suspendida
+ ('40100006', @idPremium,  0,  90,  4),   -- Premium activa
+ ('40100021', @idBasico,   0,  45,  1),   -- Básico activa
+ ('40100022', @idBasico,   0,  45,  0),   -- Básico activa
+ ('40100023', @idEstandar, 0,  45,  5);   -- Estándar activa
 
 INSERT INTO Suscripcion (IdCliente, IdPlan, FechaInicio, FechaVencimiento, Estado, ReservasConsumidasMes, PeriodoConsumo)
 SELECT c.IdCliente, s.IdPlan, DATEADD(day, -15, @hoy), DATEADD(day, s.OffVenc, @hoy), s.Estado, s.Consumo, @perMes
@@ -82,11 +94,20 @@ PRINT 'Demo situaciones: suscripciones verificadas.';
 GO
 
 -- 3) Contrataciones Pendientes de pago (cola de Caja) ----------------------------
+-- Mismo criterio que el bloque 2: IdPlan por NOMBRE, no hardcodeado (ver comentario ahí).
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @pend TABLE (DNI VARCHAR(20), IdPlan INT, Intentos INT, OffAltaDias INT);
 INSERT INTO @pend VALUES
- ('40100012', 2, 0,  0),   -- recién creada
- ('40100013', 2, 1, -1),   -- 1 intento fallido
- ('40100014', 3, 2, -4);   -- 2 intentos (al 3º se cancela)
+ ('40100012', @idEstandar, 0,  0),   -- recién creada
+ ('40100013', @idEstandar, 1, -1),   -- 1 intento fallido
+ ('40100014', @idPremium,  2, -4);   -- 2 intentos (al 3º se cancela)
 
 INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta)
 SELECT c.IdCliente, p.IdPlan, p.Precio, 0 /*Pendiente*/, q.Intentos, DATEADD(day, q.OffAltaDias, GETDATE())
@@ -98,10 +119,19 @@ GO
 
 -- 4) Contrataciones PAGADAS sin formalizar (cola "Para formalizar") --------------
 --    Bruno Castro: pago único (Efectivo). Daniela Ponce: 3 cuotas con Tarjeta (+10%).
+-- Mismo criterio que el bloque 2: IdPlan por NOMBRE, no hardcodeado (ver comentario ahí).
+DECLARE @idBasico INT, @idEstandar INT, @idPremium INT;
+SELECT @idBasico   = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Básico'   AND Estado = 1;
+SELECT @idEstandar = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Estándar' AND Estado = 1;
+SELECT @idPremium  = IdPlan FROM PlanSuscripcion WHERE Nombre = N'Premium'  AND Estado = 1;
+SET @idBasico   = ISNULL(@idBasico, (SELECT MIN(IdPlan) FROM PlanSuscripcion WHERE Estado = 1));
+SET @idEstandar = ISNULL(@idEstandar, @idBasico);
+SET @idPremium  = ISNULL(@idPremium, @idBasico);
+
 DECLARE @pag TABLE (DNI VARCHAR(20), IdPlan INT, Medio INT, Cuotas INT, Recargo DECIMAL(9,2), OffPagoDias INT);
 INSERT INTO @pag VALUES
- ('40100015', 2, 0, 1,  0, -2),    -- Efectivo, pago único
- ('40100016', 3, 1, 3, 10, -1);    -- Tarjeta, 3 cuotas, +10%
+ ('40100015', @idEstandar, 0, 1,  0, -2),    -- Efectivo, pago único
+ ('40100016', @idPremium,  1, 3, 10, -1);    -- Tarjeta, 3 cuotas, +10%
 
 INSERT INTO Contratacion (IdCliente, IdPlan, Importe, Estado, IntentosPago, FechaAlta,
                           MedioPago, FechaPago, Cuotas, RecargoPorcentaje, ImporteTotal)

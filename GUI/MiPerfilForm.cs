@@ -12,7 +12,7 @@ namespace GUI
     /// (Usuario.IdIdioma + tabla Preferencia) y se aplica al instante (idioma por Observer;
     /// fuente/tema re-aplicados a los formularios abiertos).
     /// </summary>
-    public class MiPerfilForm : Form, IIdiomaObserver
+    public class MiPerfilForm : FormBase, IIdiomaObserver
     {
         private readonly BE.Usuario  _usuario;
         private readonly BLL.Usuario _usuarioBLL = new BLL.Usuario();
@@ -110,12 +110,10 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new Icon(ico); } catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
             GestorIdioma.SuscribirObservador(this);
             CargarIdiomas();
             CargarPreferencias();
-            try { PreferenciasUI.Aplicar(this); } catch { }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

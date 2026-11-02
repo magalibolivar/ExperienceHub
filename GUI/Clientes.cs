@@ -173,7 +173,7 @@ namespace GUI
             return SitCli.Activa;
         }
 
-        // Exporta a PDF el listado tal como está filtrado (Factory → ExportadorPdf, modo tabular).
+        // Exporta a PDF el listado tal como está filtrado (ExportadorPdfUnificado, motor PDFsharp, modo tabular).
         private void ExportarListado()
         {
             var dt = dgvClientes.DataSource as DataTable;
@@ -215,7 +215,7 @@ namespace GUI
                 Encabezados   = headers,
                 Datos         = export
             };
-            new Exportacion.ExportadorPdf(Tx("eh.frm.clientes", "Clientes")).Exportar(reporte, this);
+            new Exportacion.ExportadorPdfUnificado(Tx("eh.frm.clientes", "Clientes")).Exportar(reporte, this);
         }
 
         // Panel "Suscripción" anclado abajo: estado + plan + vencimiento del cliente seleccionado y
@@ -557,22 +557,30 @@ namespace GUI
 
         private void BtnNuevo_Click(object sender, EventArgs e)
         {
-            using (var form = new ClienteForm())
-            {
-                if (form.ShowDialog(this) != DialogResult.OK) return;
-                try
+            // Reintento con los datos ya cargados ante un error de guardado (p. ej. DNI duplicado):
+            // reabre el mismo diálogo con todo lo tipeado, en vez de perderlo (mismo criterio que
+            // NuevaContratacionForm.NuevoCliente, para que la experiencia sea igual en ambos puntos
+            // de entrada al alta de cliente).
+            BE.Cliente prefill = null;
+            while (true)
+                using (var form = prefill == null ? new ClienteForm() : new ClienteForm(prefill, false))
                 {
-                    clienteBLL.Alta(this.Text, form.ClienteEditado);
-                    var t = Traductor.ObtenerTraducciones(_idioma);
-                    string fmt = t.ContainsKey("msg.cli.registrado") ? t["msg.cli.registrado"].Texto : "Cliente '{0}' registrado correctamente.";
-                    MostrarOk(string.Format(fmt, form.ClienteEditado.NombreCompleto));
-                    CargarClientes();
+                    if (form.ShowDialog(this) != DialogResult.OK) return;
+                    try
+                    {
+                        clienteBLL.Alta(this.Text, form.ClienteEditado);
+                        var t = Traductor.ObtenerTraducciones(_idioma);
+                        string fmt = t.ContainsKey("msg.cli.registrado") ? t["msg.cli.registrado"].Texto : "Cliente '{0}' registrado correctamente.";
+                        MostrarOk(string.Format(fmt, form.ClienteEditado.NombreCompleto));
+                        CargarClientes();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        MostrarError(ex);
+                        prefill = form.ClienteEditado;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MostrarError(ex);
-                }
-            }
         }
 
         private void BtnEditar_Click(object sender, EventArgs e)

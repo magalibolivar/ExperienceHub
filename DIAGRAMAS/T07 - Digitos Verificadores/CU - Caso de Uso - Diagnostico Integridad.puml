@@ -1,0 +1,38 @@
+@startuml CU - Caso de Uso - Diagnostico Integridad
+skinparam backgroundColor #FFFFFF
+skinparam shadowing true
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #2B2B40
+skinparam usecase {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam actor {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam arrow {
+  Color #2B2B40
+}
+skinparam frame {
+  BackgroundColor #FFFFFF
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+left to right direction
+actor Administrador as A
+frame "Diagnóstico de Integridad (Dígitos Verificadores)" {
+  usecase "CU009-ADM - Ver diagnóstico\nde integridad" as CU1
+  usecase "CU010-ADM - Recalcular dígitos\nverificadores" as CU2
+  usecase "Confirmar identidad\n(Clave Maestra)" as INC
+}
+A -- CU1
+A -- CU2
+CU2 ..> INC : <<include>>
+CU1 .[#2B2B40].> CU2 : «precede»
+@enduml

@@ -1,0 +1,42 @@
+@startuml PN01 - Modelo Conceptual
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+hide circle
+hide methods
+title PN01 - Modelo Conceptual (Comercialización de la suscripción)
+
+class Cliente {
+  nombre
+  dni
+  fechaNacimiento
+}
+class PlanSuscripcion {
+  nombre
+  precio
+  reservasMensuales
+}
+class Contratacion {
+  importe
+  estado
+  intentosPago
+  medioPago
+  cuotas
+}
+class Suscripcion {
+  fechaInicio
+  fechaVencimiento
+  estado
+}
+
+Cliente "1" -- "0..*" Contratacion : contrata
+PlanSuscripcion "1" -- "0..*" Contratacion : se contrata con
+Contratacion "0..1" -- "0..1" Suscripcion : formaliza
+Cliente "1" -- "0..1" Suscripcion : posee
+PlanSuscripcion "1" -- "0..*" Suscripcion : define
+@enduml

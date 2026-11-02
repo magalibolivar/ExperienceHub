@@ -100,7 +100,7 @@ namespace GUI
 
             var header = UI.Encabezado("Nueva contratación",
                 "Asistente en 3 pasos: elegí el cliente, el plan y confirmá para derivar a Caja.",
-                "eh.nva.titulo", "eh.nva.header.desc");
+                "eh.nva.titulo", "eh.nva.header.desc", "pn01.nuevacontratacion");
 
             Controls.Add(host);       // Fill
             Controls.Add(footer);     // Bottom

@@ -1,0 +1,57 @@
+@startuml
+title CU03-GER-GESTIONAR PLAN DE ACCIÓN
+actor "Gerente de Operaciones" as Ger
+participant ":PlanesAccionForm" as F
+participant ":BLL.PlanAccionService" as BLL
+participant ":BE.PlanAccion" as PA
+database "BD" as DB
+
+autonumber
+Ger -> F : aprobar el plan de acción
+F -> BLL : AprobarPlan(idPlan)
+BLL -> PA : PuedeAprobar()
+
+alt 2.1 el plan no está en Borrador
+  PA --> BLL : false
+  BLL --> F : rechazar operación
+  F --> Ger : informar el estado actual
+else el plan está en Borrador
+  PA --> BLL : true
+  BLL -> DB : UPDATE PlanAccion (Estado = Aprobado)
+  BLL --> F : plan aprobado
+
+  Ger -> F : marcar el plan en ejecución
+  F -> BLL : MarcarEnEjecucion(idPlan)
+  BLL -> PA : PuedeEjecutar()
+
+  alt 4.1 el plan no está Aprobado
+    PA --> BLL : false
+    BLL --> F : rechazar operación
+    F --> Ger : informar el estado actual
+  else el plan está Aprobado
+    PA --> BLL : true
+    BLL -> DB : UPDATE PlanAccion (Estado = EnEjecucion)
+    BLL --> F : plan en ejecución
+
+    ref over F
+      CU04-CO-EJECUTAR RECOMENDACIÓN APROBADA
+    end ref
+
+    Ger -> F : cerrar el plan de acción
+    F -> BLL : CerrarPlan(idPlan)
+    BLL -> PA : PuedeCerrar()
+
+    alt 6.1 el plan no está En ejecución
+      PA --> BLL : false
+      BLL --> F : rechazar operación
+      F --> Ger : informar el estado actual
+    else el plan está En ejecución
+      PA --> BLL : true
+      BLL -> DB : INSERT KpiSnapshot (Momento = Despues)
+      BLL -> DB : UPDATE PlanAccion (Estado = Cerrado, FechaEvaluacionPrevista)
+      BLL --> F : plan cerrado
+      F --> Ger : "Plan cerrado correctamente"
+    end
+  end
+end
+@enduml

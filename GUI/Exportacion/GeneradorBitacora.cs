@@ -13,7 +13,7 @@ namespace GUI.Exportacion
         public override Exportador CrearExportador(string formato)
         {
             if (formato == "pdf")
-                return new ExportadorPdf(Origen);
+                return new ExportadorPdfUnificado(Origen);
             else if (formato == "txt")
                 return new ExportadorTxt(Origen);
             else if (formato == "csv")

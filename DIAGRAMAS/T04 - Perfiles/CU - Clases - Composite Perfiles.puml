@@ -1,4 +1,24 @@
 @startuml CU - Clases - Composite Perfiles
+skinparam class {
+  BackgroundColor #FDEEE0-#F6C9A0
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+  ArrowColor #8B4A2B
+}
+skinparam enum {
+  BackgroundColor #FDEEE0-#F6C9A0
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+}
+skinparam note {
+  BackgroundColor #FFF3C4
+  BorderColor #D9A441
+}
+skinparam package {
+  BackgroundColor #FFFCF7
+  BorderColor #8B4A2B
+  FontColor #2B2B40
+}
 title T04 - Gestion de Perfiles (patron Composite)
 skinparam classAttributeIconSize 0
 

@@ -1,0 +1,69 @@
+@startuml PN02 - Diagrama de Clases
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+skinparam package {
+  BackgroundColor #FFFCF7
+  BorderColor #142A4D
+  FontColor #142A4D
+}
+title PN02 - Reserva de experiencias
+
+package "GUI" {
+  class Reservas
+  class ListaEsperaForm
+}
+package "BLL" {
+  class "BLL.Reserva" as BR {
+    +ConsultarSituacionCliente(idCliente) : SituacionCliente
+    +EvaluarCompatibilidades(idCliente, experiencias, invitados) : Dictionary<int,CompatibilidadReserva>
+    +CrearReserva(modulo, idCliente, idExperiencia, invitados, idListaEsperaAConfirmar) : int
+  }
+  class "BLL.ListaEspera" as BLE {
+    +Ingresar(modulo, idExperiencia, idCliente) : int
+    +ConfirmarOferta(modulo, entrada) : int
+    +RechazarOferta(modulo, entrada)
+  }
+  class "BLL.Experiencia" as BE2 {
+    +ObtenerParaReserva() : List<Experiencia>
+  }
+}
+package "DAL" {
+  class "DAL.Reserva" as DR {
+    +CrearConCupo(reserva, lugares, idSuscripcion, historial, idListaEsperaAConfirmar) : int
+  }
+  class "DAL.ListaEspera" as DLE
+}
+package "BE" {
+  class "BE.CompatibilidadReserva" as BECR {
+    +{static} Evaluar(exp, sus, plan, ciudad, edad, invitados, ...) : CompatibilidadReserva
+  }
+  class "BE.SituacionCliente" as BESC {
+    +{static} Resolver(cliente) : SituacionCliente
+  }
+  class "BE.Reserva" as BERes
+  class "BE.ListaEspera" as BELE
+  enum EstadoReserva {
+    Confirmada
+    Asistio
+    NoAsistio
+    Cancelada
+  }
+}
+
+Reservas ..> BR : CrearReserva / EvaluarCompatibilidades
+ListaEsperaForm ..> BLE : Ingresar / ConfirmarOferta
+BR --> DR
+BR ..> BECR : usa (mismas reglas que el preview)
+BR ..> BESC
+BLE ..> BR : ConfirmarOferta -> CrearReserva (mismo camino atomico)
+BLE --> DLE
+BR ..> BERes
+BERes --> EstadoReserva
+BLE ..> BELE
+@enduml

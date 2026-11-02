@@ -1,0 +1,34 @@
+@startuml
+title CU02-CAJ-EMITIR COMPROBANTE
+actor "Caja" as Ca
+participant ":CobrosPendientesForm" as F
+participant ":BLL.Contratacion" as BLL
+participant ":GUI.Exportacion.\nDocumentosContratacion" as DOC
+
+autonumber
+note over BLL
+  La emisión del comprobante no es una
+  llamada BLL separada: el número y la
+  fecha del comprobante se sellan dentro
+  de la misma transacción de RegistrarCobro
+  (ver CU01-CAJ-GESTIONAR COBRO).
+end note
+BLL -> BLL : GenerarNumeroComprobante(idContratacion, fecha)
+BLL --> F : contratación con NumeroComprobante, FechaComprobante,\nImporteTotal y RecargoPorcentaje
+
+alt 3.1 datos de facturación incompletos
+  F --> Ca : indicar qué completar antes de emitir
+else datos completos
+  Ca -> F : solicitar ver/imprimir el comprobante
+  F -> DOC : Comprobante(contratacion)
+  DOC -> DOC : armar el documento con cliente,\nmedio, cuotas, recargo e importe total
+
+  alt 3.2 no se puede emitir el comprobante
+    DOC --> F : error al generar el documento
+    F --> Ca : informar que no se pudo emitir; permite reintentar
+  else emisión exitosa
+    DOC --> F : documento (PDF) de la factura/comprobante
+    F --> Ca : "Comprobante emitido correctamente"
+  end
+end
+@enduml

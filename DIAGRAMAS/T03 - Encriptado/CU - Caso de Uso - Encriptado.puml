@@ -1,0 +1,40 @@
+@startuml CU - Caso de Uso - Encriptado
+skinparam backgroundColor #FFFFFF
+skinparam shadowing true
+skinparam defaultFontName Segoe UI
+skinparam defaultFontColor #2B2B40
+skinparam usecase {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam actor {
+  BackgroundColor #F7A4B5
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+skinparam arrow {
+  Color #2B2B40
+}
+skinparam frame {
+  BackgroundColor #FFFFFF
+  BorderColor #2B2B40
+  FontColor #2B2B40
+  FontStyle bold
+}
+left to right direction
+actor "Usuario del Sistema" as U
+actor Administrador as A
+frame "Gestión de Encriptado" {
+  usecase "CU007 - Iniciar sesión\n(verificar contraseña)" as CU1
+  usecase "CU008 - Registrar o editar\ncliente (cifrar/descifrar DNI)" as CU2
+  usecase "Hash de contraseña\n(PBKDF2-SHA256)" as INC1
+  usecase "Cifrado simétrico\nde datos sensibles (AES-128)" as INC2
+}
+U -- CU1
+A -- CU2
+CU1 ..> INC1 : <<include>>
+CU2 ..> INC2 : <<include>>
+@enduml

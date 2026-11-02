@@ -1,0 +1,34 @@
+@startuml PN03 - Modelo Conceptual
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+hide circle
+hide methods
+title PN03 - Modelo Conceptual (Planificación de la oferta)
+
+class PlanAccion {
+  titulo
+  periodoDesde
+  periodoHasta
+  estado
+}
+class RecomendacionPlan {
+  tipo
+  accionSugerida
+  decision
+  ejecutada
+}
+class KpiSnapshot {
+  momento
+  nombreIndicador
+  valor
+}
+
+PlanAccion "1" -- "0..*" RecomendacionPlan : agrupa
+PlanAccion "1" -- "0..*" KpiSnapshot : fotografía (Antes/Después)
+@enduml

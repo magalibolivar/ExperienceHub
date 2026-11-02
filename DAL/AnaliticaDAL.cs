@@ -109,6 +109,47 @@ namespace DAL
             return lista;
         }
 
+        /// <summary>Serie mensual de reservas efectivas (estados 1/3/4) por mes de la fecha de la
+        /// experiencia, dentro del período + filtros. Insumo de "Evolución mensual de reservas".</summary>
+        public List<BE.KpiMes> ReservasPorMes(DateTime d, DateTime h, int? ci, int? ca, int? o)
+        {
+            var lista = new List<BE.KpiMes>();
+            var dt = acceso.Leer(
+                "SELECT YEAR(e.Fecha) AS Anio, MONTH(e.Fecha) AS Mes, COUNT(*) AS Cant " +
+                "FROM Reserva r JOIN Experiencia e ON e.IdExperiencia=r.IdExperiencia " +
+                "WHERE r.Estado IN (1,3,4) AND " + FiltroExp("e") + " " +
+                "GROUP BY YEAR(e.Fecha), MONTH(e.Fecha) ORDER BY Anio, Mes",
+                Params(d, h, ci, ca, o));
+            foreach (DataRow row in dt.Rows)
+                lista.Add(new BE.KpiMes
+                {
+                    Anio = Convert.ToInt32(row["Anio"]),
+                    Mes = Convert.ToInt32(row["Mes"]),
+                    Reservas = Convert.ToInt32(row["Cant"])
+                });
+            return lista;
+        }
+
+        /// <summary>Distribución de reservas por estado (1 Confirmada / 2 Cancelada / 3 Asistió /
+        /// 4 No asistió) dentro del período + filtros. Insumo de "Distribución de reservas por estado".</summary>
+        public List<BE.KpiEstadoReserva> ReservasPorEstado(DateTime d, DateTime h, int? ci, int? ca, int? o)
+        {
+            var lista = new List<BE.KpiEstadoReserva>();
+            var dt = acceso.Leer(
+                "SELECT r.Estado, COUNT(*) AS Cant " +
+                "FROM Reserva r JOIN Experiencia e ON e.IdExperiencia=r.IdExperiencia " +
+                "WHERE " + FiltroExp("e") + " " +
+                "GROUP BY r.Estado ORDER BY r.Estado",
+                Params(d, h, ci, ca, o));
+            foreach (DataRow row in dt.Rows)
+                lista.Add(new BE.KpiEstadoReserva
+                {
+                    Estado = Convert.ToInt32(row["Estado"]),
+                    Cantidad = Convert.ToInt32(row["Cant"])
+                });
+            return lista;
+        }
+
         /// <summary>KPIs globales del período (demanda insatisfecha, cancelaciones, asistencia, comercial).</summary>
         public void Globales(BE.TableroPeriodo t, DateTime d, DateTime h, int? ci, int? ca, int? o)
         {

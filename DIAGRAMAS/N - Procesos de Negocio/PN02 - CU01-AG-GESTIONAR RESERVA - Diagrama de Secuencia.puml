@@ -1,0 +1,58 @@
+@startuml
+title CU01-AG-GESTIONAR RESERVA
+actor "Agente de Reservas" as Ag
+participant ":Reservas" as F
+participant ":BLL.Reserva" as BLL
+participant ":BE.CompatibilidadReserva" as COMP
+participant ":DAL.Reserva" as DAL
+database "BD" as DB
+
+autonumber
+Ag -> F : identificar cliente
+F -> BLL : ConsultarSituacionCliente(dni)
+BLL -> DAL : ObtenerSuscripcion(idCliente)
+DAL -> DB : SELECT Suscripcion
+DB --> DAL : fila
+DAL --> BLL : Suscripcion
+
+alt 3.1 suscripción no vigente
+  BLL --> F : vigente = false
+  F --> Ag : "No puede reservar: suscripción no vigente"
+else 3.2 sin reservas disponibles en el mes
+  BLL --> F : ReservasRestantes() = 0
+  F --> Ag : "No puede reservar: límite del plan"
+else suscripción vigente y con cupo mensual
+  BLL --> F : cliente habilitado
+  ref over F
+    CU02-AG-CONSULTAR EXPERIENCIAS DISPONIBLES
+  end ref
+  Ag -> F : seleccionar experiencia e indicar lugares/invitados
+  F -> BLL : EvaluarCompatibilidades(idCliente, idExperiencia, cantidad)
+  BLL -> COMP : Evaluar(cliente, experiencia, cantidad)
+  COMP --> BLL : resultado (premium/edad/invitados/ciudad/ya realizada/solapamiento)
+
+  alt 7.1 no cumple alguna condición
+    BLL --> F : motivo de incompatibilidad
+    F --> Ag : informar motivo (ajustar selección o desistir)
+  else cumple las condiciones
+    BLL -> DAL : VerificarCupo(idExperiencia)
+    DAL -> DB : SELECT cupo
+    DB --> DAL : cupo
+
+    alt 9.1 sin cupo suficiente
+      DAL --> BLL : cupo = 0
+      ref over F
+        CU04-AG-GESTIONAR LISTA DE ESPERA
+      end ref
+    else cupo suficiente
+      DAL --> BLL : cupo disponible
+      BLL -> DAL : CrearConCupo(reserva)
+      DAL -> DB : UPDATE Experiencia (cupo), UPDATE Suscripcion (consumo), INSERT Reserva (Confirmada)
+      DB --> DAL : ok
+      DAL --> BLL : idReserva
+      BLL --> F : reserva confirmada
+      F --> Ag : "Reserva registrada y confirmada"
+    end
+  end
+end
+@enduml

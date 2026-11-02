@@ -1,0 +1,44 @@
+@startuml PN02 - Modelo Conceptual
+skinparam backgroundColor #FFFDF9
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFE8D6
+  BorderColor #142A4D
+  FontColor #142A4D
+  ArrowColor #142A4D
+}
+hide circle
+hide methods
+title PN02 - Modelo Conceptual (Reserva de experiencias)
+
+class Cliente {
+  nombre
+  dni
+  ciudad
+}
+class Experiencia {
+  nombre
+  fecha
+  cupo
+  premium
+  estado
+}
+class Reserva {
+  fecha
+  estado
+  cantidadInvitados
+}
+class ListaEspera {
+  posicion
+  estado
+}
+class Organizador {
+  nombre
+}
+
+Cliente "1" -- "0..*" Reserva : realiza
+Reserva "0..*" -- "1" Experiencia : sobre
+Experiencia "1" -- "0..*" ListaEspera : gestiona
+Cliente "1" -- "0..*" ListaEspera : espera en
+Organizador "1" -- "0..*" Experiencia : provee
+@enduml

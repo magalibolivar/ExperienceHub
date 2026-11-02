@@ -1,0 +1,49 @@
+@startuml
+title CU03-VTA-REGISTRAR CLIENTE
+actor "Agente de Reservas" as Ag
+participant ":ClienteForm" as F
+participant ":BLL.Cliente" as BLL
+participant ":DAL.Cliente" as DAL
+participant ":Servicios.Bitacora" as BIT
+database "BD" as DB
+
+autonumber
+Ag -> F : registrar un nuevo cliente
+F -> Ag : solicitar datos de registración
+Ag -> F : ingresar DNI, nombre, apellido, contacto,\nciudad y fecha de nacimiento
+Ag -> F : guardar
+F -> BLL : Alta(modulo, cliente)
+BLL -> BLL : Validar(cliente, esAlta=true)
+
+alt 5.1 / 5.2 datos obligatorios incompletos o de formato inválido
+  BLL --> F : AppException (campo faltante, DNI inválido o menor de edad)
+  F --> Ag : indicar qué corregir
+else datos válidos
+  BLL -> DAL : ExisteDNI(cliente.DNI)
+  DAL -> DB : SELECT COUNT(*) FROM Cliente WHERE DNI = @dni
+  DB --> DAL : cantidad
+  DAL --> BLL : existe (bool)
+
+  alt 5.3 DNI ya registrado
+    BLL --> F : AppException("Ya existe un cliente con DNI {0}")
+    F --> Ag : informar que el DNI ya está registrado
+  else DNI disponible
+    BLL -> DAL : Alta(cliente)
+    DAL -> DB : INSERT Cliente
+
+    alt 6.1 no se puede registrar al cliente
+      DB --> DAL : error
+      DAL --> BLL : excepción
+      BLL --> F : no se pudo completar la registración
+      F --> Ag : permitir reintentar
+    else registro exitoso
+      DB --> DAL : idCliente
+      DAL --> BLL : idCliente
+      BLL -> BLL : GuardarIntereses(cliente)
+      BLL -> BIT : Registrar("Alta Cliente: " + nombre + " (DNI " + dni + ")")
+      BLL --> F : cliente registrado
+      F --> Ag : "Cliente registrado correctamente"
+    end
+  end
+end
+@enduml

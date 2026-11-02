@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace GUI
 {
-    public partial class BackupForm : Form, IIdiomaObserver
+    public partial class BackupForm : FormBase, IIdiomaObserver
     {
         private readonly BLL.Backup _bll = new BLL.Backup();
 
@@ -19,7 +19,6 @@ namespace GUI
         public BackupForm()
         {
             InitializeComponent();
-            this.Shown += (s, e) => { try { PreferenciasUI.Aplicar(this); } catch { } };  // Montserrat + prefs
             this.Controls.Add(UI.Encabezado("Backup y Restauración",
                 "Copias de seguridad cifradas (.ehbak) y restauración de la base de datos.",
                 "eh.frm.backup", "eh.bak.header.desc"));
@@ -27,8 +26,7 @@ namespace GUI
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            try { string ico = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico"); if (System.IO.File.Exists(ico)) this.Icon = new System.Drawing.Icon(ico); } catch { }
+            base.OnLoad(e);   // ícono + identidad visual SUNSET + preferencias, vía FormBase
             GestorIdioma.SuscribirObservador(this);
 
             // RF-06 — Botón "Backup de instalación limpia". Se ubica debajo de la fila de
@@ -149,16 +147,13 @@ namespace GUI
                 if (clave == null) return;   // cancelado o inválido
 
                 string filename = _bll.RealizarBackup(this.Text, DirBackups, clave);
-                MessageBox.Show(
-                    string.Format(T("msg.backup.creadoexito", "Copia de seguridad generada con éxito:\n{0}"), filename),
-                    T("rpt.dlg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rpt.dlg.exito.titulo", "Éxito"),
+                    string.Format(T("msg.backup.creadoexito", "Copia de seguridad generada con éxito:\n{0}"), filename));
                 CargarLista();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(T("msg.backup.errorgenerar", "Error al generar copia de seguridad:\n{0}"), ex.Message),
-                    T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("msg.backup.errorgenerar", "Error al generar copia de seguridad:\n{0}"), ex.Message));
             }
         }
 
@@ -173,16 +168,13 @@ namespace GUI
                 if (clave == null) return;
 
                 string filename = _bll.RealizarBackupInicial(this.Text, DirBackups, clave);
-                MessageBox.Show(
-                    string.Format(T("msg.backup.inicialexito", "Backup de instalación limpia generado:\n{0}"), filename),
-                    T("rpt.dlg.exito.titulo", "Éxito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("rpt.dlg.exito.titulo", "Éxito"),
+                    string.Format(T("msg.backup.inicialexito", "Backup de instalación limpia generado:\n{0}"), filename));
                 CargarLista();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(T("msg.backup.errorgenerar", "Error al generar copia de seguridad:\n{0}"), ex.Message),
-                    T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("msg.backup.errorgenerar", "Error al generar copia de seguridad:\n{0}"), ex.Message));
             }
         }
 
@@ -199,12 +191,10 @@ namespace GUI
             string ruta     = lstBackups.SelectedItems[0].Tag as string;
             string filename = Path.GetFileName(ruta);
 
-            if (MessageBox.Show(
-                    string.Format(T("msg.backup.confirmeliminar",
-                        "¿Eliminar la copia de seguridad?\n\"{0}\"\n\nEsta acción no se puede deshacer."), filename),
-                    T("msg.backup.tituloeliminar", "Confirmar Eliminación"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-                return;
+            bool confirmaEliminar = Estilo.Confirmar(this, T("msg.backup.tituloeliminar", "Confirmar Eliminación"),
+                string.Format(T("msg.backup.confirmeliminar",
+                    "¿Eliminar la copia de seguridad?\n\"{0}\"\n\nEsta acción no se puede deshacer."), filename));
+            if (!confirmaEliminar) return;
 
             try
             {
@@ -213,9 +203,7 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(T("msg.backup.erroreliminar", "Error al eliminar:\n{0}"), ex.Message),
-                    T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("msg.backup.erroreliminar", "Error al eliminar:\n{0}"), ex.Message));
             }
         }
 
@@ -267,8 +255,7 @@ namespace GUI
                     "¿Restaurar la base de datos desde:\n\"{0}\"?\n\nEsta operación sobrescribirá todos los datos actuales\ny reiniciará la aplicación."),
                 Path.GetFileName(ruta)) + alcance;
 
-            if (MessageBox.Show(msg, T("msg.backup.titulorestaura", "Confirmar Restauración"),
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            if (!Estilo.Confirmar(this, T("msg.backup.titulorestaura", "Confirmar Restauración"), msg))
                 return;
 
             // Si el backup está cifrado (.ehbak), pedir la contraseña para descifrarlo.
@@ -282,16 +269,13 @@ namespace GUI
             try
             {
                 _bll.RestaurarBackup(this.Text, ruta, clave);
-                MessageBox.Show(
-                    T("msg.backup.restauradaexito", "Base de datos restaurada con éxito.\nLa aplicación se reiniciará."),
-                    T("msg.backup.restauradatitulo", "Restauración Exitosa"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Estilo.Exito(this, T("msg.backup.restauradatitulo", "Restauración Exitosa"),
+                    T("msg.backup.restauradaexito", "Base de datos restaurada con éxito.\nLa aplicación se reiniciará."));
                 Application.Restart();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(T("msg.backup.errorrestaurar", "Error al restaurar:\n{0}"), ex.Message),
-                    T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MostrarError(string.Format(T("msg.backup.errorrestaurar", "Error al restaurar:\n{0}"), ex.Message));
             }
         }
 
@@ -333,8 +317,7 @@ namespace GUI
                 string p1 = d1.InputText;
                 if (string.IsNullOrEmpty(p1))
                 {
-                    MessageBox.Show(T("dlg.backup.clave.vacia", "La contraseña no puede estar vacía."),
-                        T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MostrarError(T("dlg.backup.clave.vacia", "La contraseña no puede estar vacía."));
                     return null;
                 }
                 using (var d2 = new InputDialog(
@@ -345,8 +328,7 @@ namespace GUI
                     if (d2.ShowDialog(this) != DialogResult.OK) return null;
                     if (d2.InputText != p1)
                     {
-                        MessageBox.Show(T("dlg.backup.clave.nocoincide", "Las contraseñas no coinciden."),
-                            T("msg.error.titulo", "Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MostrarError(T("dlg.backup.clave.nocoincide", "Las contraseñas no coinciden."));
                         return null;
                     }
                 }

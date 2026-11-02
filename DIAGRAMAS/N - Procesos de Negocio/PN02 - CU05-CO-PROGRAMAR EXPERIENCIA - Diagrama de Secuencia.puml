@@ -1,0 +1,30 @@
+@startuml
+title CU05-CO-PROGRAMAR EXPERIENCIA
+actor "Coordinador de Experiencias" as Co
+participant ":Experiencias" as F
+participant ":BLL.Experiencia" as BLL
+participant ":DAL.Experiencia" as DAL
+participant ":Servicios.Bitacora" as BIT
+database "BD" as DB
+
+autonumber
+Co -> F : programar nueva experiencia
+F -> Co : solicitar datos (categoría, organizador, ciudad, fecha, horario, cupo, edad mínima, premium)
+Co -> F : ingresar los datos
+F -> BLL : Alta(modulo, experiencia)
+BLL -> BLL : Validar(experiencia)
+
+alt 4.1 datos obligatorios incompletos o inválidos
+  BLL --> F : AppException de validación
+  F --> Co : indicar qué corregir
+else datos válidos
+  BLL -> BLL : experiencia.Estado = Programada\nexperiencia.CupoDisponible = CupoMaximo
+  BLL -> DAL : Alta(experiencia)
+  DAL -> DB : INSERT Experiencia (Estado = Programada)
+  DB --> DAL : idExperiencia
+  DAL --> BLL : idExperiencia
+  BLL -> BIT : Registrar("Alta Experiencia: " + nombre)
+  BLL --> F : experiencia registrada
+  F --> Co : "Experiencia programada correctamente"
+end
+@enduml

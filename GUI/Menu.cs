@@ -293,6 +293,12 @@ namespace GUI
                 (_miNuevaContratacion, "mnuContratacionVenta"),
                 (_miFormalizar,        "mnuContratacionVenta"),
                 (_miCobros,            "mnuContratacionCaja"),
+                // PN03 — Planificación: 3 pantallas analíticas (Gerente/Admin) + Planes de acción
+                // (Gerente/Coordinador/Admin). Las analíticas se gatean por mnuPlanificacion; Planes por mnuPlanAccion.
+                (_miResumen,     "mnuPlanificacion"),
+                (_miDemanda,     "mnuPlanificacion"),
+                (_miDesempeno,   "mnuPlanificacion"),
+                (_miPlanes,      "mnuPlanAccion"),
             };
             foreach (var h in hojas)
                 if (h.Item != null) h.Item.Visible = Permite(h.Permiso);
@@ -311,6 +317,8 @@ namespace GUI
             SetGrupoVisible(_mnuReservas,
                 experienciasToolStripMenuItem, reservasToolStripMenuItem,
                 _miListaEspera, _miOrganizadores, _miCategorias, _miCiudades);
+
+            SetGrupoVisible(_mnuPlanificacion, _miResumen, _miDemanda, _miDesempeno, _miPlanes);
 
             // ── Administración (técnica): submenús + Bitácora ──
             bool tieneUsuarios  = Permite("mnuUsuarios");
@@ -443,10 +451,16 @@ namespace GUI
                                   _miListaEspera;
         // PN01 — Comercialización por rol (reemplazan al único "Membresía del cliente").
         private ToolStripMenuItem _miNuevaContratacion, _miFormalizar, _miCobros;
+        // PN03 — Planificación de la oferta (tablero analítico + plan de acción).
+        // PN03 — 4 pantallas especializadas (reemplazan al tablero único por pestañas). "Decisiones y
+        // recomendaciones" se fusionó dentro de "Planes de acción" (botón "+ Nuevo plan" ahí mismo).
+        private ToolStripMenuItem _miResumen, _miDemanda, _miDesempeno, _miPlanes;
         // Grupos del menú principal (uno por proceso de negocio), creados por código.
-        private ToolStripMenuItem _mnuComercializacion, _mnuReservas;
+        private ToolStripMenuItem _mnuComercializacion, _mnuReservas, _mnuPlanificacion;
         // (compat) referencia usada por código legacy null-guardeado; ya no se crea el menú "Catálogos".
         private ToolStripMenuItem _catalogosMenu;
+        // Ítem de menú superior "Ayuda" (panorama general del sistema) — no tiene desplegable, abre el diálogo directo.
+        private ToolStripMenuItem _miAyuda;
 
         // Crea un ítem de menú que abre un formulario como hijo MDI (reutiliza la instancia si existe).
         private ToolStripMenuItem NuevoItemForm(string texto, string tagI18n, Type tipo, Func<Form> crear)
@@ -469,6 +483,15 @@ namespace GUI
             _miCiudades        = NuevoItemForm("Ciudades",        "mnu.cat.ciudades",        typeof(Ciudades),            () => new Ciudades());
             _miListaEspera     = NuevoItemForm("Lista de espera", "mnu.cat.listaespera",     typeof(ListaEsperaForm),     () => new ListaEsperaForm());
 
+            // PN03 — Planificación: cuatro pantallas especializadas (cada una su propio form MDI). Los
+            // filtros y el período se comparten vía Planificacion.ContextoPlanificacion (no se duplican
+            // consultas). "Decisiones y recomendaciones" se fusionó dentro de "Planes de acción"
+            // (generar/elegir recomendaciones ahora es el botón "+ Nuevo plan" de esa misma pantalla).
+            _miResumen    = NuevoItemForm("Resumen ejecutivo",         "mnu.pln.resumen",    typeof(Planificacion.ResumenEjecutivoForm),          () => new Planificacion.ResumenEjecutivoForm());
+            _miDemanda    = NuevoItemForm("Demanda y capacidad",       "mnu.pln.demanda",    typeof(Planificacion.DemandaCapacidadForm),          () => new Planificacion.DemandaCapacidadForm());
+            _miDesempeno  = NuevoItemForm("Desempeño y calidad",       "mnu.pln.desempeno",  typeof(Planificacion.DesempenoCalidadForm),          () => new Planificacion.DesempenoCalidadForm());
+            _miPlanes     = NuevoItemForm("Planes de acción",          "mnu.pln.planes",     typeof(Planificacion.PlanesAccionForm),              () => new Planificacion.PlanesAccionForm());
+
             // PN01 — tres pantallas por rol. Se abren con wiring de eventos (contadores + atajos),
             // por eso no usan NuevoItemForm sino métodos dedicados.
             _miNuevaContratacion = new ToolStripMenuItem("Nueva contratación") { Tag = "mnu.cat.nuevacontratacion" };
@@ -477,6 +500,9 @@ namespace GUI
             _miFormalizar.Click += (s, e) => AbrirFormalizacion(0);
             _miCobros = new ToolStripMenuItem("Cobros pendientes") { Tag = "mnu.cat.cobros" };
             _miCobros.Click += (s, e) => AbrirCobros(0);
+
+            _miAyuda = new ToolStripMenuItem(Tx("mnu.ayuda", "Ayuda")) { Tag = "mnu.ayuda" };
+            _miAyuda.Click += (s, e) => Ayuda.AyudaDialog.Mostrar(this, "menu");
         }
 
         // Trae al frente el hijo MDI del tipo pedido o lo crea con la fábrica dada.
@@ -588,7 +614,15 @@ namespace GUI
             _mnuReservas.DropDownItems.Add(_miCategorias);
             _mnuReservas.DropDownItems.Add(_miCiudades);
 
-            // 3 · ADMINISTRACIÓN (técnica) — reusa "Administrar" y le suma la Bitácora.
+            // 3 · PN03 — PLANIFICACIÓN DE LA OFERTA (reportería/analítica para decidir + plan de acción)
+            _mnuPlanificacion = new ToolStripMenuItem(Tx("mnu.blq.planificacion", "Planificación")) { Tag = "mnu.blq.planificacion" };
+            _mnuPlanificacion.DropDownItems.Add(_miResumen);
+            _mnuPlanificacion.DropDownItems.Add(_miDemanda);
+            _mnuPlanificacion.DropDownItems.Add(_miDesempeno);
+            _mnuPlanificacion.DropDownItems.Add(new ToolStripSeparator());
+            _mnuPlanificacion.DropDownItems.Add(_miPlanes);
+
+            // 4 · ADMINISTRACIÓN (técnica) — reusa "Administrar" y le suma la Bitácora.
             //     El Reporte de Jornada queda DENTRO de Bitácora (ya no hay bloque Analíticas).
             gestionToolStripMenuItem.Tag  = "mnu.administracion";
             gestionToolStripMenuItem.Text = Tx("mnu.administracion", "Administración");
@@ -599,7 +633,9 @@ namespace GUI
             menuStrip1.Items.Clear();
             menuStrip1.Items.Add(_mnuComercializacion);            // PN01
             menuStrip1.Items.Add(_mnuReservas);                    // PN02
+            menuStrip1.Items.Add(_mnuPlanificacion);               // PN03
             menuStrip1.Items.Add(gestionToolStripMenuItem);        // Administración
+            menuStrip1.Items.Add(_miAyuda);                        // Ayuda (panorama general)
             menuStrip1.Items.Add(usuarioToolStripMenuItem);        // Sesión (Mi Perfil / Cerrar sesión)
         }
 

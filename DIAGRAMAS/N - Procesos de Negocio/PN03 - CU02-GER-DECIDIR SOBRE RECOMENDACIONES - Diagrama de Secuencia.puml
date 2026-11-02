@@ -1,0 +1,29 @@
+@startuml
+title CU02-GER-DECIDIR SOBRE RECOMENDACIONES
+actor "Gerente de Operaciones" as Ger
+participant ":PlanesAccionForm" as F
+participant ":BLL.PlanAccionService" as BLL
+participant ":Servicios.Bitacora" as BIT
+database "BD" as DB
+
+autonumber
+ref over F
+  CU01-GER-ANALIZAR INDICADORES Y GENERAR RECOMENDACIONES
+end ref
+Ger -> F : revisar una recomendación pendiente
+Ger -> F : decidir (aprobar o descartar) con motivo
+F -> BLL : Decidir(idRecomendacion, aprobar, motivo)
+BLL -> BLL : rec.PuedeDecidir()
+
+alt el Gerente aprueba
+  BLL -> DB : UPDATE RecomendacionPlan (Decision = Aprobada, MotivoDecision)
+  BLL -> BIT : Registrar("Recomendación aprobada — " + motivo)
+  BLL --> F : recomendación aprobada
+  F --> Ger : "Recomendación aprobada correctamente"
+else 2.1 el Gerente descarta la recomendación
+  BLL -> DB : UPDATE RecomendacionPlan (Decision = Descartada, MotivoDecision)
+  BLL -> BIT : Registrar("Recomendación descartada — " + motivo)
+  BLL --> F : recomendación descartada
+  F --> Ger : queda fuera del plan de acción
+end
+@enduml

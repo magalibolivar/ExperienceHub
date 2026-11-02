@@ -66,6 +66,7 @@
     <Compile Include="SeedDesarrollo.cs" />
     <Compile Include="MotorRecomendaciones.cs" />
     <Compile Include="Analitica.cs" />
+    <Compile Include="EvaluacionKpi.cs" />
     <Compile Include="PlanAccionService.cs" />
     <Compile Include="Calificacion.cs" />
     <Compile Include="PlanSuscripcion.cs" />

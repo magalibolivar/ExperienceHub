@@ -126,7 +126,7 @@ namespace GUI
 
             var header = UI.Encabezado("Reservas",
                 "Asesorá al cliente y concretá la reserva, gestioná las existentes o registrá asistencia y valoración.",
-                "eh.frm.reservas", "eh.res.header.desc");
+                "eh.frm.reservas", "eh.res.header.desc", "pn02.reservas");
 
             Controls.Add(_tabs);    // Fill
             Controls.Add(header);   // Top

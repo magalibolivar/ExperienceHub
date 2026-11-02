@@ -104,7 +104,7 @@ namespace GUI
 
             var header = UI.Encabezado("Cobros pendientes",
                 "Cobrá las contrataciones derivadas por Venta. Al concretar el pago se emite el comprobante.",
-                "eh.cob.titulo", "eh.cob.header.desc");
+                "eh.cob.titulo", "eh.cob.header.desc", "pn01.cobros");
 
             Controls.Add(cardGrid);
             Controls.Add(panel);

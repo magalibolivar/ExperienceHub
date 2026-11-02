@@ -1,0 +1,51 @@
+@startuml PN03 - DER
+skinparam linetype ortho
+hide circle
+title PN03 - DER (Planificación de la oferta)
+
+entity "PlanAccion" as PA {
+  * IdPlanAccion : int <<PK>>
+  --
+  Titulo : nvarchar
+  PeriodoDesde / PeriodoHasta : date
+  FiltroCiudad : int <<FK, null>>
+  FiltroCategoria : int <<FK, null>>
+  FiltroOrganizador : int <<FK, null>>
+  Estado : int «enum»
+  IdGerente : int <<FK, null>>
+  FechaCreacion : datetime
+  FechaCierre : datetime «null»
+}
+entity "RecomendacionPlan" as RP {
+  * IdRecomendacion : int <<PK>>
+  --
+  IdPlanAccion : int <<FK>>
+  Tipo : int «enum»
+  IdEntidad : int «null»
+  NombreEntidad : nvarchar «null»
+  Evidencia : nvarchar
+  AccionSugerida : int «enum»
+  Decision : int «enum»
+  MotivoDecision : nvarchar «null»
+  Ejecutada : bit
+  FechaEjecucion : datetime «null»
+}
+entity "KpiSnapshot" as KS {
+  * IdSnapshot : int <<PK>>
+  --
+  IdPlanAccion : int <<FK>>
+  Momento : int «enum (Antes/Después)»
+  Clave : nvarchar
+  Valor : decimal
+  Fecha : datetime
+}
+entity "Organizador" as O {
+  * IdOrganizador : int <<PK>>
+  --
+  Estado : bit
+}
+
+PA ||--o{ RP : agrupa
+PA ||--o{ KS : fotografía
+RP }o--o| O : refiere (según Tipo)
+@enduml

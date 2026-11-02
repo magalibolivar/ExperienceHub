@@ -1,0 +1,87 @@
+@startuml
+title PN01 - Comercialización de la suscripción
+
+|Cliente (externo)|
+start
+:Solicitar información;
+
+|Agente de Reservas|
+:Presentar planes;
+note right
+  Planes disponibles:
+  nombre del plan, beneficios incluidos,
+  límites de uso, valor de la suscripción y vigencia.
+end note
+
+|Cliente (externo)|
+:Evaluar alternativas;
+if (¿Conviene alguna alternativa?) then (No conviene)
+  :Desistir contratación;
+  stop
+else (Conviene)
+  :Elegir plan;
+endif
+
+|Agente de Reservas|
+:Informar condiciones del plan;
+note right
+  Condiciones del plan:
+  plan seleccionado, beneficios aplicables,
+  límites de uso, valor, vigencia y condiciones
+  particulares de contratación.
+end note
+
+|Cliente (externo)|
+:Recibir condiciones del plan;
+if (¿Acepta condiciones?) then (No)
+  :Desistir contratación;
+  stop
+else (Sí)
+  :Brindar datos personales;
+  note right: DNI / datos de contacto
+endif
+
+|Agente de Reservas|
+:Recibir datos del cliente;
+note right
+  Ficha del cliente:
+  datos personales, DNI, contacto y domicilio.
+end note
+:Generar orden de cobro;
+
+|Cliente (externo)|
+while (¿Pago de la contratación resuelto?) is (No)
+  if (¿Método de pago?) then (Efectivo)
+    :Pagar en efectivo;
+  elseif (Tarjeta)
+    :Pagar con tarjeta;
+  else (Transferencia)
+    :Pagar con transferencia;
+  endif
+
+  |Caja|
+  :Cobrar importe;
+  if (¿Se concreta el pago?) then (Se concreta)
+    :Confirmar pago;
+    :Emitir comprobante;
+    note right: Factura / Comprobante
+  else (No se concreta)
+    if (¿Alcanzó el máximo de 3 intentos?) then (Sí)
+      :Cancelar contratación;
+      note right: Constancia de cancelación
+      stop
+    endif
+  endif
+  |Cliente (externo)|
+endwhile (Sí)
+
+|Agente de Reservas|
+:Formalizar suscripción;
+note right: Constancia de suscripción
+
+|Cliente (externo)|
+:Recibir comprobante;
+:Obtener constancia de suscripción;
+stop
+
+@enduml
